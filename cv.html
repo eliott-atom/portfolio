@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>curriculum vitae</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+<style>
+
+* {
+
+margin: 0;
+
+padding: 0;
+
+box-sizing: border-box;
+
+}
+
+
+
+body {
+
+background-color: #f2f2f2;
+
+color: #111111;
+
+font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+font-size: 12.5px;
+
+line-height: 1.45;
+
+min-height: 100vh;
+
+display: flex;
+
+justify-content: center;
+
+align-items: flex-start;
+
+padding: 6vh 2vw;
+
+user-select: none;
+
+position: relative;
+
+}
+
+
+
+/* 1. LAYER STACK: CANVASES SIT DIRECTLY ABOVE PAPER BG */
+
+#highlighter-canvas,
+
+#scratch-canvas {
+
+position: absolute;
+
+top: 0;
+
+left: 0;
+
+z-index: 5;
+
+pointer-events: none;
+
+}
+
+
+
+#scratch-canvas {
+
+opacity: 0.32;
+
+}
+
+
+
+body.is-drawing-mode #highlighter-canvas,
+
+body.is-drawing-mode #scratch-canvas {
+
+pointer-events: auto;
+
+}
+
+
+
+/* 2. THE CV CONTAINER */
+
+.cv-container {
+
+position: relative;
+
+width: 100%;
+
+max-width: 680px;
+
+}
+
+
+
+/* The Paper Sheet Background (Layer 1: Under Canvas) */
+
+.cv-paper-bg {
+
+position: absolute;
+
+inset: 0;
+
+background: #ffffff;
+
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.04);
+
+z-index: 1;
+
+pointer-events: none;
+
+}
+
+
+
+/* 3. INVISIBLE WHITE WATERMARK (Layer 7: Floats over Canvas) */
+
+.curriculum-watermark {
+
+position: absolute;
+
+top: 80px;
+
+left: 26px;
+
+width: 90px;
+
+height: 375px;
+
+z-index: 7;
+
+transform: scaleY(2.5);
+
+pointer-events: none;
+
+user-select: none;
+
+-webkit-user-select: none;
+
+display: flex;
+
+flex-direction: column;
+
+align-items: flex-start;
+
+}
+
+
+
+.watermark-year {
+
+font-family: "Libre Franklin", sans-serif;
+
+font-size: 10px;
+
+font-weight: 700;
+
+color: #ffffff;
+
+border: 1px solid #ffffff;
+
+padding: 2px 6px;
+
+margin-bottom: 18px;
+
+line-height: 1;
+
+}
+
+
+
+.watermark-text-col {
+
+display: flex;
+
+gap: 6px;
+
+height: 100%;
+
+}
+
+
+
+.watermark-text {
+
+writing-mode: vertical-rl;
+
+transform: rotate(180deg) scaleX(1.35);
+
+transform-origin: center;
+
+font-family: "Libre Franklin", sans-serif;
+
+font-weight: 900;
+
+font-size: 3.4rem;
+
+line-height: 0.82;
+
+letter-spacing: -2px;
+
+color: #ffffff;
+
+text-transform: lowercase;
+
+white-space: nowrap;
+
+}
+
+
+
+/* 4. THE CV CONTENT (Layer 6: Transparent sheet body) */
+
+.cv-sheet {
+
+position: relative;
+
+width: 100%;
+
+padding: 80px 65px 110px 135px;
+
+z-index: 6;
+
+pointer-events: none;
+
+}
+
+
+
+/* DOWNLOAD BUTTON (Pink Pill) */
+
+.cv-top-bar {
+
+display: flex;
+
+justify-content: flex-end;
+
+margin-bottom: 2rem;
+
+}
+
+
+
+.download-btn {
+
+-webkit-appearance: none;
+
+-moz-appearance: none;
+
+appearance: none;
+
+border: none !important;
+
+outline: none !important;
+
+box-shadow: none !important;
+
+display: inline-block;
+
+background-color: #ff00ff;
+
+color: #ffffff;
+
+font-family: "Libre Franklin", sans-serif;
+
+font-size: 11px;
+
+font-weight: 700;
+
+text-transform: lowercase;
+
+letter-spacing: 0.5px;
+
+padding: 8px 18px;
+
+border-radius: 30px;
+
+cursor: pointer;
+
+pointer-events: auto;
+
+transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease;
+
+}
+
+
+
+.cv-top-bar, .section-label, .intro, .row {
+
+position: relative;
+
+z-index: 1;
+
+}
+
+
+
+.download-btn:hover {
+
+opacity: 0.9;
+
+transform: scale(1.05);
+
+}
+
+
+
+.download-btn:active {
+
+transform: scale(0.97);
+
+}
+
+
+
+/* EDITORIAL TEXT BLOCKS */
+
+.section-label {
+
+font-family: "Libre Franklin", sans-serif;
+
+font-weight: 700;
+
+text-align: right;
+
+margin: 2.8rem 0 1.2rem;
+
+font-size: 13px;
+
+}
+
+
+
+.intro p {
+
+text-align: justify;
+
+margin-bottom: 1.4rem;
+
+}
+
+
+
+.row {
+
+display: grid;
+
+grid-template-columns: 110px 1fr;
+
+margin-bottom: 10px;
+
+}
+
+
+
+.row span {
+
+display: block;
+
+font-size: 10.5px;
+
+color: #555555;
+
+}
+
+
+
+/* 5. TOOLS DOCK */
+
+.tools-dock {
+
+position: fixed;
+
+bottom: -5px;
+
+right: 40px;
+
+display: flex;
+
+align-items: flex-end;
+
+gap: 20px;
+
+z-index: 100;
+
+}
+
+
+
+/* STABILO RIG */
+
+.stabilo-rig {
+
+position: relative;
+
+width: 100px;
+
+height: 250px;
+
+cursor: pointer;
+
+transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+transform: translateY(65%);
+
+}
+
+
+
+.marker-body, .marker-cap {
+
+position: absolute;
+
+top: 0;
+
+left: 0;
+
+width: 100%;
+
+height: 100%;
+
+object-fit: contain;
+
+transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+
+}
+
+
+
+.stabilo-rig.is-revealed {
+
+transform: translateY(0);
+
+}
+
+
+
+.stabilo-rig.is-uncapped .marker-cap {
+
+transform: translateY(-90px) rotate(65deg) scale(1.15);
+
+opacity: 0;
+
+pointer-events: none;
+
+}
+
+
+
+.stabilo-rig.is-uncapped .marker-body {
+
+transform: rotate(-6deg);
+
+}
+
+
+
+/* SPRAY CAN RIG (Single WebP Image) */
+
+.spray-rig {
+
+position: relative;
+
+width: 100px;
+
+height: 250px;
+
+cursor: pointer;
+
+transition: transform 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+
+transform: translateY(120%);
+
+opacity: 0;
+
+pointer-events: none;
+
+}
+
+
+
+.spray-can-img {
+
+position: absolute;
+
+top: 0;
+
+left: 0;
+
+width: 100%;
+
+height: 100%;
+
+object-fit: contain;
+
+transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+}
+
+
+
+.spray-rig.is-unlocked {
+
+transform: translateY(65%);
+
+opacity: 1;
+
+pointer-events: auto;
+
+}
+
+
+
+.spray-rig.is-unlocked:hover {
+
+transform: translateY(55%);
+
+}
+
+
+
+.spray-rig.is-active {
+
+transform: translateY(0);
+
+}
+
+
+
+.spray-rig.is-active .spray-can-img {
+
+transform: rotate(-6deg) scale(1.05);
+
+}
+
+
+
+.spray-rig.is-spraying .spray-can-img {
+
+transform: rotate(-8deg) scale(1.02) translateY(4px);
+
+}
+
+
+
+/* 6. CURSORS */
+
+.brush-cursor {
+
+position: fixed;
+
+width: 26px;
+
+height: 26px;
+
+border: 1px solid rgba(0, 0, 0, 0.7);
+
+border-radius: 50%;
+
+pointer-events: none;
+
+transform: translate(-50%, -50%);
+
+z-index: 1000;
+
+display: none;
+
+}
+
+
+
+.spray-cursor {
+
+position: fixed;
+
+width: 50px; /* Matched to 2x sprayRadius (110px) */
+
+height: 50px;
+
+border: 1px dashed rgba(255, 0, 255, 0.85);
+
+border-radius: 50%;
+
+pointer-events: none;
+
+transform: translate(-50%, -50%);
+
+z-index: 1000;
+
+display: none;
+
+}
+
+
+
+.spray-cursor::after {
+
+content: "";
+
+position: absolute;
+
+top: 50%;
+
+left: 50%;
+
+width: 3px;
+
+height: 3px;
+
+background: #ff00ff;
+
+border-radius: 50%;
+
+transform: translate(-50%, -50%);
+
+}
+
+
+
+body.is-drawing-mode { cursor: none; }
+
+body.is-drawing-mode.tool-stabilo .brush-cursor { display: block; }
+
+body.is-drawing-mode.tool-spray .spray-cursor { display: block; }
+
+
+
+/* PRINT STYLESHEET */
+
+@media print {
+
+@page {
+
+margin: 1.5cm;
+
+size: A4 portrait;
+
+}
+
+
+
+body {
+
+background: #ffffff !important;
+
+padding: 0 !important;
+
+margin: 0 !important;
+
+}
+
+
+
+#highlighter-canvas,
+
+#scratch-canvas,
+
+.tools-dock,
+
+.brush-cursor,
+
+.spray-cursor,
+
+.curriculum-watermark,
+
+.download-btn {
+
+display: none !important;
+
+}
+
+
+
+.cv-container {
+
+max-width: 100% !important;
+
+width: 100% !important;
+
+}
+
+
+
+.cv-paper-bg {
+
+display: none !important;
+
+}
+
+
+
+.cv-sheet {
+
+background: #ffffff !important;
+
+box-shadow: none !important;
+
+padding: 0 !important;
+
+margin: 0 !important;
+
+width: 100% !important;
+
+}
+
+
+
+* {
+
+color: #000000 !important;
+
+-webkit-print-color-adjust: exact;
+
+print-color-adjust: exact;
+
+}
+
+}
+
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+</head>
+
+<body>
+
+
+
+<!-- Canvas Engine -->
+
+<canvas id="highlighter-canvas"></canvas>
+
+<canvas id="scratch-canvas"></canvas>
+
+
+
+<!-- Cursors -->
+
+<div class="brush-cursor" id="brush-cursor"></div>
+
+<div class="spray-cursor" id="spray-cursor"></div>
+
+
+
+<!-- CV Stage -->
+
+<div class="cv-container">
+
+<div class="cv-paper-bg"></div>
+
+
+
+<!-- Hidden White Watermark -->
+
+<div class="curriculum-watermark" aria-hidden="true">
+
+<div class="watermark-year">2024</div>
+
+<div class="watermark-text-col">
+
+<div class="watermark-text">curriculum</div>
+
+<div class="watermark-text">vitae</div>
+
+</div>
+
+</div>
+
+
+
+<main class="cv-sheet" id="sheet">
+
+<div class="cv-top-bar">
+
+<button type="button" id="download-cv-btn" class="download-btn">download cv [pdf]</button>
+
+</div>
+
+
+
+<div class="section-label">about</div>
+
+<div class="intro">
+
+<p style="text-align: right; margin-bottom: 2rem;">
+
+I am Eliott, I live in Geneva and studied<br>in EPFL in Lausanne and TU in Berlin
+
+</p>
+
+<p>
+
+Since forever, I have spent my time in theaters and doing my own films ; writing, acting, and building the spaces where stories happen. I was lucky enough to get funding for a play in Nyon. A film I made recently received the Matura Arbeit Preis and I continue to make others.
+
+</p>
+
+<p>
+
+I see architecture as a continuation of this work. It is the study of how an architectured work determines a movement or a feeling. I am looking for a way to build that remains sensible, accessible to everyone and adapted to the state of the planet.
+
+</p>
+
+</div>
+
+
+
+<div class="section-label">education</div>
+
+<div class="row">
+
+<div>2020-2023</div>
+
+<div>Collège Sismondi<span>honor math/physic maturity, writing price</span></div>
+
+</div>
+
+<div class="row">
+
+<div>2023-2025</div>
+
+<div>EPF Lausanne<span>excellency scholar, teacher assistant</span></div>
+
+</div>
+
+<div class="row">
+
+<div>2025-2026</div>
+
+<div>TU Berlin<span>erasmus student</span></div>
+
+</div>
+
+
+
+<div class="section-label">softwares</div>
+
+<div class="row">
+
+<div>Constructing:</div>
+
+<div>Archicad, Vectorworks, TopSolid</div>
+
+</div>
+
+<div class="row">
+
+<div>Modeling:</div>
+
+<div>Rhino 3D, Blender</div>
+
+</div>
+
+<div class="row">
+
+<div>Visualizing:</div>
+
+<div>Unreal Engine, Twinmotion, Photoshop/Affinity</div>
+
+</div>
+
+<div class="row">
+
+<div>Video:</div>
+
+<div>Premiere Pro/Davinci Resolve, After Effects</div>
+
+</div>
+
+<div class="row">
+
+<div>Layout & Graphics:</div>
+
+<div>InDesign/Affinity, Illustrator/Affinity</div>
+
+</div>
+
+</main>
+
+</div>
+
+
+
+<!-- Interactive Tools Rig -->
+
+<div class="tools-dock">
+
+<div class="spray-rig" id="spray-btn">
+
+<img src="spray-can.webp" alt="spray paint can" class="spray-can-img">
+
+</div>
+
+
+
+<div class="stabilo-rig" id="marker-btn">
+
+<img src="stabilo-body.webp" alt="stabilo body" class="marker-body">
+
+<img src="stabilo-cap.webp" alt="stabilo cap" class="marker-cap">
+
+</div>
+
+</div>
+
+
+
+<script>
+
+const mainCanvas = document.getElementById('highlighter-canvas');
+
+const mainCtx = mainCanvas.getContext('2d');
+
+const scratchCanvas = document.getElementById('scratch-canvas');
+
+const scratchCtx = scratchCanvas.getContext('2d');
+
+
+
+const markerBtn = document.getElementById('marker-btn');
+
+const sprayBtn = document.getElementById('spray-btn');
+
+const brushCursor = document.getElementById('brush-cursor');
+
+const sprayCursor = document.getElementById('spray-cursor');
+
+
+
+let isDrawingMode = false;
+
+let isDrawing = false;
+
+let activeTool = 'stabilo';
+
+let stabiloState = 0;
+
+let sprayUnlocked = false;
+
+
+
+let lastX = 0;
+
+let lastY = 0;
+
+let lastTime = 0;
+
+let dirX = 0;
+
+let dirY = 0;
+
+let distSinceTurn = 0;
+
+
+
+let currentMousePageX = 0;
+
+let currentMousePageY = 0;
+
+let sprayAnimFrame = null;
+
+
+
+const INK_OPACITY = 0.32;
+
+
+
+function initBrush(ctx) {
+
+ctx.lineCap = 'round';
+
+ctx.lineJoin = 'round';
+
+ctx.lineWidth = 26;
+
+ctx.strokeStyle = '#ff00ff';
+
+ctx.fillStyle = '#ff00ff';
+
+}
+
+
+
+function resizeCanvases() {
+
+const scrollWidth = document.documentElement.scrollWidth;
+
+const scrollHeight = document.documentElement.scrollHeight;
+
+
+
+if (mainCanvas.width !== scrollWidth || mainCanvas.height !== scrollHeight) {
+
+const tempCanvas = document.createElement('canvas');
+
+tempCanvas.width = mainCanvas.width;
+
+tempCanvas.height = mainCanvas.height;
+
+if (mainCanvas.width > 0 && mainCanvas.height > 0) {
+
+tempCanvas.getContext('2d').drawImage(mainCanvas, 0, 0);
+
+}
+
+
+
+[mainCanvas, scratchCanvas].forEach(c => {
+
+c.width = scrollWidth;
+
+c.height = scrollHeight;
+
+c.style.width = scrollWidth + 'px';
+
+c.style.height = scrollHeight + 'px';
+
+});
+
+
+
+initBrush(scratchCtx);
+
+
+
+if (tempCanvas.width > 0 && tempCanvas.height > 0) {
+
+mainCtx.drawImage(tempCanvas, 0, 0);
+
+}
+
+}
+
+}
+
+
+
+window.addEventListener('resize', resizeCanvases);
+
+setTimeout(resizeCanvases, 150);
+
+
+
+function updateModeClasses() {
+
+document.body.classList.toggle('is-drawing-mode', isDrawingMode);
+
+document.body.classList.toggle('tool-stabilo', isDrawingMode && activeTool === 'stabilo');
+
+document.body.classList.toggle('tool-spray', isDrawingMode && activeTool === 'spray');
+
+}
+
+
+
+// STABILO MACHINE
+
+markerBtn.addEventListener('click', (e) => {
+
+e.stopPropagation();
+
+
+
+if (stabiloState === 0) {
+
+stabiloState = 1;
+
+markerBtn.classList.add('is-revealed');
+
+} else if (stabiloState === 1) {
+
+stabiloState = 2;
+
+markerBtn.classList.add('is-uncapped');
+
+activeTool = 'stabilo';
+
+isDrawingMode = true;
+
+sprayBtn.classList.remove('is-active');
+
+updateModeClasses();
+
+resizeCanvases();
+
+} else if (stabiloState === 2) {
+
+stabiloState = 0;
+
+markerBtn.classList.remove('is-revealed', 'is-uncapped');
+
+isDrawingMode = false;
+
+updateModeClasses();
+
+
+
+if (!sprayUnlocked) {
+
+sprayUnlocked = true;
+
+sprayBtn.classList.add('is-unlocked');
+
+}
+
+}
+
+});
+
+
+
+// SPRAY CAN MACHINE
+
+sprayBtn.addEventListener('click', (e) => {
+
+e.stopPropagation();
+
+if (!sprayUnlocked) return;
+
+
+
+if (activeTool === 'spray' && isDrawingMode) {
+
+isDrawingMode = false;
+
+sprayBtn.classList.remove('is-active');
+
+updateModeClasses();
+
+} else {
+
+activeTool = 'spray';
+
+isDrawingMode = true;
+
+sprayBtn.classList.add('is-active');
+
+if (stabiloState === 2) {
+
+stabiloState = 0;
+
+markerBtn.classList.remove('is-revealed', 'is-uncapped');
+
+}
+
+updateModeClasses();
+
+resizeCanvases();
+
+}
+
+});
+
+
+
+// AEROSOL SPRAY ENGINE
+
+function sprayAerosolAt(x, y) {
+
+const sprayRadius = 110;
+
+const particleDensity = 110;
+
+
+
+mainCtx.save();
+
+mainCtx.fillStyle = '#ff00ff';
+
+
+
+for (let i = 0; i < particleDensity; i++) {
+
+const angle = Math.random() * Math.PI * 2;
+
+const r = sprayRadius * Math.pow(Math.random(), 1.6);
+
+const px = x + Math.cos(angle) * r;
+
+const py = y + Math.sin(angle) * r;
+
+
+
+const dotSize = Math.random() < 0.06 ? Math.random() * 2 + 1.2 : Math.random() * 1.1 + 0.35;
+
+mainCtx.globalAlpha = Math.random() * 0.22 + 0.12;
+
+
+
+mainCtx.beginPath();
+
+mainCtx.arc(px, py, dotSize, 0, Math.PI * 2);
+
+mainCtx.fill();
+
+}
+
+
+
+if (Math.random() < 0.35) {
+
+const splatterAngle = Math.random() * Math.PI * 2;
+
+const splatterDist = sprayRadius * (1.15 + Math.random() * 0.9);
+
+const sx = x + Math.cos(splatterAngle) * splatterDist;
+
+const sy = y + Math.sin(splatterAngle) * splatterDist;
+
+
+
+mainCtx.globalAlpha = Math.random() * 0.35 + 0.15;
+
+mainCtx.beginPath();
+
+mainCtx.arc(sx, sy, Math.random() * 1.6 + 0.5, 0, Math.PI * 2);
+
+mainCtx.fill();
+
+}
+
+
+
+mainCtx.restore();
+
+}
+
+
+
+function runContinuousSpray() {
+
+if (isDrawing && activeTool === 'spray') {
+
+sprayAerosolAt(currentMousePageX, currentMousePageY);
+
+sprayAnimFrame = requestAnimationFrame(runContinuousSpray);
+
+}
+
+}
+
+
+
+function commitStabiloStroke() {
+
+if (!isDrawing) return;
+
+isDrawing = false;
+
+
+
+mainCtx.save();
+
+mainCtx.globalAlpha = parseFloat(scratchCanvas.style.opacity) || INK_OPACITY;
+
+mainCtx.globalCompositeOperation = 'source-over';
+
+mainCtx.drawImage(scratchCanvas, 0, 0);
+
+mainCtx.restore();
+
+
+
+scratchCtx.clearRect(0, 0, scratchCanvas.width, scratchCanvas.height);
+
+}
+
+
+
+function commitAndContinue(x, y) {
+
+mainCtx.save();
+
+mainCtx.globalAlpha = parseFloat(scratchCanvas.style.opacity) || INK_OPACITY;
+
+mainCtx.globalCompositeOperation = 'source-over';
+
+mainCtx.drawImage(scratchCanvas, 0, 0);
+
+mainCtx.restore();
+
+
+
+scratchCtx.clearRect(0, 0, scratchCanvas.width, scratchCanvas.height);
+
+
+
+scratchCtx.beginPath();
+
+scratchCtx.arc(x, y, scratchCtx.lineWidth / 2, 0, Math.PI * 2);
+
+scratchCtx.fill();
+
+}
+
+
+
+function handlePointerMove(pageX, pageY) {
+
+currentMousePageX = pageX;
+
+currentMousePageY = pageY;
+
+
+
+if (!isDrawingMode || !isDrawing) return;
+
+
+
+if (activeTool === 'stabilo') {
+
+const dx = pageX - lastX;
+
+const dy = pageY - lastY;
+
+const dist = Math.hypot(dx, dy);
+
+
+
+const now = performance.now();
+
+const dt = Math.max(now - lastTime, 1);
+
+const speed = Math.min(dist / dt, 3);
+
+lastTime = now;
+
+
+
+const dynamicOpacity = 0.45 - (speed / 3) * 0.30;
+
+const dynamicWidth = 32 - (speed / 3) * 12;
+
+
+
+scratchCanvas.style.opacity = dynamicOpacity;
+
+scratchCtx.lineWidth = dynamicWidth;
+
+
+
+if (dist > 0) {
+
+if (distSinceTurn > 25) {
+
+const dot = dx * dirX + dy * dirY;
+
+if (dot < 0) {
+
+commitAndContinue(pageX, pageY);
+
+dirX = dx;
+
+dirY = dy;
+
+distSinceTurn = 0;
+
+}
+
+}
+
+dirX += dx;
+
+dirY += dy;
+
+distSinceTurn += dist;
+
+}
+
+
+
+scratchCtx.beginPath();
+
+scratchCtx.moveTo(lastX, lastY);
+
+scratchCtx.lineTo(pageX, pageY);
+
+scratchCtx.stroke();
+
+
+
+lastX = pageX;
+
+lastY = pageY;
+
+} else if (activeTool === 'spray') {
+
+const dx = pageX - lastX;
+
+const dy = pageY - lastY;
+
+const dist = Math.hypot(dx, dy);
+
+const steps = Math.max(Math.floor(dist / 10), 1);
+
+
+
+for (let s = 0; s < steps; s++) {
+
+const interpX = lastX + (dx / steps) * s;
+
+const interpY = lastY + (dy / steps) * s;
+
+sprayAerosolAt(interpX, interpY);
+
+}
+
+
+
+lastX = pageX;
+
+lastY = pageY;
+
+}
+
+}
+
+
+
+window.addEventListener('mousemove', (e) => {
+
+brushCursor.style.left = e.clientX + 'px';
+
+brushCursor.style.top = e.clientY + 'px';
+
+sprayCursor.style.left = e.clientX + 'px';
+
+sprayCursor.style.top = e.clientY + 'px';
+
+
+
+handlePointerMove(e.pageX, e.pageY);
+
+});
+
+
+
+window.addEventListener('mousedown', (e) => {
+
+if (!isDrawingMode || e.target.closest('#marker-btn') || e.target.closest('#spray-btn') || e.target.closest('.download-btn')) return;
+
+isDrawing = true;
+
+lastX = e.pageX;
+
+lastY = e.pageY;
+
+currentMousePageX = e.pageX;
+
+currentMousePageY = e.pageY;
+
+lastTime = performance.now();
+
+dirX = 0;
+
+dirY = 0;
+
+distSinceTurn = 0;
+
+
+
+if (activeTool === 'stabilo') {
+
+scratchCtx.beginPath();
+
+scratchCtx.arc(lastX, lastY, scratchCtx.lineWidth / 2, 0, Math.PI * 2);
+
+scratchCtx.fill();
+
+} else if (activeTool === 'spray') {
+
+sprayBtn.classList.add('is-spraying');
+
+sprayAerosolAt(lastX, lastY);
+
+cancelAnimationFrame(sprayAnimFrame);
+
+sprayAnimFrame = requestAnimationFrame(runContinuousSpray);
+
+}
+
+});
+
+
+
+window.addEventListener('mouseup', () => {
+
+if (activeTool === 'stabilo') {
+
+commitStabiloStroke();
+
+} else if (activeTool === 'spray') {
+
+isDrawing = false;
+
+sprayBtn.classList.remove('is-spraying');
+
+cancelAnimationFrame(sprayAnimFrame);
+
+}
+
+});
+
+
+
+window.addEventListener('touchstart', (e) => {
+
+if (!isDrawingMode || e.target.closest('#marker-btn') || e.target.closest('#spray-btn') || e.target.closest('.download-btn')) return;
+
+isDrawing = true;
+
+const t = e.touches[0];
+
+lastX = t.pageX;
+
+lastY = t.pageY;
+
+currentMousePageX = t.pageX;
+
+currentMousePageY = t.pageY;
+
+lastTime = performance.now();
+
+dirX = 0;
+
+dirY = 0;
+
+distSinceTurn = 0;
+
+
+
+if (activeTool === 'stabilo') {
+
+scratchCtx.beginPath();
+
+scratchCtx.arc(lastX, lastY, scratchCtx.lineWidth / 2, 0, Math.PI * 2);
+
+scratchCtx.fill();
+
+} else if (activeTool === 'spray') {
+
+sprayBtn.classList.add('is-spraying');
+
+sprayAerosolAt(lastX, lastY);
+
+cancelAnimationFrame(sprayAnimFrame);
+
+sprayAnimFrame = requestAnimationFrame(runContinuousSpray);
+
+}
+
+});
+
+
+
+window.addEventListener('touchmove', (e) => {
+
+if (!isDrawingMode || !isDrawing) return;
+
+const t = e.touches[0];
+
+handlePointerMove(t.pageX, t.pageY);
+
+});
+
+
+
+window.addEventListener('touchend', () => {
+
+if (activeTool === 'stabilo') {
+
+commitStabiloStroke();
+
+} else if (activeTool === 'spray') {
+
+isDrawing = false;
+
+sprayBtn.classList.remove('is-spraying');
+
+cancelAnimationFrame(sprayAnimFrame);
+
+}
+
+});
+
+
+
+// PDF EXPORT
+
+const downloadBtn = document.getElementById('download-cv-btn');
+
+downloadBtn.addEventListener('click', () => {
+
+const sheet = document.getElementById('sheet');
+
+const topBar = sheet.querySelector('.cv-top-bar');
+
+
+
+if (activeTool === 'stabilo' && isDrawing) commitStabiloStroke();
+
+
+
+const rect = sheet.getBoundingClientRect();
+
+const scrollX = window.scrollX || window.pageXOffset || 0;
+
+const scrollY = window.scrollY || window.pageYOffset || 0;
+
+
+
+const bleed = 400;
+
+
+
+const sheetX = rect.left + scrollX;
+
+const sheetY = rect.top + scrollY;
+
+const sheetW = sheet.offsetWidth;
+
+const sheetH = sheet.offsetHeight;
+
+
+
+const cropCanvas = document.createElement('canvas');
+
+cropCanvas.width = sheetW;
+
+cropCanvas.height = sheetH;
+
+const cropCtx = cropCanvas.getContext('2d');
+
+
+
+cropCtx.drawImage(
+
+mainCanvas,
+
+sheetX, sheetY, sheetW, sheetH,
+
+0, 0, sheetW, sheetH
+
+);
+
+
+
+const inkImg = document.createElement('img');
+
+inkImg.src = cropCanvas.toDataURL('image/png');
+
+inkImg.style.position = 'absolute';
+
+inkImg.style.top = `-${bleed}px`;
+
+inkImg.style.left = `-${bleed}px`;
+
+inkImg.style.width = `calc(100% + ${bleed * 2}px)`;
+
+inkImg.style.height = `calc(100% + ${bleed * 2}px)`;
+
+inkImg.style.maxWidth = 'none'; // Prevents CSS constraints from squeezing the image
+
+inkImg.style.pointerEvents = 'none';
+
+inkImg.style.zIndex = '0';
+
+sheet.prepend(inkImg);
+
+
+
+if (topBar) topBar.style.visibility = 'hidden';
+
+
+
+const options = {
+
+margin: [12, 12, 12, 12],
+
+filename: 'cv-eliott-atom-croubalian.pdf',
+
+image: { type: 'jpeg', quality: 0.98 },
+
+html2canvas: {
+
+scale: 2,
+
+backgroundColor: '#ffffff',
+
+useCORS: true
+
+},
+
+jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+
+};
+
+
+
+html2pdf()
+
+.set(options)
+
+.from(sheet)
+
+.save()
+
+.then(() => {
+
+if (topBar) topBar.style.visibility = 'visible';
+
+inkImg.remove();
+
+});
+
+});
+
+</script>
+
+</body>
+
+</html>
+

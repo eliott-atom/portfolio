@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eliott Atom Croubalian — Intro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000000;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-weight: 500;
+            font-size: 20px;
+            overflow: hidden; 
+        }
+
+        #content-layer {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000000;
+            z-index: 1;
+            transition: background-color 0.8s ease, filter 0.8s linear; 
+        }
+
+        #content-layer.theme-white {
+            background-color: #ffffff;
+        }
+
+        #content-layer.theme-inverted {
+            filter: invert(1);
+        }
+
+        .corner-link {
+            position: fixed;
+            z-index: 10; 
+            padding: 4vw; 
+            text-decoration: none;
+            text-transform: lowercase;
+            color: #000000; 
+            transition: color 0.15s ease;
+            pointer-events: none; 
+        }
+
+        .corner-link:hover,
+        .corner-link.is-active {
+            font-weight: 900;
+            color: #ff00ff; 
+        }
+
+        .top-left { top: 0; left: 0; }
+        .top-right { top: 0; right: 0; text-align: right; }
+        .bottom-left { bottom: 0; left: 0; }
+        .bottom-right { bottom: 0; right: 0; text-align: right; }
+
+        div.grid-wrapper {
+            display: grid;
+            height: 100vh;
+            place-items: center; 
+            position: relative; 
+        }
+
+        img, video {
+            width: 75%;
+            max-width: 500px;
+            display: block;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            object-position: center;
+            grid-area: 1 / 1;
+        }
+
+        /* Curseur spécifique pour la tête pour indiquer qu'elle est cliquable */
+        #head-idle {
+            cursor: pointer;
+        }
+
+        #head-idle, #vid-reveil, .interactive-video {
+            display: none;
+        }
+        #vid-reveil {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        /* --- BULLE DE DIALOGUE EASTER EGG --- */
+        #speech-bubble {
+            position: absolute;
+            top: 25%;
+            left: 55%; /* Se place en haut à droite de la tête */
+            max-width: 250px;
+            background-color: #ff00ff;
+            color: #ffffff;
+            padding: 15px 25px;
+            border-radius: 30px 30px 30px 5px; /* Forme de bulle */
+            font-family: "Libre Franklin", sans-serif;
+            font-weight: 900;
+            font-size: 16px;
+            line-height: 1.2;
+            z-index: 20;
+            pointer-events: none;
+            
+            /* Animation de base (cachée) */
+            opacity: 0;
+            transform: scale(0);
+            transform-origin: bottom left; 
+            transition: opacity 0.2s ease, transform 0s ease; /* Transform à 0s pour reset instantané */
+        }
+
+        /* État actif de la bulle (effet rebond élastique) */
+        #speech-bubble.show {
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 0.2s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* LE TITRE */
+        #main-title {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: 900;
+            font-size: 6vw; 
+            line-height: 1; 
+            text-align: center; 
+            text-transform: lowercase;
+            color: #ffffff;
+            mix-blend-mode: difference; 
+            pointer-events: none; 
+            z-index: 10000;
+            white-space: pre-wrap; 
+            transition: top 1.2s ease-in-out, left 1.2s ease-in-out, transform 1.2s ease-in-out, font-size 1.2s ease-in-out;
+        }
+        #main-title.move-to-header {
+            top: 2vw;
+            left: 4vw;
+            transform: translate(0, 0); 
+            font-size: 26px; 
+            text-align: left;
+        }
+
+        /* L'ÉCRAN NOIR FINAL */
+        #black-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: #000000;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease; 
+        }
+        #black-overlay.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="black-overlay"></div>
+
+    <!-- BOUTONS -->
+    <a href="content.html" class="corner-link top-left" id="btn-index"></a>
+    <a href="info.html" class="corner-link top-right" id="btn-info"></a>
+    <a href="cv.html" class="corner-link bottom-left" id="btn-cv"></a>
+    <a href="mailto:eliott.croubalian@gmail.com" class="corner-link bottom-right" id="btn-contact"></a>
+
+    <div id="content-layer">
+        <div class="grid-wrapper">
+            
+            <video id="vid-reveil" muted playsinline>
+                <source src="reveil.mp4" type="video/mp4">
+            </video>
+
+            <img id="head-idle" src="tete-centre.webp" alt="Intro Animation">
+            
+            <!-- LA BULLE DE DIALOGUE -->
+            <div id="speech-bubble"></div>
+            
+            <video id="vid-top-left" class="interactive-video" muted playsinline>
+                <source src="regarde-haut-gauche.mp4" type="video/mp4">
+            </video>
+            <video id="vid-top-right" class="interactive-video" muted playsinline>
+                <source src="regarde-haut-droite.mp4" type="video/mp4">
+            </video>
+            <video id="vid-bottom-left" class="interactive-video" muted playsinline>
+                <source src="regarde-bas-gauche.mp4" type="video/mp4">
+            </video>
+            <video id="vid-bottom-right" class="interactive-video" muted playsinline>
+                <source src="regarde-bas-droite.mp4" type="video/mp4">
+            </video>
+
+        </div>
+    </div> 
+
+    <div id="main-title"></div>
+
+    <script>
+        // --- 1. FONCTIONS MACHINE À ÉCRIRE ---
+        function typeWriterIn(element, text, speed, callback) {
+            let i = 0;
+            function type() {
+                let visiblePart = text.substring(0, i);
+                let hiddenPart = text.substring(i);
+                
+                element.innerHTML = visiblePart + '<span style="visibility: hidden;">' + hiddenPart + '</span>';
+                
+                if (i < text.length) {
+                    i++;
+                    setTimeout(type, speed);
+                } else if (callback) {
+                    callback();
+                }
+            }
+            type();
+        }
+
+        function typeWriterOut(element, speed, callback) {
+            let text = element.textContent || element.innerText; 
+            let i = text.length;
+
+            function untype() {
+                let visiblePart = text.substring(0, i);
+                let hiddenPart = text.substring(i);
+
+                element.innerHTML = visiblePart + '<span style="visibility: hidden;">' + hiddenPart + '</span>';
+
+                if (i > 0) {
+                    i--;
+                    setTimeout(untype, speed);
+                } else if (callback) {
+                    element.innerHTML = ''; 
+                    callback();
+                }
+            }
+            untype();
+        }
+
+        const linksData = [
+            { id: 'btn-index', text: 'portfolio' },
+            { id: 'btn-info', text: 'info' },
+            { id: 'btn-cv', text: 'cv' },
+            { id: 'btn-contact', text: 'contact' }
+        ];
+
+        // --- 2. SÉQUENCE D'INTRODUCTION ---
+        window.addEventListener('load', () => {
+            
+            setTimeout(() => {
+                document.getElementById('content-layer').classList.add('theme-white');
+            }, 200);
+
+            setTimeout(() => {
+                linksData.forEach((link, index) => {
+                    const el = document.getElementById(link.id);
+                    setTimeout(() => {
+                        typeWriterIn(el, link.text, 60);
+                    }, index * 250); 
+                });
+            }, 800); 
+
+            setTimeout(() => {
+                const vidReveil = document.getElementById('vid-reveil');
+                const headIdle = document.getElementById('head-idle');
+                const titleEl = document.getElementById('main-title');
+
+                vidReveil.style.display = 'block';
+                
+                setTimeout(() => {
+                    vidReveil.style.opacity = '1'; 
+                }, 10);
+
+                vidReveil.play();
+
+                setTimeout(() => {
+                    headIdle.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        vidReveil.style.display = 'none';
+                    }, 50);
+                    
+                    typeWriterIn(titleEl, 'eliott atom\ncroubalian', 70);
+
+                    document.querySelectorAll('.corner-link').forEach(link => {
+                        link.style.pointerEvents = 'auto';
+                    });
+
+                }, 3500);
+
+            }, 2000);
+        });
+
+        // --- 3. SÉQUENCE DE SORTIE ---
+        const interactions = [
+            { btnId: 'btn-index', vidId: 'vid-top-left' },
+            { btnId: 'btn-info', vidId: 'vid-top-right' },
+            { btnId: 'btn-cv', vidId: 'vid-bottom-left' },
+            { btnId: 'btn-contact', vidId: 'vid-bottom-right' }
+        ];
+
+        let isTransitioning = false; 
+
+        interactions.forEach(item => {
+            const btn = document.getElementById(item.btnId);
+            const video = document.getElementById(item.vidId);
+
+            if (btn && video) {
+                btn.addEventListener('click', function(e) {
+                    if (isTransitioning) return;
+                    
+                    isTransitioning = true;
+                    e.preventDefault(); 
+                    
+                    document.body.style.pointerEvents = 'none';
+                    const targetUrl = this.href;
+
+                    this.classList.add('is-active');
+                    document.getElementById('head-idle').style.display = 'none';
+                    document.getElementById('vid-reveil').style.display = 'none';
+                    document.getElementById('speech-bubble').style.display = 'none'; // Cache la bulle si active
+                    
+                    video.style.display = 'block';
+                    let playPromise = video.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(err => console.log("Erreur lecture:", err));
+                    }
+
+                    setTimeout(() => {
+                        video.pause();
+                        document.getElementById('content-layer').classList.add('theme-inverted');
+
+                        setTimeout(() => {
+                            if (item.btnId === 'btn-index') {
+                                const titleEl = document.getElementById('main-title');
+                                titleEl.innerHTML = 'eliott atom\ncroubalian'; 
+                                titleEl.classList.add('move-to-header');
+                            } else {
+                                typeWriterOut(document.getElementById('main-title'), 50);
+                            }
+                            
+                            typeWriterOut(document.getElementById(item.btnId), 25); 
+
+                            setTimeout(() => {
+                                document.getElementById('black-overlay').classList.add('show');
+                                
+                                setTimeout(() => {
+                                    window.location.href = targetUrl;
+                                }, 300);
+
+                            }, 1200); 
+
+                        }, 800); 
+
+                    }, 3000); 
+                });
+            }
+        });
+
+        // --- 4. EASTER EGG : BULLE DE DIALOGUE ---
+        const phrases = [
+            "stop poking my face.",
+            "i'm trying to look professional.",
+            "the links are in the corners.",
+            "ouch.",
+            "do i know you?",
+            "yes, i actually look like this.",
+            "are we playing a game?",
+            "please proceed to the portfolio."
+        ];
+        
+        let lastPhraseIndex = -1;
+        let bubbleTypeTimeout; // Stocke l'ID du timeout pour pouvoir l'interrompre si on reclique vite
+
+        document.getElementById('head-idle').addEventListener('click', function() {
+            if (isTransitioning) return;
+            
+            const bubble = document.getElementById('speech-bubble');
+            
+            // 1. Coupe l'écriture en cours (si on a cliqué frénétiquement)
+            clearTimeout(bubbleTypeTimeout);
+            
+            // 2. Reset l'animation CSS (le scale retourne à 0 instantanément)
+            bubble.classList.remove('show');
+            bubble.innerHTML = ''; 
+            
+            // 3. Choisit une phrase au hasard (différente de la précédente)
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * phrases.length);
+            } while (newIndex === lastPhraseIndex);
+            lastPhraseIndex = newIndex;
+            
+            const selectedText = phrases[newIndex];
+            
+            // 4. Force le navigateur à rafraîchir pour rejouer l'animation depuis le début
+            void bubble.offsetWidth; 
+            
+            // 5. Relance l'animation de rebond
+            bubble.classList.add('show');
+            
+            // 6. Lance l'effet machine à écrire spécifique pour la bulle (plus rapide)
+            let i = 0;
+            function typeBubble() {
+                let visiblePart = selectedText.substring(0, i);
+                let hiddenPart = selectedText.substring(i);
+                bubble.innerHTML = visiblePart + '<span style="visibility: hidden;">' + hiddenPart + '</span>';
+                
+                if (i < selectedText.length) {
+                    i++;
+                    bubbleTypeTimeout = setTimeout(typeBubble, 25);
+                }
+            }
+            typeBubble();
+        });
+    </script>
+</body>
+</html>

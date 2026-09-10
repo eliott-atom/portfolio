@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Index</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@100;200;300;400;900&display=swap" rel="stylesheet">
+    <style>
+        /* 1. Global Styles */
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-weight: 300;
+            margin: 0;
+            padding: 4vw; 
+            font-size: 13px;
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        /* 2. Top Navigation Header */
+        header {
+            display: grid;
+            grid-template-columns: 1.5fr 3.5fr 0.5fr; 
+            margin-bottom: 1.5rem; 
+        }
+
+        .header-left { font-weight: 400; }
+        .header-center { text-transform: lowercase;}
+        .header-right { text-align: right; }
+
+       
+        .project-row {
+            position: relative; 
+            z-index: 1; 
+            
+            display: grid;
+            grid-template-columns: 5fr 2fr 0.5fr; 
+            align-items: center; 
+            
+            padding: 8px 0; 
+            margin: 0; 
+            
+            cursor: pointer; 
+            transition: color 0.1s ease;
+        }
+        .project-row::before {
+            content: "";
+            position: absolute;
+            z-index: -1; 
+            
+            left: -20vw; 
+            right: -20vw; 
+            
+            top: 50%;
+            transform: translateY(-43.5%); 
+            
+            height: 1.4em; 
+            
+            background-color: #ff00ff; 
+            opacity: 0; 
+            transition: opacity 0.3s ease; 
+        }
+        .project-row:hover::before,
+        .project-row.is-active::before {
+            opacity: 1;
+        }
+        
+        
+        .project-row span:nth-child(1) {
+            font-family: "Libre Franklin";
+            font-weight: 900; /* La graisse maximale (Black/Heavy) */
+            font-size: 1.4em; /* Grossit légèrement le texte par rapport au reste */
+            transform: scaleX(1.62);
+            transform-origin: left center; /* Essentiel : force l'étirement vers la droite pour que le début du mot reste aligné à gauche */
+            display: inline-block;
+            text-transform: lowercase; /* Force le texte en minuscules comme "faille" */
+            letter-spacing: 0px; /* Resserre un tout petit peu les lettres pour un effet bloc */
+        }
+        .project-row span:nth-child(3) { text-align: right; }
+        .project-row span:nth-child(2) { text-transform: lowercase; text-align: right; padding-right: 2vw; }
+
+
+        .project-info-wrapper {
+            display: grid;
+            grid-template-rows: 0fr; 
+            transition: grid-template-rows 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            overflow: hidden;
+        }
+
+        .project-info-wrapper.is-open {
+            grid-template-rows: 1fr; 
+        }
+        /* 6. The Hidden Paragraph Styling */
+        .project-info {
+            display: grid;
+            grid-template-columns: 5fr 2.5fr; /* Même découpage que .project-row */
+            color: #b3b3b3; 
+            overflow: hidden;
+            min-height: 0;
+            padding-top: -0.5rem;
+        }
+
+        /* Alignements des deux premières colonnes */
+        .project-info > span:nth-of-type(1) {
+            text-align: left;
+        }
+        .project-info > span:nth-of-type(2) { 
+            text-transform: lowercase; 
+            text-align: right;; 
+        }
+
+        /* Les blocs pleine largeur (texte long, conteneurs médias) */
+        .span-all {
+            grid-column: 1 / -1;
+            padding-top: 1.5rem;
+            color: #ffffff;
+            max-width: 650px;       /* La limite de lecture s'applique ici */
+            margin-left: auto;      /* Centré sous le projet */
+            margin-right: auto;
+            text-align: justify;
+        }
+
+        .hyperlink {
+            grid-column: 1 / -1;
+            padding-top: 0rem;
+            color: #b3b3b3;
+            text-decoration: underline;
+            text-align: right;
+            text-transform: lowercase;
+        }
+
+        /* 7. Media Styling */
+        /* 1. The Wrapper */
+        .media-container {
+            position: relative;
+            width: 100%;
+            max-width: 650px;
+            margin-top: 2vw; 
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            cursor: none;
+        }
+
+        /* 2. The Image inside the wrapper */
+        .media-container img,
+        .media-container video,
+        .media-container iframe {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin-top: 0; /* Margin is now handled by the container */
+        }
+
+        /* 3. The Cutaway Text Window */
+        .media-tooltip {
+            position: absolute;
+            
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); 
+            
+            background-color: #ff00ff; 
+            color: #ffffff;
+            padding: 4px 8px;
+            font-weight: 400;
+            text-transform: lowercase;
+            text-align: center;
+
+            display: inline-block;
+            width: max-content;
+            max-width: 60%;           
+            white-space: normal;      
+            word-break: normal;
+            
+            pointer-events: none; 
+            opacity: 0; 
+            transition: opacity 0.1s ease;
+            z-index: 10;
+        }
+
+        /* 4. The Visibility Class (Triggered by JS) */
+        .media-container.is-active-media .media-tooltip {
+            opacity: 1;
+        }
+
+
+        .wave-container {
+            width: 120%;
+            overflow: hidden; 
+            white-space: nowrap; 
+            margin: 2rem 0 1.5rem -2rem; /* Gère l'espace au-dessus et en dessous de la vague */
+            color: #888888; /* Couleur de la vague (gris pour être subtil, ou mettez #ffffff pour blanc) */
+            font-size: 18px; 
+            line-height: 1;
+            
+        }
+        .wave-track {
+            display: inline-block;
+            white-space: nowrap;
+            /* L'animation : elle dure 15 secondes, à vitesse constante (linear), à l'infini */
+            animation: waveScroll 15s linear infinite; 
+        }
+        @keyframes waveScroll {
+            0% { 
+                transform: translateX(0); 
+            }
+            100% { 
+                transform: translateX(-50%); /* Se déplace exactement de la moitié, puis recommence de manière invisible */
+            }
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <!-- TOP MENU -->
+    <header>
+        <div class="header-left">Eliott Atom <br> Croubalian</div>
+        <div class="header-center">
+            Index, Info<br>
+            Architecture, Film, Object, Scenography
+        </div>
+        <div class="header-right">En<br>Fr</div>
+    </header>
+    
+    <div class="wave-container">
+        <div class="wave-track">
+            <span>〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰</span>
+        </div>
+    </div>

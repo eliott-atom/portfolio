@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>digital portfolio of Eliott Atom Croubalian</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* 1. GLOBAL & RESET */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-weight: 300;
+            font-size: 13px;
+            line-height: 1.5;
+            overflow: hidden;
+        }
+
+        /* 2. LA GRILLE MAÎTRESSE */
+        .master-grid {
+            display: grid;
+            grid-template-columns: 2fr 5fr 2fr; 
+            padding: 0 4vw;
+            max-width: 2000px;
+            justify-content: center;
+            align-items: center;
+
+        }
+
+        /* 3. HEADER FIXE */
+        header {
+            position: fixed;
+            top: 2vw;
+            left: 0;
+            line-height: 1.0;
+            width: 100vw;
+            z-index: 50;
+            pointer-events: none;
+        }
+        .header-left { grid-column: 1; 
+            pointer-events: auto; 
+            font-weight: 900; 
+            font-size: 2em;           
+            text-transform: lowercase;
+            cursor: pointer; 
+            color: #ffffff;
+            text-decoration: none;
+
+
+}
+        .header-right { 
+            grid-column: 3; 
+            pointer-events: auto; 
+        }
+        .filter-wrapper {
+    display: grid;
+    /* La première valeur est la largeur de la colonne texte (ex: architecture), la 2ème est pour la date */
+    grid-template-columns: 130px 60px; /* <-- C'est ici que tu règles ta distance fixe */
+    align-items: flex-start;
+    text-transform: lowercase;
+    justify-content: end;
+}
+        .filter-list {
+            display: flex;
+            flex-direction: column; 
+            text-align: left;
+        }
+        .filter-toggle {
+            cursor: pointer;
+            font-weight: 700; 
+            line-height: 1.3;
+            transition: font-weight 0.1s ease;
+        }
+        .filter-toggle:not(.is-active) {
+            font-weight: 300; 
+        }
+        
+        /* Bouton Date interactif */
+        .date-label {
+            line-height: 1.3;
+            cursor: pointer;
+            user-select: none;
+            transition: opacity 0.2s ease;
+        }
+        .date-label:hover {
+            opacity: 0.6;
+        }
+
+
+        /* 4. NAVIGATION (Playlist fixe) */
+        .project-nav {
+            position: fixed;
+            top: 20vh; 
+            left: 0;
+            width: 100vw;
+            height: 85vh; 
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            pointer-events: none; 
+        }
+
+        /* Zone scrollable des projets avec le masque dégradé adouci */
+        .project-list-container {
+            pointer-events: auto; 
+            padding-top: 1vh;
+            flex-grow: 1;
+            overflow-y: auto;
+            overflow-x: hidden; /* Empêche strictement le scroll horizontal */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            /* Le dégradé adouci : transition plus longue entre transparent et noir */
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 85%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 85%, transparent 100%);
+            padding-bottom: 30vh; 
+        }
+        .project-list-container::-webkit-scrollbar { display: none; }
+
+        /* Les rangées de projets */
+        .project-row {
+            position: relative;
+            padding: 8px 0;
+            cursor: pointer;
+            transition: color 0.3s ease, opacity 0.3s ease;
+        }
+        
+        .project-row.is-hidden {
+            display: none; 
+        }
+
+        .project-row::before {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            left: -20vw;
+            right: -20vw;
+            top: 50%;
+            transform: translateY(-43.5%);
+            height: 1.4em;
+            background-color: #ff00ff;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .project-row:hover::before,
+        .project-row.is-active::before {
+            opacity: 1;
+        }
+
+        .row-inner {
+            align-items: center;
+        }
+
+        .col-name { grid-column: 1; }
+        .col-name span {
+            font-family: "Libre Franklin", sans-serif;
+            font-weight: 900;
+            font-size: 1.4em;
+            text-transform: lowercase;
+            transform: scaleX(1.62);
+            transform-origin: left center;
+            display: inline-block;
+            letter-spacing: 0px;
+        }
+
+       .col-meta {
+    grid-column: 3;
+    text-transform: lowercase;
+    display: grid;
+    /* IL EST CRUCIAL QUE CE SOIT EXACTEMENT LES MÊMES VALEURS QU'AU DESSUS */
+    grid-template-columns: 130px 60px; 
+   justify-content: end;
+    align-items: center;
+    line-height: 1.0;
+
+}
+
+        /* 5. LE STAGE (La colonne centrale qui scrolle) */
+        .stage-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        .stage-center {
+            grid-column: 2;
+            height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden; /* Sécurité supplémentaire au centre */
+            pointer-events: auto;
+            padding-top: 25vh;
+            padding-bottom: 15vh; 
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .stage-center::-webkit-scrollbar { display: none; }
+
+        /* 6. CONTENU DES PROJETS */
+        .project-content {
+            display: none;
+            margin: 0 auto;
+        }
+        .project-content.is-visible {
+            display: block;
+        }
+        .project-description {
+            text-align: justify;
+            margin-bottom: 2rem;
+            color: #ffffff;
+        }
+        .project-description span.partners {
+            display: block;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            font-style: italic;
+            text-align: right;
+        }
+
+        /* 7. MEDIAS & TOOLTIPS */
+        .media-container {
+            position: relative;
+            width: 100%;
+            margin-bottom: 2vw; 
+            display: block;
+            cursor: pointer; 
+        }
+        .media-container img,
+        .media-container video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+       .media-tooltip {
+            position: absolute;
+            top: 50%; 
+            left: 50%; 
+            
+            background-color: #ff00ff; 
+            color: #ffffff;
+            padding: 15px 25px;
+            border-radius: 30px; /* Arrondi uniforme parfait */
+            font-weight: 600;
+            
+            text-transform: lowercase;
+            text-align: center;
+            display: inline-block;
+            width: max-content;
+            max-width: 80%; /* Laisse toujours 10% de marge de chaque côté */           
+            pointer-events: none; 
+            z-index: 10;
+
+            /* Animation "Pop" depuis le centre exact */
+            opacity: 0; 
+            transform: translate(-50%, -50%) scale(0);
+            transform-origin: center; 
+            transition: opacity 0.2s ease, transform 0s ease; 
+        }
+        
+        .media-container.is-active-media .media-tooltip {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            transition: opacity 0.2s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+
+        .filter-list,
+.col-meta span:nth-child(1) {
+    text-align: right; 
+    font-weight: 700;
+}
+.date-label, 
+.col-meta span:nth-child(2) {
+    text-align: left; /* La date et la flèche toucheront parfaitement le bord de l'écran */
+    padding-left: 15px; /* Un petit espace entre la date et la flèche */
+}
+
+.three-col-text {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2vw;
+            color: #ffffff;
+            text-align: left;
+            margin-top: -1vw; /* Rapproche le texte de l'image au-dessus */
+            margin-bottom: 4vw; /* Garde l'espacement avec l'image suivante */
+            line-height: 1.4;
+        }
+
+/* Animation de la flèche Date (Global) */
+        .sort-arrow {
+            display: inline-block;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        .sort-arrow.is-flipped {
+            transform: rotateX(180deg); /* Retournement 3D haut/bas */
+        }
+        
+        /* Cacher les éléments mobile sur ordi */
+        #mobile-content-dropdown, #mobile-close-btn {
+            display: none;
+        }
+
+
+
+
+
+
+/* ------------------------------------------------ */
+        /* 8. ADAPTATION MOBILE (Par ratio écran)           */
+        /* ------------------------------------------------ */
+        @media (max-aspect-ratio: 4/5) {
+            
+            /* 1. Nouvelle Grille : Titre (5 parts) | Tags (7 parts) */
+            /* On donne un peu plus de place aux tags pour les mots longs */
+            header.master-grid {
+                display: grid;
+                grid-template-columns: 5fr 7fr; 
+                padding: 0 4vw;
+                align-items: start;
+            }
+            .header-left { grid-column: 1; font-size: 1.2em; z-index: 10; }
+            .header-right { grid-column: 2; width: 100%; }
+            
+            /* L'axe central de "l'arbre" (1fr / 1fr) */
+            .filter-wrapper {
+                display: grid;
+                grid-template-columns: 1fr 1fr; 
+                width: 100%;
+                position: relative;
+                transform: translateX(18vw);
+            }
+
+            /* 2. Menu "Content" (Droite) et "Date" (Gauche) */
+            #mobile-content-dropdown {
+                display: block;
+                font-weight: 700;
+                padding-top: 0.3vh;
+                cursor: pointer;
+                text-align: right;   /* Appuyé contre l'axe central */
+                padding-right: 2vw;  /* Gouttière de l'arbre */
+            }
+            #mobile-content-dropdown.is-active-menu {
+                text-decoration: underline;
+                text-underline-offset: 4px;
+                text-decoration-thickness: 2px;
+                text-decoration-color: #ffffff; 
+            }
+            .date-label {
+                text-align: left;    /* Appuyé contre l'axe central */
+                padding-left: 2vw;   /* Gouttière de l'arbre */
+                padding-right: 0;
+            }
+
+            /* Menu déroulant ajusté pour poper au bon endroit */
+            .filter-list {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: -20%;
+                right: 50%; /* Aligné près du mot content */
+                background-color: #ff00ff;
+                padding: 10px;
+                padding-top: 25px;
+                padding-bottom: 6px;
+                border-radius: 15px;
+                z-index: -1;
+                
+                opacity: 0;
+                transform: scale(0);
+                transform-origin: top right; 
+                pointer-events: none;
+                transition: opacity 0.2s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            }
+            .filter-list.is-open { 
+                opacity: 1;
+                transform: scale(1);
+                pointer-events: auto;
+            }
+
+            /* 3. Playlist : Même grille stricte (5fr / 7fr) */
+            .row-inner {
+                display: grid;
+                grid-template-columns: 5fr 7fr;
+                width: 100%;
+                align-items: start;
+                
+            }
+            .col-name { grid-column: 1; }
+            .col-name span { 
+                transform: scaleX(1.1); 
+                transform-origin: left; 
+                font-size: 1.1em; 
+                display: inline-block;
+            }
+            
+            /* Les branches de l'arbre (1fr / 1fr) */
+            .col-meta { 
+                grid-column: 2; 
+                display: grid; 
+                grid-template-columns: 1fr 1fr; 
+                width: 100%;
+                gap: 0; 
+            }
+            .col-meta span:nth-child(1) {
+                text-align: right;   /* Appuyé contre l'axe */
+                padding-right: 2vw;  /* Gouttière */
+                line-height: 1.1; 
+                transform: translateX(18vw);
+
+            }
+            .col-meta span:nth-child(2) {
+                text-align: left;    /* Appuyé contre l'axe */
+                padding-left: 2vw;   /* Gouttière */
+                transform: translateX(18vw);
+
+            }
+
+            /* 4. Disparition TOTALE du texte au clic */
+            body.is-project-open .header-left,
+            body.is-project-open .header-right,
+            body.is-project-open .col-name span,
+            body.is-project-open .col-meta,
+            body.is-project-open .row-inner,
+            body.is-project-open .project-row {
+                opacity: 0 !important;
+                pointer-events: none;
+                transition: opacity 0.2s ease;
+            }
+            
+            .stage-center {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                width: 100%;
+                padding-top: 15vh;
+            }
+
+            .project-description, .three-col-text {
+                padding-left: 4vw;
+                padding-right: 4vw;
+            }
+
+            /* 5. Le bouton CLOSE à DROITE */
+            #mobile-close-btn {
+                position: fixed;
+                top: 3vw;
+                right: 4vw; 
+                left: auto; 
+                background-color: #ff00ff;
+                color: #ffffff;
+                padding: 10px 20px;
+                border-radius: 30px;
+            
+                font-weight: 300;
+                font-size: 16px;
+                cursor: pointer;
+                z-index: 200;
+                
+                opacity: 0;
+                transform: scale(0);
+                transition: all 0.2s ease;
+                pointer-events: none;
+            }
+            body.is-project-open #mobile-close-btn {
+                display: block;
+                opacity: 1;
+                transform: scale(1);
+                pointer-events: auto;
+            }
+            /* On détruit la grille Desktop (2fr 5fr 2fr) pour libérer l'article */
+            .stage-wrapper.master-grid {
+                display: block !important;
+                padding: 0 !important;
+            }
+            /* 6. Écraser les largeurs Desktop pour le contenu de l'article */
+            .project-content {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            /* Les images viennent percuter les bords de l'écran */
+            .media-container {
+                width: 100% !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                border-radius: 0 !important; /* Enlève les arrondis pour un collage parfait aux bords */
+            }
+
+            /* On sécurise les marges uniquement pour le texte pour qu'il reste lisible */
+            .project-description, .three-col-text {
+                padding-left: 4vw !important;
+                padding-right: 4vw !important;
+                width: 100% !important;
+                box-sizing: border-box; /* Empêche le padding de faire déborder le texte */
+            }
+
+        }
+
+.stage-center {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                width: 100%;
+                padding-top: 15vh;
+                
+                /* Le bouclier est désactivé par défaut pour te laisser cliquer sur le menu */
+                pointer-events: none; 
+            }
+
+            /* Quand on ouvre un projet, la zone redevient cliquable pour tes images et vidéos */
+            body.is-project-open .stage-center {
+                pointer-events: auto;
+            }
+
+
+/* ------------------------------------------------ */
+        /* 9. TRANSITIONS DE PAGE (Fade in / out)           */
+        /* ------------------------------------------------ */
+        /* 1. On prépare les éléments à être animés */
+        .header-right,
+        header,
+        .project-nav,
+        .stage-wrapper {
+            opacity: 1;
+            transition: opacity 1s ease; /* Durée du fondu (1 seconde) */
+        }
+
+        /* 2. Au chargement de la page (ou quand on la quitte), on les rend invisibles. */
+        /* Comme le body est noir, seul ".header-left" (ton nom) restera visible ! */
+        body.is-loading .header-right,
+        body.is-loading .project-nav,
+        body.is-loading .stage-wrapper {
+            opacity: 0 !important;
+            pointer-events: none;
+        }
+        
+
+        /* Quand on quitte la page : TOUT le site (y compris ton nom) s'éteint en douceur */
+        body.is-leaving header,
+        body.is-leaving .project-nav,
+        body.is-leaving .stage-wrapper {
+            opacity: 0 !important;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="is-loading" class="is-leaving">
+
+    <!-- 1. HEADER & FILTRES -->
+    <header class="master-grid">
+        <!-- Bouton Close (Caché par défaut) -->
+        <div id="mobile-close-btn">✕ CLOSE</div>
+        
+<a href="index.html" class="header-left">Eliott Atom<br>Croubalian</a>        <div class="header-right">
+            <div class="filter-wrapper">
+                <!-- Le bouton dropdown pour mobile -->
+                <div id="mobile-content-dropdown">content</div>
+                
+                <div class="filter-list">
+                    <div class="filter-toggle is-active" data-filter="object">object</div>
+                    <div class="filter-toggle is-active" data-filter="architecture">architecture</div>
+                    <div class="filter-toggle is-active" data-filter="scenography">scenography</div>
+                    <div class="filter-toggle is-active" data-filter="film">film</div>
+                </div>
+                
+                <!-- La flèche isolée pour l'animation -->
+                <div class="date-label" id="date-sort-btn">date <span class="sort-arrow">&darr;</span></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2. NAVIGATION (Liste de projets scrollable) -->
+    <nav class="project-nav">
+        <div class="project-list-container" id="project-list">
+
+            <!-- Architecture -->
+            <div class="project-row" data-target="proj-faille" data-category="architecture" data-year="2025">
+                <div class="master-grid row-inner">
+                    <div class="col-name"><span>faille</span></div>
+                    <div class="col-meta"><span>architecture</span><span>2025</span></div>
+                </div>
+            </div>
+
+<div class="project-row" data-target="proj-figu" data-category="architecture" data-year="2025">
+                <div class="master-grid row-inner">
+                    <div class="col-name"><span>annonciation</span></div>
+                    <div class="col-meta"><span>architecture</span><span>2025</span></div>
+                </div>
+            </div>
+
+            <div class="project-row" data-target="proj-intersection" data-category="architecture" data-year="2023">
+                <div class="master-grid row-inner">
+                    <div class="col-name"><span>intersection</span></div>
+                    <div class="col-meta"><span>architecture</span><span>2023</span></div>
+                </div>
+            </div>
+
+            <div class="project-row" data-target="proj-renaissance" data-category="architecture scenography" data-year="2025">
+                <div class="master-grid row-inner">
+                    <div class="col-name"><span>renaissance</span></div>
+                    <div class="col-meta"><span>architecture <br> scenography</span><span>2026</span></div>
+                </div>
+            </div>
+
+            <div class="project-row" data-target="proj-school" data-category="architecture" data-year="2025">
+                <div class="master-grid row-inner">
+                    <div class="col-name"><span>school</span></div>
+                    <div class="col-meta"><span>architecture</span><span>2025</span></div>
+                </div>
+            </div>
+
+            <div class="project-row" data-target="proj-horizon" data-category="architecture" data-year="2024">
+                <div class="master-grid row-inner">
+                    <div class="col-name"><span>horizon</span></div>
+                    <div class="col-meta"><span>architecture</span><span>2024</span></div>
+                </div>
+            </div>
+
+            <div class="project-row" data-target="proj-zenith" data-category="architecture" data-year="2024">
+                <div class="master-grid row-inner">
+                    <div class="col-name"><span>zenith</span></div>
+                    <div class="col-meta"><span>architecture</span><span>2024</span></div>
+                </div>
+            </div>
+
+            <div class="project-row" data-target="proj-mdt" data-category="architecture" data-year="2026">
+                <div class="master-grid row-inner">
+                    <div class="col-name"><span>mdt</span></div>
+                    <div class="col-meta"><span>architecture</span><span>2026</span></div>
+                </div>
+            </div>
+
+            <!-- Object -->
+            <div class="project-row" data-target="proj-alloy23" data-category="object" data-year="2026">
+                <div class="master-grid row-inner">
+                    <div class="col-name"><span>alloy 23</span></div>
+                    <div class="col-meta"><span>object</span><span>2026</span></div>
+                </div>
+            </div>
+
+            <div class="project-row" data-target="proj-muqarnas" data-category="object" data-year="2026">
+                <div class="master-grid row-inner">
+                    <div class="col-name"><span>muqarnas</span></div>
+                    <div class="col-meta"><span>object</span><span>2026</span></div>
+                </div>
+            </div>
+
+            <div class="project-row" data-target="proj-shibari" data-category="object" data-year="2026">
+                <div class="master-grid row-inner">
+                    <div class="col-name"><span>shibari chair</span></div>
+                    <div class="col-meta"><span>object</span><span>2026</span></div>
+                </div>
+            </div>
+
+            <!-- Film -->
+            <div class="project-row" data-target="proj-deuil" data-category="film scenography" data-year="2023">
+                <div class="master-grid row-inner">
+                    <div class="col-name"><span>deuil pour deuil</span></div>
+                    <div class="col-meta"><span>film <br> scenography</span><span>2023</span></div>
+                </div>
+            </div>
+
+            <div class="project-row" data-target="proj-love" data-category="film" data-year="ongoing">
+                <div class="master-grid row-inner">
+                    <div class="col-name"><span>love is love is love</span></div>
+                    <div class="col-meta"><span>film</span><span>ongoing</span></div>
+                </div>
+            </div>
+
+            <div class="project-row" data-target="proj-sabbart" data-category="film" data-year="2018">
+                <div class="master-grid row-inner">
+                    <div class="col-name"><span>sabbart</span></div>
+                    <div class="col-meta"><span>film</span><span>2018</span></div>
+                </div>
+            </div>
+
+            <div class="project-row" data-target="proj-birds" data-category="film" data-year="2026">
+                <div class="master-grid row-inner">
+                    <div class="col-name"><span>birds and pigs</span></div>
+                    <div class="col-meta"><span>film</span><span>2026</span></div>
+                </div>
+            </div>
+
+            <!-- Scenography -->
+            <div class="project-row" data-target="proj-dreamteen" data-category="scenography" data-year="2021">
+                <div class="master-grid row-inner">
+                    <div class="col-name"><span>dream teen</span></div>
+                    <div class="col-meta"><span>scenography</span><span>2021</span></div>
+                </div>
+            </div>
+            
+        </div>
+    </nav>
+
+    <!-- 3. LA COLONNE CENTRALE -->
+    <div class="master-grid stage-wrapper">
+        <main class="stage-center" id="scroll-stage">
+            
+            <!-- FAILLE -->
+            <div id="proj-faille" class="project-content">
+                <div class="project-description">
+                    <span class="partners">Semester Project BA4 at EPFL Studio Baker & Blanc<br>Partnered with Romane Bach</span>
+                    A boundary is more than a line; it is a space of varying thickness that joins two worlds. This project explored the temporal "rift" between Lausanne's medieval history and its urban future.<br/><br/>
+                    Located at No. 23 Rue de Bourg, a busy street, the site occupies a narrow 5-meter-wide "gap" that drops 10 meters down to the intimate 14 Rue du Rôtillon. Directly facing the historic Galerie Saint-François (1909), the intervention acts as a new urban articulation, a vertical bridge between two distinct topographies and eras.<br/><br/>
+                    The project focuses on the raw fabrication of an architectural artifact. Designed as a live-work atelier for two master percussionists and their apprentices, the structure is realized entirely through two materials: massive timber and membrane.
+                </div>
+                
+                <div class="media-container">
+                    <img src="faille-1.webp" loading="lazy" width="1000" height="1000" alt="Cardboard and wood site model">
+                    <div class="media-tooltip">Cardboard, wood: site model</div>
+                </div>
+                <div class="media-container">
+                    <img src="faille-5.webp" loading="lazy" width="1000" height="1656" alt="Mass plan and axonometries">
+                    <div class="media-tooltip">Spray paint, acrylic pen, plastic sheet: mass plan, level plans, cut, axonometries (top-bottom)</div>
+                </div>
+                <div class="media-container">
+                    <img src="faille-3.webp" loading="lazy" width="1000" height="1000" alt="Wood and plaster model">
+                    <div class="media-tooltip">Wood and plaster: model</div>
+                </div>
+                <div class="media-container">
+                    <img src="faille-4.webp" loading="lazy" width="1000" height="788" alt="Wood and plaster model detail">
+                    <div class="media-tooltip">Wood and plaster: model</div>
+                </div>
+                <div class="media-container">
+                    <img src="faille-2.webp" loading="lazy" width="1000" height="350" alt="Vectorworks cut view">
+                    <div class="media-tooltip">Vectorworks: cut view of the project</div>
+                </div>
+            </div>
+
+            <!-- INTERSECTION -->
+            <div id="proj-intersection" class="project-content">
+                <div class="project-description">
+                    <span class="partners">Semester Project BA1 at EPFL Studio Alice<br>Group of 3 students</span>
+                    This project explores the structural and aesthetic integration of rammed earth and timber through a full-scale physical build. Working in a collaborative group of four, the process moved from technical drawing to site management, including the design and assembly of custom formwork (casing) for the earth.<br/><br/>
+                    The tectonic focus centers on a "pinching" constraint, used to express the intersection of horizontal and vertical loads. By physically ramming the earth (pisé) into specific geometries, we tested how compression logic can be applied to both wood members and the earth mass. The resulting 1:1 prototype serves as a study in sustainable material synthesis, balancing pragmatic construction site planning with refined architectural expression.
+                </div>
+                
+                <div class="media-container">
+                    <img src="intersection-1.webp" loading="lazy" width="1000" height="1224" alt="Vectorworks front view">
+                    <div class="media-tooltip">Vectorworks: front view of detail</div>
+                </div>
+                <div class="media-container">
+                    <img src="intersection-2.webp" loading="lazy" width="1000" height="1224" alt="Negative scan of ink">
+                    <div class="media-tooltip">Negative scan of ink on paper: tectonic integration</div>
+                </div>
+                <div class="media-container">
+                    <img src="intersection-3.webp" loading="lazy" width="1000" height="868" alt="1:1 physical detail">
+                    <div class="media-tooltip">Wood, metal, earth: 1:1 detail (left), 1:2 detail (right)</div>
+                </div>
+                <div class="media-container">
+                    <img src="intersection-4.webp" loading="lazy" width="1000" height="1000" alt="Formwork axonometry">
+                    <div class="media-tooltip">Vectorworks: formwork axonometry</div>
+                </div>
+                <div class="media-container">
+                    <img src="intersection-5.webp" loading="lazy" width="1000" height="694" alt="Elevation and cut details">
+                    <div class="media-tooltip">Vectorworks: elevation, cut, plan of detail</div>
+                </div>
+                <div class="media-container">
+                    <img src="intersection-6.webp" loading="lazy" width="1000" height="694" alt="Formwork plan">
+                    <div class="media-tooltip">Vectorworks: formwork (bottom)</div>
+                </div>
+            </div>
+
+            <!-- SCHOOL -->
+            <div id="proj-school" class="project-content">
+                <div class="project-description">
+                    <span class="partners">Semester Project BA5 at TUB Studio Kirfel<br>Group of 4 students</span>
+                    Architecture education is currently exhausting itself in a cycle of self-imitation, producing generalists who lack the specialized agency to confront a future of universally available intelligence. To break the hermetic seal between intellectual and manual production, this project proposes a "School of Specialists."<br/><br/>
+                    Rather than training identical individuals, students master distinct, non-architectural disciplines, from permaculture and metallurgy to social protocols, to inject "fresh blood" into the design process. This philosophy is spatialized through five primordial pavilions in Berlin: a hand-dug "Ecology Cut" of rammed earth, a high-precision "Technological Ellipsoid," and a rhythmic timber "Craft Stack."<br/><br/>
+                    These isolated experiments eventually all merge together to form the Mutterhouse, a collective organism where specialized skills interlock and interdisciplinarity is trained like a muscle.
+                </div>
+                
+                <div class="media-container">
+                    <img src="school-1.webp" loading="lazy" width="1000" height="660" alt="Cut view of project">
+                    <div class="media-tooltip">Cut view of the project</div>
+                </div>
+                <div class="media-container">
+                    <img src="school-2.webp" loading="lazy" width="999" height="1459" alt="Phasing diagram">
+                    <div class="media-tooltip">Phasing diagram: from specialization to the Mutterhouse</div>
+                </div>
+                <div class="media-container">
+                    <img src="school-3.webp" loading="lazy" width="1000" height="799" alt="Rammed earth framework">
+                    <div class="media-tooltip">Rammed earth wall framework process</div>
+                </div>
+                <div class="media-container">
+                    <img src="school-4.webp" loading="lazy" width="1000" height="505" alt="Technological Ellipsoid exterior">
+                    <div class="media-tooltip">Technological Ellipsoid pavilion</div>
+                </div>
+                <div class="media-container">
+                    <img src="school-5.webp" loading="lazy" width="1000" height="1000" alt="Ellipsoid plan">
+                    <div class="media-tooltip">Ellipsoid plan and circulation</div>
+                </div>
+                <div class="media-container">
+                    <img src="school-6.webp" loading="lazy" width="1000" height="703" alt="Ventilation diagram">
+                    <div class="media-tooltip">Cooling and ventilation diagram of the Ellipsoid</div>
+                </div>
+            </div>
+
+<!-- Figu -->
+            <div id="proj-figu" class="project-content">
+                <div class="project-description">
+                    <span class="partners">Lapis Fire class at EPFL<br>with Myriam Maire</span>
+For this exercise, we reverse-engineered Robert Campin’s
+Tryptique du Mérode to understand its spatial and perspective logic.
+The goal was to translate the 2D painting back into 3D architectural
+information.
+We began by deconstructing the painting’s perspective to extract a
+plan and section, which allowed us to build an accurate axonometry
+in Rhino. After defining the volume, we used Blender and
+Photoshop to recreate the specific materials and lighting of the
+Renaissance original. To complete the triptych, we proposed a
+second point of view, using the established spatial codes to reveal a
+new angle of the scene. The original perspective beeing
+mathematically impossible, we proposed two reconstruction : a
+realistic one and another one as close as possible, showing how it
+is possible to obtain a stylistic result even in physically based
+rendering (technique like forced perspective…)
+                </div>
+                
+                <div class="media-container">
+                    <img src="figu-1.webp" loading="lazy" width="1000" height="331" alt="Cut view of the reconstituated interior">
+                    <div class="media-tooltip">Cut view of the reconstituated interior</div>
+                </div>
+                <div class="media-container">
+                    <img src="figu-7.webp" loading="lazy" width="1000" height="1254" alt="Blender 3D rendering">
+                    <div class="media-tooltip">Vectorworks : Plan of a typical flemish house, corresponding our painting</div>
+                </div>
+                <div class="media-container">
+                    <img src="figu-2.webp" loading="lazy" width="1000" height="1217" alt="extracted plan and view">
+                    <div class="media-tooltip">Vectorworks : Extracted plan and view</div>
+                </div>
+                <div class="media-container">
+                    <img src="figu-3.webp" loading="lazy" width="1000" height="829" alt="Blender 3D rendering">
+                    <div class="media-tooltip">Blender 3D rendering</div>
+                </div>
+                <div class="media-container">
+                    <img src="figu-4.webp" loading="lazy" width="1000" height="829" alt="Blender 3D rendering">
+                    <div class="media-tooltip">Blender 3D rendering</div>
+                </div>
+                <div class="media-container">
+                    <img src="figu-5.webp" loading="lazy" width="1000" height="1555" alt="Blender 3D rendering passes">
+                    <div class="media-tooltip">Blender 3D rendering passes</div>
+                </div>
+                <div class="media-container">
+                    <img src="figu-6.webp" loading="lazy" width="1000" height="1508" alt="Blender 3D rendering construction">
+                    <div class="media-tooltip">Blender 3D rendering construction</div>
+                </div>
+            </div>
+            
+            <!-- HORIZON -->
+            <div id="proj-horizon" class="project-content">
+                <div class="project-description">
+                    <span class="partners">Semester Project BA2 at EPFL Studio Alice<br>Collective of Ordinaire, Ratio</span>
+                    Working as a collective of thirty students, we had to manage the reality of a site that was already saturated. After years of student builds, Rigot Park had become overwhelmed with disconnected structures. Rather than adding more mass, we focused on "editing" the existing park to fix its defects-specifically at the entrance and on the ground plane.<br/><br/>
+                    We turned an obstructive timber structure into a functional passageway and formalized informal "desire paths" into a primary circulation axis using paving stones. This project was a lesson in pragmatism: by subtly adjusting past interventions and focusing on the ground, we were able to better define the space and restore the park's flow without building something new.
+                </div>
+                
+                <div class="media-container">
+                    <img src="horizon-1.webp" loading="lazy" width="1000" height="501" alt="Paved pathway plan">
+                    <div class="media-tooltip">Plan of the paved pathway</div>
+                </div>
+                <div class="media-container">
+                    <img src="horizon-2.webp" loading="lazy" width="1000" height="1000" alt="Paving stones in use">
+                    <div class="media-tooltip">Paving stones circulation axis</div>
+                </div>
+                <div class="media-container">
+                    <img src="horizon-3.webp" loading="lazy" width="1000" height="1092" alt="Site plan with vegetation">
+                    <div class="media-tooltip">Plan of ground interventions</div>
+                </div>
+                <div class="media-container">
+                    <img src="horizon-4.webp" loading="lazy" width="1000" height="546" alt="Section with vegetation">
+                    <div class="media-tooltip">Section view with planting logic</div>
+                </div>
+                <div class="media-container">
+                    <img src="horizon-5.webp" loading="lazy" width="1000" height="546" alt="Paving construction detail">
+                    <div class="media-tooltip">Compacted earth and stone construction detail</div>
+                </div>
+                <div class="media-container">
+                    <img src="horizon-6.webp" loading="lazy" width="1000" height="1063" alt="Wood structure elevation">
+                    <div class="media-tooltip">Integration with existing timber structure</div>
+                </div>
+            </div>
+
+            <!-- ZENITH -->
+            <div id="proj-zenith" class="project-content">
+                <div class="project-description">
+                    <span class="partners">Semester Project BA3 at EPFL Studio Baker & Blanc<br>with Romane Bach</span>
+                    Located at 2,042 meters above Montreux, this project investigates the "fringe" where the earth meets the sky. The studio focuses on the territorial implications of the zenith-the vertical intersection between a specific site and the celestial sphere.<br/><br/>
+                    The project develops a monastic settlement for a research community of 34 people living in isolation through the four seasons. The community's daily life is a collective experiment in astronomy and the history of celestial perception, balancing intellectual study with the physical care of the alpine land. Programmatically, the settlement includes shared spaces for meditation, study, and dining, alongside the cultivation of alpine herbs and the protection of the local marmot population.<br/><br/>
+                    This architecture is found at the top point of the mountain, where, half buried, it cultivates a relationship to the outside with regular piercing along the skin of this inverted lighthouse. The central staircase distribute the whole building, and culminate at the top in an observation pov.
+                </div>
+                
+                <div class="media-container">
+                    <img src="zenith-1.webp" loading="lazy" width="1000" height="1000" alt="Vectorworks layers">
+                    <div class="media-tooltip">Vectorworks: layers of the project</div>
+                </div>
+                <div class="media-container">
+                    <img src="zenith-2.webp" loading="lazy" width="1000" height="1371" alt="Site model">
+                    <div class="media-tooltip">Polystyrene, 3d printed plastic, clay: site model</div>
+                </div>
+                <div class="media-container">
+                    <img src="zenith-3.webp" loading="lazy" width="1000" height="1322" alt="Cut model 1:50">
+                    <div class="media-tooltip">Wood, clay and plaster: cut model 1:50</div>
+                </div>
+                <div class="media-container">
+                    <img src="zenith-4.webp" loading="lazy" width="1000" height="328" alt="Plan and fire model">
+                    <div class="media-tooltip">Acrylic paint, plastic stars on woolen sheet: plan / Clay, plaster, fire: model 1:200</div>
+                </div>
+            </div>
+
+            <!-- MDT -->
+            <div id="proj-mdt" class="project-content">
+                <div class="project-description">
+                    <span class="partners">Architecture Internship<br>under Marc de Tassigny and Leonhard Kanapin</span>
+                    Professional experience gathered during an architectural internship at the Geneva-based office MDT, working on various scales of local projects.
+                    <br>More coming soon.
+                </div>
+            </div>
+
+            <!-- ALLOY 23 -->
+            <div id="proj-alloy23" class="project-content">
+    
+    <div class="project-description">
+        <span class="partners">CoLAB design project</span>
+        As a designer, my primary objective for this project was to avoid purchasing new materials. I wanted to focus on up-cycling to prevent the waste of new resources and work strictly with what was already available. To begin, I inquired at my school and conducted an inventory of the metal stock in the basement Materialdepot. There, I found two types of aluminum tubes, with diameters of 2 cm and 3 cm. I decided to combine these with galvanized steel sheets that I extracted from an old shelving unit I had at home. This approach ensured that the salvaged materials dictated the project's direction rather than the other way around.
+    </div>
+
+    <!-- IMAGES 1 & 2 : Matériaux -->
+    <div class="media-container">
+        <img src="alloy-1.webp" loading="lazy" width="1000" height="552" alt="Salvaged aluminum tubes">
+        <div class="media-tooltip">Up-cycled materials: 2cm and 3cm diameter aluminum tubes</div>
+    </div>
+    <div class="media-container">
+        <img src="alloy-2.webp" loading="lazy" width="1000" height="256" alt="Galvanized steel sheets from old shelving">
+        <div class="media-tooltip">Salvaged galvanized steel sheets from existing shelving</div>
+    </div>
+
+    <div class="project-description">
+        The initial spark for the design came from a practical, everyday need: I just needed a right-side bedside table. But when I started thinking about what actually goes on a nightstand, a lamp is the most obvious thing. Instead of just building a table and putting a separate lamp on top of it, I thought it would be much more interesting to merge the two. I wanted to create a multifunctional piece where the furniture and the lighting are fully integrated into one single object. I happened to have an unused lamp gathering dust at home, which perfectly fit my "zero-new-materials" mindset. Adding the lamp wasn't just an afterthought; it became a core part of the concept to prove that a piece made entirely from scrap can be a complete, highly functional object.
+    </div>
+
+    <!-- IMAGES 3 & 4 : Concept / Lampe -->
+    <div class="media-container">
+        <img src="alloy-3.webp" loading="lazy" width="1000" height="746" alt="Integrated lamp concept">
+        <div class="media-tooltip">Concept: merging furniture and lighting into a single object</div>
+    </div>
+    <div class="media-container">
+        <img src="alloy-4.webp" loading="lazy" width="1000" height="746" alt="Unused lamp component">
+        <div class="media-tooltip">Integration of an unused lamp matching the zero-waste mindset</div>
+    </div>
+
+    <div class="project-description">
+        After completing the material inventory, I began sketching in CAD software to explore my options. I developed a design inspired by Asian bamboo scaffolding, which relied on piercing the tubes so they could interlock and create a structural frame. However, when I presented the assembly steps to the workshop manager, he explained that making clean, off-center holes in the aluminum tubes was not possible with the available equipment. To assemble it, I would have had to manually saw or file the joints. This made the construction process too complex and would have ruined the clean aesthetic I was aiming for, forcing me to abandon this initial concept.
+    </div>
+
+    <!-- IMAGES 5 & 6 : Premier essai CAD / Échec technique -->
+    <div class="media-container">
+        <img src="alloy-5.webp" loading="lazy" width="1000" height="555" alt="Bamboo scaffolding inspired CAD design">
+        <div class="media-tooltip">Initial CAD exploration: bamboo scaffolding inspiration</div>
+    </div>
+    <div class="media-container">
+        <img src="alloy-6.webp" loading="lazy" width="1000" height="746" alt="Complex tube piercing joints">
+        <div class="media-tooltip">Abandoned joint system: required off-center precision drilling</div>
+    </div>
+
+    <div class="project-description">
+        So, I went back to the drawing board to rethink how these tubes could fit together. That's when I came up with a much simpler, yet more ingenious system based on nesting. The idea was to slide the 2cm diameter tubes inside the 3cm ones. The load-bearing structure would consist of the thinner 2cm tubes running the entire height of the furniture. The thicker 3cm tubes would be cut into smaller sections to act as spacers.<br><br>
+        By drilling holes in the four corners of the galvanized steel sheets, I could slide them onto the thinner tubes. Then, the wider tube sections would slip over the top to lock the shelves in place and create the separation between the tiers. This stacking system is great because it's extremely easy to assemble and allows me to swap out the shelf materials (like using Plexiglas sheets instead of steel) at any time. It’s also reproducible for other objects if I ever decide to make a collection of similar furniture.
+    </div>
+
+    <!-- IMAGES 7, 8 & 9 : Nouveau système / Nesting -->
+    <div class="media-container">
+        <img src="alloy-7.webp" loading="lazy" width="1000" height="555" alt="Nesting system diagram">
+        <div class="media-tooltip">Nesting system: 2cm structural tubes sliding inside 3cm spacers</div>
+    </div>
+    <div class="media-container">
+        <img src="alloy-8.webp" loading="lazy" width="1000" height="347" alt="Stacking logic for shelves">
+        <div class="media-tooltip">Stacking logic: using spacers to lock the steel tiers in place</div>
+    </div>
+    <div class="media-container">
+        <img src="alloy-9.webp" loading="lazy" width="1000" height="347" alt="Modularity of the design">
+        <div class="media-tooltip">Modularity: easily reproducible and adaptable assembly</div>
+    </div>
+
+    <div class="project-description">
+        The dimensions of the unit were determined through practical testing. The overall height was matched to my bed, while the lamp was positioned at the optimal height for reading. For the vertical spacing, I divided the total height into four equal parts: the bottom tier occupies two parts, and the two upper tiers occupy one part each. To determine the width and depth of the shelves, I experimented instinctively with cardboard mock-ups. I initially tested a square shape, but finding it impractical for a bedside table, I opted for a rectangular format. The final dimensions are the direct result of this physical experimentation in mockups.
+    </div>
+
+    <!-- IMAGES 10 & 11 : Mockups carton -->
+    <div class="media-container">
+        <img src="alloy-10.webp" loading="lazy" width="1000" height="746" alt="Cardboard mock-up for proportions">
+        <div class="media-tooltip">Cardboard mock-up: physical testing of height and scale</div>
+    </div>
+    <div class="media-container">
+        <img src="alloy-11.webp" loading="lazy" width="1000" height="555" alt="Testing shelf shapes">
+        <div class="media-tooltip">Proportion testing: shifting from square to rectangular format</div>
+    </div>
+
+    <div class="project-description">
+        The fabrication phase confronted me with the true challenges of metalworking, teaching me that metal is a much more complex and unforgiving material to work with than wood. The process began with 16 clean cuts of the aluminum tubes using a circular saw. Next, preparing the galvanized steel sheets proved to be a physically exhausting step: unbending and flattening them using hammers and pliers highlighted the flip side of recycling raw materials.<br><br>
+        I then cut these plates to the right dimensions using an industrial guillotine shear. Drilling was equally tedious. To make the twelve 2cm diameter holes needed for the tubes to pass through, I had to systematically drill 5mm pilot holes first. Finally, I spent hours filing the edges to eliminate any sharpness. Although the final result is highly satisfactory, a perfect finish remains difficult to achieve with standard tools. This experience made me realize that even with a seemingly simple design, working with metal requires relentless technical rigor.
+    </div>
+
+    <!-- IMAGES 12 & 13 : Fabrication / Résultat final -->
+    <div class="media-container">
+        <img src="alloy-12.webp" loading="lazy" width="1000" height="1396" alt="Metal fabrication process">
+        <div class="media-tooltip">Fabrication: cutting, drilling pilot holes, and filing edges</div>
+    </div>
+    <div class="media-container">
+        <img src="alloy-13.webp" loading="lazy" width="1000" height="1494" alt="Final Alloy 23 nightstand">
+        <div class="media-tooltip">Alloy 23: final assembled nightstand with integrated lamp</div>
+    </div>
+
+            </div>
+
+            <!-- MUQARNAS -->
+            <div id="proj-muqarnas" class="project-content">
+    
+    <div class="project-description">
+        <span class="partners">CoLAB design project</span>
+    </div>
+
+    <!-- IMAGE 1 -->
+    <div class="media-container">
+        <img src="muqarnas-1.webp" loading="lazy" width="1000" height="1418" alt="Galvanized steel structure with visible rivets">
+        <div class="media-tooltip">Galvanized steel: visible rivets and face-to-face connections</div>
+    </div>
+    <div class="project-description">
+        The Industrial Muqarnas proposal is a project that translates the complex, ornamental geometry of traditional Islamic architecture into a strictly standardized, low-tech industrial system. The concept centers on "de-sacralizing" the Muqarnas form by shifting it from a purely decorative architectural element to a modular, functional object made from crude industrial materials. The design utilizes galvanized steel for its raw, "ready-made" aesthetic. The structure is built from identical, reproducible metal modules that are stacked and angled to grow organically. To maintain honesty in construction, the pieces are connected face-to-face using visible rivets, treating the mechanical joints as a functional texture rather than a flaw.
+    </div>
+    
+    <!-- IMAGE 2 -->
+    <div class="media-container">
+        <img src="muqarnas-2.webp" loading="lazy" width="1000" height="954" alt="Prismatic modules and Eastern System profiles">
+        <div class="media-tooltip">Eastern System: radial logic and prismatic modules</div>
+    </div>
+    <div class="project-description">
+        To create these industrial Muqarnas, the design utilizes a specific set of profiles and geometric arrangements derived from traditional vaulting systems. The individual modules are prismatic pieces that rise and fall based on their cross-sectional shape. In the Eastern System, which this design follows, the shapes are diverse and can include straight, angled, or curved profiles. These identical metal modules are arranged using a radial logic, diverging from a central pole to create variable angles and distorted, organic-looking forms. This contrasts with the Western System, which is more rigid and limited to standardized triangles and rectangles set on a fixed grid.<br><br>
+        <strong>Prismatic Modules:</strong> Individual 3D pieces that define the elevation.<br>
+        <strong>Eastern Profiles:</strong> A flexible range of straight, angled, or curved shapes.<br>
+        <strong>Radial Arrangement:</strong> Shapes diverging from a center point to allow for organic growth.<br>
+        <strong>Assembly Flanges:</strong> Precise bent edges on each shape that allow them to be riveted together face-to-face.
+    </div>
+    
+    <!-- IMAGE 3 -->
+    <div class="media-container">
+        <img src="muqarnas-3.webp" loading="lazy" width="1000" height="710" alt="2D plan and radial geometry">
+        <div class="media-tooltip">2D map: radial arrangement translating to 3D growth</div>
+    </div>
+    <div class="project-description">
+        The plan serves as the essential 2D map for the Muqarnas' 3D structure. The Western System (Square Style) is grid-based and modular, relying on standardized shapes like triangles and rectangles with fixed angles. In contrast, the Eastern System (Pole Table Style) follows a radial logic where shapes diverge from a central pole, allowing for variable angles and distorted forms. By following these existing Eastern System patterns, the geometric shapes for the table are generated. Utilizing this radial logic allows the identical, reproducible metal modules to be stacked and angled, creating a structure that grows organically. This method transforms the industrial aesthetic of galvanized steel into a complex, ornamental form that remains modular and easy to repeat.
+    </div>
+    
+    <!-- IMAGE 4 -->
+    <div class="media-container">
+        <img src="muqarnas-4.webp" loading="lazy" width="1000" height="710" alt="Structural grid system underneath">
+        <div class="media-tooltip">Structural grid: supporting the octagonal metal sheet</div>
+    </div>
+    <div class="project-description">
+        The galvanized steel sheet is obviously too flimsy to serve as a functional table surface; it yields under pressure rather than resisting it. Solving this by cheating (such as laminating wood with steel) would rely on brute mass rather than structural logic, totally betraying the project. Instead, the single sheet is supported by a metal grid system underneath. The triangles on top are either bent or cut off. Then the grid is created and assembled following the established principles of honesty and modularity. After experimenting with beam placement to optimize structural integrity, a large octagonal metal sheet is fixed on top, held by the structural frame.
+    </div>
+    
+    <!-- IMAGE 5 -->
+    <div class="media-container">
+        <img src="muqarnas-5.webp" loading="lazy" width="1000" height="573" alt="Light-catching industrial finish">
+        <div class="media-tooltip">Industrial finish: light-catching pattern and rough texture</div>
+    </div>
+    <div class="project-description">
+        The initial expectation is to create a strong visual contrast by generating complex forms using a cheap industrial material with a rough finish. This roughness and the visible rivets de-sacralize the Muqarnas form, turning it into a modular, accessible architectural element rather than just a decorative one. First, a complex, light-catching pattern will be seen, and only upon closer inspection will the realization hit that it’s made from standard, crude sheet metal.
+    </div>
+
+            </div>
+
+            <!-- RENAISSANCE THEATER -->
+            <div id="proj-renaissance" class="project-content">
+                
+                <div class="project-description">
+                    <span class="partners">Buhnenbild seminar</span>
+                    During a one-week seminar in Berlin, we designed a scenography for the garden of the Renaissance Theater. True to my ongoing focus on upcycling and material reuse, the project was built entirely from salvaged old theater sets. We combined these discarded elements to create a dynamic outdoor space featuring seating areas, lush planting, two distinct exhibition spaces, and a small garden structured as a succession of theatrical "tableaux".<br><br>
+                    A major constraint of the site was the mandatory presence of three large shipping containers. Rather than attempting to hide them, we integrated them directly into the spatial narrative. By playing with their massive volumes, the scenography serves as a playful nod to the backstage mechanics and the broader universe of the theater.
+                </div>
+
+                <!-- 1. Site -->
+                <div class="media-container">
+                    <img src="renaissance-1.webp" loading="lazy" width="1000" height="733" alt="Site context of the Renaissance Theater garden">
+                    <div class="media-tooltip">Site context: Renaissance Theater garden</div>
+                </div>
+
+                <!-- 2. Maquette -->
+                <div class="media-container">
+                    <img src="renaissance-2.webp" loading="lazy" width="1000" height="882" alt="Physical model of the scenography">
+                    <div class="media-tooltip">Physical model</div>
+                </div>
+
+                <!-- 3. Schémas -->
+                <div class="media-container">
+                    <img src="renaissance-3.webp" loading="lazy" width="1000" height="1294" alt="Spatial and conceptual diagrams">
+                    <div class="media-tooltip">Spatial and conceptual diagrams</div>
+                </div>
+
+                <!-- 4. Plans -->
+                <div class="media-container">
+                    <img src="renaissance-4.webp" loading="lazy" width="1000" height="1096" alt="Three architectural plans">
+                    <div class="media-tooltip">Architectural plans integrating the containers</div>
+                </div>
+                
+                <!-- Texte en 3 colonnes lié aux plans -->
+                <div class="three-col-text">
+                    <div>
+                        Containers are a part of the urban landscape. Like a boulder in the city.
+                    </div>
+                    <div>
+                        Providing three units of storage, two garden spaces and a raised area.
+                    </div>
+                    <div>
+                        Creating smaller niches to retreat and reflect, as well as a stronger visual appearance from the street. The angles referencing the geometry of the Art Deco interior in the theatre, and plants the expressive organic shapes.
+                    </div>
+                </div>
+
+                <!-- 5. Rendus -->
+                <div class="media-container">
+                    <img src="renaissance-5.webp" loading="lazy" width="1000" height="1531" alt="Atmospheric renders of the outdoor space">
+                    <div class="media-tooltip">Atmospheric renders</div>
+                </div>
+
+                <!-- 6. Principes constructifs -->
+                <div class="media-container">
+                    <img src="renaissance-6.webp" loading="lazy" width="1000" height="642" alt="Structural and construction principles">
+                    <div class="media-tooltip">Construction and structural principles</div>
+                </div>
+
+            </div>
+        
+            <!-- SHIBARI CHAIR -->
+            <div id="proj-shibari" class="project-content">
+    
+    <div class="project-description">
+        <span class="partners">CoLAB design project</span>
+    </div>
+
+    <!-- IMAGE 1 -->
+    <div class="media-container">
+        <img src="shibari-1.webp" loading="lazy" width="1000" height="1428" alt="Humanoid rigged metal sheet on all fours">
+        <div class="media-tooltip">Humanoid rigging: transposing a body on all fours onto metal</div>
+    </div>
+    <div class="project-description">
+        My proposal centers on transposing the mechanical rigging of a humanoid character onto a single .5 mm metal sheet. By applying the logic of a body on all fours, I am imposing severe binds to lock this rigging into a functional piece of furniture that prioritizes empathy and physical presence over traditional comfort. This approach is heavily informed by the tension found in Shibari and the tactile works of Anna Humberg, Sebastian Brajkovik, and Hannah Levy, while drawing on the temporal physical logic of Erwin Wurm’s "One Minute Sculptures". The processing method is strictly limited to cutting, bending, and knotting, purposefully avoiding traditional fasteners. Instead, structural stability is achieved through tying down the sheet, where the high-tension interaction between the metal and the rope becomes the primary focus. The rope must dig into the material to create a system that immobilizes the heavy structure, essentially forcing the material to inhabit a captured moment of movement.
+    </div>
+    
+    <!-- IMAGE 2 -->
+    <div class="media-container">
+        <img src="shibari-2.webp" loading="lazy" width="1000" height="1428" alt="T-pose logic applied to the metal sheet">
+        <div class="media-tooltip">T-pose logic: mimicking the structural distribution of a body</div>
+    </div>
+    <div class="project-description">
+        My design approach is defined by the act of rigging a humanoid form onto metal and using those severe binds to lock the resulting posture. This explores the literal translation of a humanoid T-pose into a "blank canvas" metal sheet, using the logic of digital rigging to define physical form. By treating the flat metal as an anatomically riggable surface, I am transposing a human pose—specifically an all-fours "crawling" position—directly onto the material through precise cutting and bending. This process does not amputate the material, but rather adapts it, allowing the metal to mimic the structural distribution of a body while preserving its original integrity as a single, continuous sheet, keeping the "atrophied tail" intact.
+    </div>
+    
+    <!-- IMAGE 3 -->
+    <div class="media-container">
+        <img src="shibari-3.webp" loading="lazy" width="1000" height="1428" alt="Blueprint and geometric pattern of extraction">
+        <div class="media-tooltip">Geometric blueprint: mapping the skeletal roadmap</div>
+    </div>
+    <div class="project-description">
+        This foundational geometry functions as a pattern of extraction, where precise interior cuts and dotted fold lines delineate the transition from a two-dimensional "blank canvas" to a three-dimensional anatomical rig. This blueprint maps out the "legs," "backrest," and "seat" before they are subjected to tension, serving as the skeletal roadmap. To ensure structural integrity, I analyzed the physical forces to prevent the metal sheet from tearing under high tension. The main challenge was reaching an equilibrium where ropes replace the "constant effort" of human muscles without causing material failure. By calculating vectors for gravity and friction, the rigging counteracts the metal's tendency to slip or spring back to its flat state. The leg angles, set at approximately 41 degrees, work with the locked head and leg positions to immobilize the structure.
+    </div>
+    
+    <!-- IMAGE 4 -->
+    <div class="media-container">
+        <img src="shibari-4.webp" loading="lazy" width="1000" height="713" alt="Shibari tension and looping system on steel">
+        <div class="media-tooltip">Shibari looping system: distributing load across the metal</div>
+    </div>
+    <div class="project-description">
+        To stop the rope from ripping through the thin steel, I used a looping system to distribute the load across the metal's surface rather than concentrating stress at a single point. This wrapping, acting like a band around the form, is directly inspired by Japanese Shibari. It ensures that while the rope "digs in" to secure the posture, the integrity of the seat and backrest remains uncompromised.<br><br>
+        It was important for me to keep a provocative, kinky aspect in this design. AI is fundamentally anti-kink, driven by the puritanical guidelines of the companies behind most models. With the resurgence of human artists making messy, visceral art forms and leaning into "darker" themes, forcing the metal into severe, rigged binds embraces a physical messiness that algorithms often try to sanitize. The chair doesn't offer comfort; it offers a confrontation with empathy through the cold, high-tension interaction of rope digging into steel.
+    </div>
+    
+    <!-- IMAGE 5 -->
+    <div class="media-container">
+        <img src="shibari-5.webp" loading="lazy" width="1000" height="981" alt="Cardboard prototype vs structural resistance">
+        <div class="media-tooltip">Scale translation: moving from cardboard proof of concept to steel</div>
+    </div>
+    <div class="project-description">
+        The cardboard model serves as a proof of concept for the folding geometry, but it fails to replicate the physical tension required for the final piece. Because cardboard is lightweight and flexible, it cannot withstand the force needed to make the ropes truly tense; any significant pull simply collapses the material rather than "rigging" it. It is also hard to capture the tight, pulled aesthetic of the ropes at such a small scale, appearing a bit too relaxed. In real-life scale, the 5mm steel provides the necessary mass and structural resistance to allow the ropes to be pulled to extreme levels of tension without the frame buckling. This full-scale weight creates the floor friction needed to stop the legs from sliding, enabling the rope to "dig in" and lock the humanoid posture into a rigid, stable equilibrium that the prototype can only hint at.
+    </div>
+
+            </div>
+
+            <!-- DEUIL POUR DEUIL -->
+            <div id="proj-deuil" class="project-content">
+                
+                <div class="project-description">
+                    <span class="partners">Travail de Maturité<br>with Jodie Trontin</span>
+                    A short film exploring themes of loss and memory. This project was awarded the prestigious "Prix de maturité suisse" by the Bern University of the Arts (HKB). The film delves into the complex dynamics of grief among a group of friends following a tragic accident, highlighting the varied and often conflicting ways people process loss and assign blame.
+                </div>
+                
+                <div class="media-container">
+                    <iframe width="100%" style="aspect-ratio: 16/9; display: block;" src="https://www.youtube.com/embed/djKchgR0A0c" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                    <!-- Tooltip caché sur l'iframe pour éviter de bloquer les contrôles YouTube, on l'affiche sous forme de légende intégrée si besoin, ou on le laisse vide car le player parle de lui-même -->
+                </div>
+
+                <div class="project-description">
+                    For the Matura Prize exhibition at HKB, we designed a spatial video installation that physically extended the visual language of the film. The scenography consisted of a fully white room, directly mirroring the dreamy, sterile aesthetic of the white background scenes present in "Deuil pour Deuil". <br><br>
+                    The installation was highly interactive: visitors were provided with pens and paint and encouraged to freely mark and paint over the white canvas of the room. This physical interaction was contrasted with a technical layer—a mix of CRT televisions displaying scenes from the film's white room, interspersed with live feeds from hidden cameras in the exhibition space. This setup seamlessly integrated the live audience onto the screens, making them appear as if they were trapped within the white room scenes of the film itself.
+                </div>
+
+                <div class="media-container">
+                    <img src="deuil-1.webp" loading="lazy" width="1000" height="655" alt="White room scenography with interactive painting">
+                    <div class="media-tooltip">Fully white installation mirroring the film's aesthetic</div>
+                </div>
+                
+                <div class="media-container">
+                    <img src="deuil-2.webp" loading="lazy" width="1000" height="748" alt="Hidden cameras and CRT TVs">
+                    <div class="media-tooltip">CRT TVs blending film scenes with live hidden camera feeds</div>
+                </div>
+
+                <div class="media-container">
+                    <img src="deuil-3.webp" loading="lazy" width="768" height="1024" alt="Audience interacting with the installation">
+                    <div class="media-tooltip">Visitors painting the set, becoming part of the scene</div>
+                </div>
+
+            </div>
+
+            <!-- LOVE IS LOVE IS LOVE -->
+            <div id="proj-love" class="project-content">
+                <div class="project-description">
+                    <span class="partners">Personnal Project<br>with Jodie Trontin</span>
+                    An upcoming mid-length film currently in production.
+                </div>
+            </div>
+
+            <!-- SABBART -->
+            <div id="proj-sabbart" class="project-content">
+    
+    <div class="project-description">
+        <span class="partners">Ongoing visual collaboration<br>with Adrien Sabbah</span>
+        Adrien Sabbah is a Geneva-born visual artist whose work functions as an expanding universe across painting, drawing, textiles, ceramics, and scenography. His visual language mixes abstraction with narration, utilizing bright colors and symbolic shapes to explore childhood imagination without nostalgia. His work balances joy and melancholy, using color not merely as decoration, but as a way to resist the harshness of reality and affirm the possibility of dreams.<br><br>
+        For his artistic account, I directed a variety of conceptual and promotional videos. These short formats capture the raw, process-driven, and vibrant nature of his universe.
+    </div>
+
+    <!-- REEL 1 -->
+    <div style="margin-bottom: 2vw; width: 100%;">
+        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/reel/DNsb7mVUCmA/" data-instgrm-version="14" style="background: transparent; border: 0; width: 100%; min-width: 100%; margin: 0 auto;"></blockquote>
+    </div>
+
+    <!-- REEL 2 -->
+    <div style="margin-bottom: 2vw; width: 100%;">
+        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/reel/DCJgY8Etcjt/" data-instgrm-version="14" style="background: transparent; border: 0; width: 100%; min-width: 100%; margin: 0 auto;"></blockquote>
+    </div>
+
+    <!-- REEL 3 -->
+    <div style="margin-bottom: 2vw; width: 100%;">
+        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/reel/DHQlS7it-Na/" data-instgrm-version="14" style="background: transparent; border: 0; width: 100%; min-width: 100%; margin: 0 auto;"></blockquote>
+    </div>
+
+    <!-- REEL 4 -->
+    <div style="margin-bottom: 2vw; width: 100%;">
+        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/reel/C1mklp0tTfT/" data-instgrm-version="14" style="background: transparent; border: 0; width: 100%; min-width: 100%; margin: 0 auto;"></blockquote>
+    </div>
+
+    <!-- REEL 5 -->
+    <div style="margin-bottom: 2vw; width: 100%;">
+        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/reel/DGId0uEN9MQ/" data-instgrm-version="14" style="background: transparent; border: 0; width: 100%; min-width: 100%; margin: 0 auto;"></blockquote>
+    </div>
+
+    <!-- REEL 6 -->
+    <div style="margin-bottom: 2vw; width: 100%;">
+        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/reel/DRopZJPgHId/" data-instgrm-version="14" style="background: transparent; border: 0; width: 100%; min-width: 100%; margin: 0 auto;"></blockquote>
+    </div>
+
+
+            </div>
+
+            <!-- BIRDS AND PIGS -->
+            <div id="proj-birds" class="project-content">
+                <div class="project-description">
+                    <span class="partners">Music Videos<br>for Anne Rosset</span>
+                    Two distinct music video productions exploring contrasting narrative approaches and visual palettes.
+                </div>
+            </div>
+
+            <!-- DREAM TEEN -->
+            <div id="proj-dreamteen" class="project-content">
+                
+                <div class="project-description">
+                    <span class="partners">Curatorial Practice & Scenography<br>for farº festival</span>
+                    In the autumn of 2021, I organized and set up the very first edition of "Dream Teen" for the far° festival in Nyon. Designed as a dedicated space for expression, creation, and curatorial practice, this initiative was aimed at young people aged 14 to 21 from Nyon and the surrounding areas.<br><br>
+                    The project functioned as a laboratory where teenagers could actively participate in the cultural landscape, bringing their own perspectives into the festival's framework. By integrating youth directly into the creative and curatorial process, we established a platform that successfully bridged the gap between contemporary live arts and the next generation of audiences and creators.
+                </div>
+
+                <!-- VIMEO EMBED -->
+                <div class="media-container" style="margin-bottom: 4vw;">
+                    <!-- PASTE YOUR VIDEO NUMBER BELOW -->
+                    <iframe src="https://player.vimeo.com/video/773323782?title=0&byline=0&portrait=0" width="100%" style="aspect-ratio: 16/9; display: block;" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+                </div>
+
+                <!-- PHOTOS -->
+                <div class="media-container">
+                    <img src="dream-teen-1.webp" loading="lazy" width="1000" height="819" alt="Dream Teen first edition at far Nyon">
+                    <div class="media-tooltip">Dream Teen: engaging youth in curatorial practices</div>
+                </div>
+
+                <div class="media-container">
+                    <img src="dream-teen-2.webp" loading="lazy" width="1000" height="709" alt="Dream Teen space of expression">
+                    <div class="media-tooltip">First edition at the far° festival, 2021</div>
+                </div>
+
+            </div>
+  
+        </main>
+    </div>
+
+    <!-- 4. LOGIQUE JAVASCRIPT -->
+    <script>
+        const rows = document.querySelectorAll('.project-row');
+        const contents = document.querySelectorAll('.project-content');
+        const stage = document.getElementById('scroll-stage');
+        const projectListContainer = document.getElementById('project-list');
+
+        function clearSelection() {
+            rows.forEach(r => r.classList.remove('is-active'));
+            contents.forEach(c => c.classList.remove('is-visible'));
+            document.body.classList.remove('is-project-open');
+        }
+
+        // A. Clic sur un projet (Ouvrir / Fermer)
+        rows.forEach(row => {
+            row.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isAlreadyActive = row.classList.contains('is-active');
+
+                clearSelection();
+
+                if (!isAlreadyActive) {
+                    row.classList.add('is-active');
+                    document.body.classList.add('is-project-open');
+                    const targetId = row.getAttribute('data-target');
+                    document.getElementById(targetId).classList.add('is-visible');
+                    stage.scrollTo({ top: 0, behavior: 'auto' });
+                setTimeout(() => {
+                    if (window.instgrm) {
+                        window.instgrm.Embeds.process();
+                    }
+                }, 50);
+                }
+            });
+        });
+
+        // B. Filtres (Système de toggle)
+        const filters = document.querySelectorAll('.filter-toggle');
+        filters.forEach(filter => {
+            filter.addEventListener('click', () => {
+                filter.classList.toggle('is-active');
+
+                const activeCategories = Array.from(filters)
+                    .filter(f => f.classList.contains('is-active'))
+                    .map(f => f.getAttribute('data-filter'));
+
+                rows.forEach(row => {
+                    // 1. Récupère la liste des catégories du projet (ex: "architecture scenography")
+                    const categoryString = row.getAttribute('data-category');
+                    
+                    // 2. Découpe ça en tableau (ex: ["architecture", "scenography"])
+                    const rowCategories = categoryString.split(' '); 
+                    
+                    // 3. Vérifie si au moins UNE de ces catégories est active
+                    const isVisible = rowCategories.some(cat => activeCategories.includes(cat));
+
+                    if (isVisible) {
+                        row.classList.remove('is-hidden');
+                    } else {
+                        row.classList.add('is-hidden');
+                        if (row.classList.contains('is-active')) {
+                            clearSelection();
+                        }
+                    }
+                });
+            });
+        });
+
+        // C. Filtre par date & Logique Mobile
+        const dateBtn = document.getElementById('date-sort-btn');
+        const sortArrow = document.querySelector('.sort-arrow');
+        let isChronological = false;
+
+        function sortProjects() {
+            const rowsArray = Array.from(projectListContainer.querySelectorAll('.project-row'));
+            rowsArray.sort((a, b) => {
+                let yearA = a.getAttribute('data-year');
+                let yearB = b.getAttribute('data-year');
+                yearA = yearA === 'ongoing' ? 9999 : parseInt(yearA, 10);
+                yearB = yearB === 'ongoing' ? 9999 : parseInt(yearB, 10);
+                return isChronological ? yearA - yearB : yearB - yearA;
+            });
+            rowsArray.forEach(row => projectListContainer.appendChild(row));
+        }
+
+        dateBtn.addEventListener('click', () => {
+            isChronological = !isChronological;
+            // On fait "flipper" la flèche via CSS au lieu de changer le texte
+            sortArrow.classList.toggle('is-flipped'); 
+            sortProjects();
+        });
+        sortProjects(); // Tri initial
+
+        // --- NOUVEAU : Logique Mobile ---
+        
+        const dropdownLabel = document.getElementById('mobile-content-dropdown');
+        const filterListMobile = document.querySelector('.filter-list');
+        
+        dropdownLabel.addEventListener('click', (e) => {
+            e.stopPropagation(); 
+            filterListMobile.classList.toggle('is-open');
+            dropdownLabel.classList.toggle('is-active-menu'); // Ajoute/retire le soulignement
+        });
+
+        // Fermer le menu si on clique ailleurs sur l'écran
+        document.addEventListener('click', () => {
+            filterListMobile.classList.remove('is-open');
+            dropdownLabel.classList.remove('is-active-menu'); // Retire le soulignement
+        });
+
+        // Fermer le menu si on clique ailleurs sur l'écran
+        document.addEventListener('click', () => {
+            filterListMobile.classList.remove('is-open');
+        });
+
+        // 2. Bouton Close
+        const mobileCloseBtn = document.getElementById('mobile-close-btn');
+        mobileCloseBtn.addEventListener('click', () => {
+            clearSelection();
+        });
+        // D. Tri par défaut au chargement
+        sortProjects();
+
+        // E. Clic dans l'espace vide pour fermer
+        stage.addEventListener('click', (e) => {
+            if (e.target === stage) {
+                clearSelection();
+            }
+        });
+        
+        // F. Logique des Tooltips sur les images
+        const mediaContainers = document.querySelectorAll('.media-container');
+         mediaContainers.forEach(container => {
+            container.addEventListener('click', (e) => {
+                e.stopPropagation(); // Empêche le clic de fermer accidentellement le projet
+                
+                // Alterne l'apparition de la boîte rose
+                container.classList.toggle('is-active-media');
+            });
+        });
+
+
+// --- NOUVEAU : G. TRANSITIONS DE PAGE ---
+        
+        // 1. Apparition (Fade in) quand la page a fini de charger
+        window.addEventListener('load', () => {
+            // Petit délai de 100ms pour s'assurer que l'effet soit fluide
+            setTimeout(() => {
+                document.body.classList.remove('is-loading');
+            }, 100);
+        });
+
+        // 2. Disparition (Fade out) au clic sur un lien
+        const allLinks = document.querySelectorAll('a');
+        allLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                // Vérifie que c'est bien un lien de ton site (ex: retour à l'index)
+                if (link.hostname === window.location.hostname && link.getAttribute('target') !== '_blank') {
+                    e.preventDefault(); // Bloque le changement de page immédiat
+                    const targetUrl = link.href;
+                    
+                    document.body.classList.add('is-leaving'); // Remet le voile noir
+                    
+                    // Attend 1 seconde (la durée de la transition CSS) puis change de page
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, 1000); 
+                }
+            });
+        });
+
+
+    </script>
+    <script async src="https://www.instagram.com/embed.js"></script>
+</body>
+</html>
