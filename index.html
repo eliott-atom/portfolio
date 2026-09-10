@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eliott Atom Croubalian — Intro</title>
+    <title>welcome</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;900&display=swap" rel="stylesheet">
@@ -172,7 +172,7 @@
     <a href="content.html" class="corner-link top-left" id="btn-index"></a>
     <a href="info.html" class="corner-link top-right" id="btn-info"></a>
     <a href="cv.html" class="corner-link bottom-left" id="btn-cv"></a>
-    <a href="mailto:eliott.croubalian@gmail.com" class="corner-link bottom-right" id="btn-contact"></a>
+    <a href="contact.html" class="corner-link bottom-right" id="btn-contact"></a>
 
     <div id="content-layer">
         <div class="grid-wrapper">
@@ -421,6 +421,17 @@
             }
             typeBubble();
         });
+
+        window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+        // Example: Tell all videos to recalculate or reset their state if JS controls them
+        document.querySelectorAll('video').forEach(vid => {
+            vid.pause();
+            vid.currentTime = 0; // Reset video to beginning if needed
+        });
+    }
+});
+
     </script>
 </body>
 </html>
