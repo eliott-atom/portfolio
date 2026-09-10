@@ -378,6 +378,31 @@
             transform: scale(0.97);
         }
 
+
+        /* 7. MOBILE RESPONSIVENESS FOR TOOLS */
+        @media (max-width: 768px) {
+            .tools-dock {
+                right: 20px;
+                /* Pushes the dock safely above the iPhone home indicator */
+                bottom: max(15px, env(safe-area-inset-bottom));
+                /* Shrinks the tools slightly for better mobile ergonomics */
+                transform: scale(0.85);
+                transform-origin: bottom right;
+            }
+
+            /* Makes the tools peek out higher so the Safari URL bar doesn't swallow them */
+            .stabilo-rig {
+                transform: translateY(40%); 
+            }
+
+            .spray-rig.is-unlocked {
+                transform: translateY(40%);
+            }
+            
+            .spray-rig.is-unlocked:hover {
+                transform: translateY(40%); /* disables the desktop hover peek */
+            }
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
