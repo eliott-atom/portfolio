@@ -217,10 +217,36 @@
     <div id="main-title"></div>
 
     <script>
-        // --- 1. FONCTIONS MACHINE À ÉCRIRE ---
-        function typeWriterIn(element, text, speed, callback) {
+        let isTransitioning = false;
+        let animationCycle = 0;
+        let activeTimeouts = [];
+        let bubbleTypeTimeout;
+        let lastPhraseIndex = -1;
+
+        const linksData = [
+            { id: 'btn-index', text: 'portfolio' },
+            { id: 'btn-info', text: 'info' },
+            { id: 'btn-cv', text: 'cv' },
+            { id: 'btn-contact', text: 'contact' }
+        ];
+
+        function registerTimeout(fn, delay) {
+            const id = setTimeout(fn, delay);
+            activeTimeouts.push(id);
+            return id;
+        }
+
+        function clearAllTimeouts() {
+            activeTimeouts.forEach(t => clearTimeout(t));
+            activeTimeouts = [];
+            clearTimeout(bubbleTypeTimeout);
+        }
+
+        // MACHINE À ÉCRIRE AVEC SÉCURITÉ DE CYCLE
+        function typeWriterIn(element, text, speed, cycle, callback) {
             let i = 0;
             function type() {
+                if (cycle !== animationCycle) return;
                 let visiblePart = text.substring(0, i);
                 let hiddenPart = text.substring(i);
                 
@@ -228,7 +254,7 @@
                 
                 if (i < text.length) {
                     i++;
-                    setTimeout(type, speed);
+                    registerTimeout(type, speed);
                 } else if (callback) {
                     callback();
                 }
@@ -257,50 +283,97 @@
             untype();
         }
 
-        const linksData = [
-            { id: 'btn-index', text: 'portfolio' },
-            { id: 'btn-info', text: 'info' },
-            { id: 'btn-cv', text: 'cv' },
-            { id: 'btn-contact', text: 'contact' }
-        ];
+        // CYCLE D'INTRODUCTION COMPLET ET RÉINITIALISABLE
+        function startIntroSequence() {
+            clearAllTimeouts();
+            animationCycle++;
+            const currentCycle = animationCycle;
 
-        // --- 2. SÉQUENCE D'INTRODUCTION ---
-        window.addEventListener('load', () => {
-            
-            setTimeout(() => {
-                document.getElementById('content-layer').classList.add('theme-white');
+            // 1. Déverrouille les clics et le rideau noir
+            isTransitioning = false;
+            document.body.style.pointerEvents = 'auto';
+
+            const overlay = document.getElementById('black-overlay');
+            overlay.classList.remove('show');
+            overlay.style.opacity = '0';
+
+            // 2. Réinitialise le conteneur principal
+            const contentLayer = document.getElementById('content-layer');
+            contentLayer.classList.remove('theme-white', 'theme-inverted');
+
+            // 3. Masque et stoppe toutes les vidéos
+            document.querySelectorAll('.interactive-video').forEach(vid => {
+                vid.pause();
+                vid.currentTime = 0;
+                vid.style.display = 'none';
+            });
+
+            const vidReveil = document.getElementById('vid-reveil');
+            vidReveil.pause();
+            vidReveil.currentTime = 0;
+            vidReveil.style.opacity = '0';
+            vidReveil.style.display = 'none';
+
+            // 4. Masque la tête idle et la bulle
+            document.getElementById('head-idle').style.display = 'none';
+            const bubble = document.getElementById('speech-bubble');
+            bubble.classList.remove('show');
+            bubble.innerHTML = '';
+
+            // 5. Réinitialise le titre et les boutons de coin
+            const titleEl = document.getElementById('main-title');
+            titleEl.classList.remove('move-to-header');
+            titleEl.innerHTML = '';
+
+            linksData.forEach(link => {
+                const el = document.getElementById(link.id);
+                if (el) {
+                    el.classList.remove('is-active');
+                    el.innerHTML = '';
+                    el.style.pointerEvents = 'none';
+                }
+            });
+
+            // 6. Lance le déroulement temporel
+            registerTimeout(() => {
+                if (currentCycle !== animationCycle) return;
+                contentLayer.classList.add('theme-white');
             }, 200);
 
-            setTimeout(() => {
+            registerTimeout(() => {
+                if (currentCycle !== animationCycle) return;
                 linksData.forEach((link, index) => {
                     const el = document.getElementById(link.id);
-                    setTimeout(() => {
-                        typeWriterIn(el, link.text, 60);
+                    registerTimeout(() => {
+                        if (currentCycle !== animationCycle) return;
+                        typeWriterIn(el, link.text, 60, currentCycle);
                     }, index * 250); 
                 });
             }, 800); 
 
-            setTimeout(() => {
-                const vidReveil = document.getElementById('vid-reveil');
-                const headIdle = document.getElementById('head-idle');
-                const titleEl = document.getElementById('main-title');
+            registerTimeout(() => {
+                if (currentCycle !== animationCycle) return;
 
                 vidReveil.style.display = 'block';
-                
-                setTimeout(() => {
+                registerTimeout(() => {
+                    if (currentCycle !== animationCycle) return;
                     vidReveil.style.opacity = '1'; 
                 }, 10);
 
-                vidReveil.play();
+                let playPromise = vidReveil.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(() => {});
+                }
 
-                setTimeout(() => {
-                    headIdle.style.display = 'block';
+                registerTimeout(() => {
+                    if (currentCycle !== animationCycle) return;
+                    document.getElementById('head-idle').style.display = 'block';
                     
-                    setTimeout(() => {
+                    registerTimeout(() => {
                         vidReveil.style.display = 'none';
                     }, 50);
                     
-                    typeWriterIn(titleEl, 'eliott atom\ncroubalian', 70);
+                    typeWriterIn(titleEl, 'eliott atom\ncroubalian', 70, currentCycle);
 
                     document.querySelectorAll('.corner-link').forEach(link => {
                         link.style.pointerEvents = 'auto';
@@ -309,17 +382,28 @@
                 }, 3500);
 
             }, 2000);
+        }
+
+        // CHARGEMENT INITIAL
+        window.addEventListener('load', () => {
+            startIntroSequence();
         });
 
-        // --- 3. SÉQUENCE DE SORTIE ---
+        // GESTION DU RETOUR ARRIÈRE MOBILE (SAFARI BFCACHE)
+        window.addEventListener('pageshow', (event) => {
+            // Se déclenche si la page vient du cache ou si une transition avait été amorcée
+            if (event.persisted || isTransitioning) {
+                startIntroSequence();
+            }
+        });
+
+        // SORTIES DE PAGE VERS LES AUTRES SECTIONS
         const interactions = [
             { btnId: 'btn-index', vidId: 'vid-top-left' },
             { btnId: 'btn-info', vidId: 'vid-top-right' },
             { btnId: 'btn-cv', vidId: 'vid-bottom-left' },
             { btnId: 'btn-contact', vidId: 'vid-bottom-right' }
         ];
-
-        let isTransitioning = false; 
 
         interactions.forEach(item => {
             const btn = document.getElementById(item.btnId);
@@ -330,6 +414,7 @@
                     if (isTransitioning) return;
                     
                     isTransitioning = true;
+                    clearAllTimeouts();
                     e.preventDefault(); 
                     
                     document.body.style.pointerEvents = 'none';
@@ -338,12 +423,12 @@
                     this.classList.add('is-active');
                     document.getElementById('head-idle').style.display = 'none';
                     document.getElementById('vid-reveil').style.display = 'none';
-                    document.getElementById('speech-bubble').style.display = 'none'; // Cache la bulle si active
+                    document.getElementById('speech-bubble').style.display = 'none';
                     
                     video.style.display = 'block';
                     let playPromise = video.play();
                     if (playPromise !== undefined) {
-                        playPromise.catch(err => console.log("Erreur lecture:", err));
+                        playPromise.catch(() => {});
                     }
 
                     setTimeout(() => {
@@ -362,7 +447,9 @@
                             typeWriterOut(document.getElementById(item.btnId), 25); 
 
                             setTimeout(() => {
-                                document.getElementById('black-overlay').classList.add('show');
+                                const overlay = document.getElementById('black-overlay');
+                                overlay.style.opacity = '1';
+                                overlay.classList.add('show');
                                 
                                 setTimeout(() => {
                                     window.location.href = targetUrl;
@@ -377,7 +464,7 @@
             }
         });
 
-        // --- 4. EASTER EGG : BULLE DE DIALOGUE ---
+        // EASTER EGG BULLE DE DIALOGUE
         const phrases = [
             "stop poking my face.",
             "i'm trying to look professional.",
@@ -386,25 +473,40 @@
             "do i know you?",
             "yes, i actually look like this.",
             "are we playing a game?",
-            "please proceed to the portfolio."
+            "stop poking my face.",
+    "concussion incoming.",
+    "you're ruining my hair.",
+    "please respect the personal bubble.",
+    "error 404: reaction not found.",
+    "made of 100% recycled concrete.",
+    "smells like foam board and cyanoacrylate.",
+    "don't ask about the render times.",
+    "built entirely out of cardboard and coffee.",
+    "take 43... action.",
+    "i studied for this.",
+    "fix my face in post.",
+    "it burns!          just kidding",
+    "the lighting was actually great that day.",
+    "prize winner (allegedly).",
+    "harder!",
+    "now with 20% more magenta.",
+    "contains small parts. choking hazard.",
+    "recidive",
+    "beep boop. wait, i'm a human.",
+    "why are you still here?",
+    "you found the secret dialogue! (there is no prize).",
+    "do not feed after midnight"
         ];
-        
-        let lastPhraseIndex = -1;
-        let bubbleTypeTimeout; // Stocke l'ID du timeout pour pouvoir l'interrompre si on reclique vite
 
         document.getElementById('head-idle').addEventListener('click', function() {
             if (isTransitioning) return;
             
             const bubble = document.getElementById('speech-bubble');
-            
-            // 1. Coupe l'écriture en cours (si on a cliqué frénétiquement)
             clearTimeout(bubbleTypeTimeout);
             
-            // 2. Reset l'animation CSS (le scale retourne à 0 instantanément)
             bubble.classList.remove('show');
             bubble.innerHTML = ''; 
             
-            // 3. Choisit une phrase au hasard (différente de la précédente)
             let newIndex;
             do {
                 newIndex = Math.floor(Math.random() * phrases.length);
@@ -412,14 +514,9 @@
             lastPhraseIndex = newIndex;
             
             const selectedText = phrases[newIndex];
-            
-            // 4. Force le navigateur à rafraîchir pour rejouer l'animation depuis le début
             void bubble.offsetWidth; 
-            
-            // 5. Relance l'animation de rebond
             bubble.classList.add('show');
             
-            // 6. Lance l'effet machine à écrire spécifique pour la bulle (plus rapide)
             let i = 0;
             function typeBubble() {
                 let visiblePart = selectedText.substring(0, i);
@@ -433,15 +530,6 @@
             }
             typeBubble();
         });
-
-        window.addEventListener('pageshow', (event) => {
-            // Détecte si la page provient du cache de navigation arrière de Safari
-            if (event.persisted) {
-                window.location.reload();
-            }
-        });
-
-
     </script>
 </body>
 </html>
