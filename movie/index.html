@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LOVE IS LOVE</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      width: 100vw;
+      height: 100vh;
+      background-color: #0a0a0a;
+      overflow: hidden;
+      font-family: monospace;
+      color: #fff;
+      position: relative;
+    }
+
+    /* Video Container */
+    #video-container {
+      position: absolute;
+      transition: all 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+      z-index: 1;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: #000;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    /* Dynamic Title */
+    #title {
+      position: absolute;
+      font-size: clamp(1.8rem, 4.5vw, 3.8rem);
+      font-weight: 700;
+      z-index: 2;
+      transition: all 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+      white-space: nowrap;
+      text-shadow: 0 0 20px rgba(0,0,0,0.9);
+      user-select: none;
+    }
+
+    /* Action Button */
+    #learn-more {
+      position: absolute;
+      bottom: 35px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 14px 32px;
+      font-size: 1rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      background: #ff1493;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      z-index: 10;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    #learn-more:hover {
+      background: #ff69b4;
+      transform: translateX(-50%) scale(1.05);
+    }
+
+    /* Debug Status HUD */
+    #debug-hud {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 8px 14px;
+      border: 1px solid #222;
+      font-size: 0.85rem;
+      color: #00ff66;
+      z-index: 10;
+      line-height: 1.4;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="debug-hud">Initializing...</div>
+
+  <div id="video-container">
+    <video autoplay loop muted playsinline src="https://www.w3schools.com/html/mov_bbb.mp4"></video>
+  </div>
+
+  <h1 id="title">LOVE</h1>
+
+  <button id="learn-more">LEARN MORE</button>
+
+  <script>
+    const videoContainer = document.getElementById('video-container');
+    const title = document.getElementById('title');
+    const learnMoreBtn = document.getElementById('learn-more');
+    const debugHud = document.getElementById('debug-hud');
+
+    // 1. Seeded PRNG (Mulberry32) ensures reproducible layout transformations
+    function seededRandom(seed) {
+      let t = seed += 0x6D2B79F5;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+
+    // 2. Extract base directory regardless of subfolder depth (e.g. /movie/ or /portfolio/movie/)
+    function getBasePath() {
+      let path = window.location.pathname;
+      path = path.replace(/index\.html$/i, '');
+      path = path.replace(/\/love(-is-love)*\/?$/i, '/');
+      if (!path.endsWith('/')) path += '/';
+      return path;
+    }
+
+    // 3. Depth is computed directly from occurrences of 'is-love' in the URL path
+    function getDepthFromPath() {
+      const matches = window.location.pathname.match(/is-love/g);
+      return matches ? matches.length : 0;
+    }
+
+    // 4. Render state dynamically according to the URL depth
+    function render() {
+      const depth = getDepthFromPath();
+      const basePath = getBasePath();
+      const rng = () => seededRandom(depth * 7919 + 42);
+
+      // Status readout
+      debugHud.innerHTML = `Base: <strong>${basePath}</strong><br>Depth: <strong>${depth}</strong><br>Seed: <strong>${depth * 7919 + 42}</strong>`;
+
+      // Construct title text
+      title.innerText = "LOVE" + " IS LOVE".repeat(depth);
+
+      if (depth === 0) {
+        // Pristine starting layout
+        videoContainer.style.top = '0';
+        videoContainer.style.left = '0';
+        videoContainer.style.width = '100vw';
+        videoContainer.style.height = '100vh';
+        videoContainer.style.transform = 'none';
+
+        title.style.top = '12%';
+        title.style.left = '50%';
+        title.style.transform = 'translateX(-50%)';
+        title.style.color = '#ffffff';
+      } else {
+        // Deterministic chaotic layout
+        const r1 = rng();
+        const r2 = rng();
+        const r3 = rng();
+        const r4 = rng();
+
+        // Shifting video box
+        const width = Math.max(25, 90 - (depth * 7));
+        const height = Math.max(25, 80 - (depth * 6));
+        const vTop = (r1 * 40) + '%';
+        const vLeft = (r2 * 30) + '%';
+        const vRotation = ((r3 - 0.5) * depth * 9).toFixed(2);
+
+        videoContainer.style.top = vTop;
+        videoContainer.style.left = vLeft;
+        videoContainer.style.width = `${width}vw`;
+        videoContainer.style.height = `${height}vh`;
+        videoContainer.style.transform = `rotate(${vRotation}deg)`;
+
+        // Shifting typography
+        const tTop = (10 + (r3 * 65)) + '%';
+        const tLeft = (5 + (r4 * 55)) + '%';
+        const tSkew = ((r1 - 0.5) * depth * 14).toFixed(2);
+
+        title.style.top = tTop;
+        title.style.left = tLeft;
+        title.style.transform = `skewX(${tSkew}deg)`;
+
+        // Color degradation
+        const hue = Math.floor(r2 * 360);
+        title.style.color = `hsl(${hue}, 85%, 65%)`;
+      }
+    }
+
+    // 5. Button click updates the URL cleanly and applies the next degradation step
+    learnMoreBtn.addEventListener('click', () => {
+      const nextDepth = getDepthFromPath() + 1;
+      const basePath = getBasePath();
+      
+      const nextSlug = "love" + "-is-love".repeat(nextDepth);
+      const targetUrl = basePath + nextSlug;
+
+      window.history.pushState({ depth: nextDepth }, '', targetUrl);
+      render();
+    });
+
+    // 6. Handle browser Back / Forward navigation buttons
+    window.addEventListener('popstate', () => {
+      render();
+    });
+
+    // Initial render call
+    render();
+  </script>
+</body>
+</html>
