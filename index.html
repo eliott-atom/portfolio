@@ -435,14 +435,12 @@
         });
 
         window.addEventListener('pageshow', (event) => {
-    if (event.persisted) {
-        // Example: Tell all videos to recalculate or reset their state if JS controls them
-        document.querySelectorAll('video').forEach(vid => {
-            vid.pause();
-            vid.currentTime = 0; // Reset video to beginning if needed
+            // Détecte si la page provient du cache de navigation arrière de Safari
+            if (event.persisted) {
+                window.location.reload();
+            }
         });
-    }
-});
+
 
     </script>
 </body>
