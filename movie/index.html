@@ -569,23 +569,21 @@
     /* Conteneur principal HAL occupant l'écran */
     .hal-images-wrapper {
       position: relative;
-      width: min(92vw, 680px);
-      height: min(60vh, 560px);
+      aspect-ratio: 200 / 190;
+      width: min(88vw, 55vh, 460px);
+      max-width: 480px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: clamp(18px, 4vh, 38px);
+      animation: halPulseHeartbeat 3.2s ease-in-out infinite;
     }
 
     .hal-layer {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      max-width: 100%;
-      max-height: 100%;
-      width: auto;
-      height: auto;
+      inset: 0;
+      width: 100%;
+      height: 100%;
       object-fit: contain;
       user-select: none;
       pointer-events: none;
@@ -595,8 +593,7 @@
     .hal-light-layer {
       z-index: 2;
       filter: drop-shadow(0 0 45px rgba(255, 10, 45, 0.85)) drop-shadow(0 0 90px rgba(255, 0, 30, 0.5));
-      animation: halLightBreath 2.8s ease-in-out infinite;
-      transition: opacity 0.8s ease, filter 0.4s ease, transform 0.4s ease;
+      transition: opacity 0.8s ease, filter 0.4s ease;
     }
 
     /* HAL-body.webp monte progressivement de 0 à 1 en opacité au fil du texte */
@@ -606,14 +603,12 @@
       transition: opacity 0.8s ease;
     }
 
-    @keyframes halLightBreath {
+    @keyframes halPulseHeartbeat {
       0%, 100% {
-        transform: translate(-50%, -50%) scale(1);
-        filter: drop-shadow(0 0 45px rgba(255, 10, 45, 0.85)) drop-shadow(0 0 90px rgba(255, 0, 30, 0.5));
+        transform: scale(1);
       }
       50% {
-        transform: translate(-50%, -50%) scale(1.035);
-        filter: drop-shadow(0 0 65px rgba(255, 30, 60, 0.98)) drop-shadow(0 0 120px rgba(255, 10, 40, 0.7));
+        transform: scale(1.028);
       }
     }
 
@@ -2135,34 +2130,64 @@
         return audioCtx;
       }
 
+      // Élévation de la session audio iOS en mode Playback (contourne le commutateur silencieux physique)
+      let silentMediaEl = null;
+      function enableIOSAudioSession() {
+        if (!silentMediaEl) {
+          try {
+            silentMediaEl = document.createElement('audio');
+            silentMediaEl.setAttribute('playsinline', '');
+            silentMediaEl.setAttribute('webkit-playsinline', '');
+            // Micro-buffer PCM WAV 8kHz mono base64 valide (0.1s de silence pur)
+            silentMediaEl.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+            silentMediaEl.loop = true;
+            silentMediaEl.volume = 0.01;
+            document.body.appendChild(silentMediaEl);
+          } catch(e) {}
+        }
+        if (silentMediaEl) {
+          try {
+            const p = silentMediaEl.play();
+            if (p && typeof p.catch === 'function') {
+              p.catch(() => {});
+            }
+          } catch(e) {}
+        }
+      }
+
       // Déblocage universel Web Audio pour iOS Safari / WebKit
       function unlockAudioEngine() {
+        enableIOSAudioSession();
         const ac = getAudioContext();
-        if (!ac) return;
-        if (ac.state === 'suspended' || ac.state === 'interrupted') {
-          ac.resume().then(() => {
+        if (ac) {
+          if (ac.state === 'suspended' || ac.state === 'interrupted') {
+            ac.resume().then(() => {
+              isAudioUnlocked = true;
+              updateForDepth(getDepth());
+            }).catch(() => {});
+          } else if (ac.state === 'running') {
             isAudioUnlocked = true;
-            updateForDepth(getDepth());
-          }).catch(() => {});
-        } else if (ac.state === 'running') {
-          isAudioUnlocked = true;
-        }
+          }
 
-        // 1. Jouer un buffer silencieux pour forcer le matériel audio iOS à s'activer
-        try {
-          const buffer = ac.createBuffer(1, 1, 22050);
-          const source = ac.createBufferSource();
-          source.buffer = buffer;
-          source.connect(ac.destination);
-          source.start(0);
-        } catch (e) {}
+          // 1. Déclencher un micro-buffer avec gain non-nul pour forcer le DAC matériel iOS
+          try {
+            const buffer = ac.createBuffer(1, 100, ac.sampleRate || 44100);
+            const source = ac.createBufferSource();
+            const gain = ac.createGain();
+            gain.gain.value = 0.001;
+            source.buffer = buffer;
+            source.connect(gain);
+            gain.connect(ac.destination);
+            source.start(0);
+          } catch (e) {}
+        }
 
         // 2. Débloquer / amorcer SpeechSynthesis pour iOS Safari
         if ('speechSynthesis' in window) {
           try {
             if (!window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
               const prime = new SpeechSynthesisUtterance(' ');
-              prime.volume = 0;
+              prime.volume = 0.01;
               window.speechSynthesis.speak(prime);
             }
           } catch(e) {}
@@ -2185,7 +2210,15 @@
               if (!res.ok) throw new Error('Wav fetch failed');
               return res.arrayBuffer();
             })
-            .then(buf => ac.decodeAudioData(buf))
+            .then(buf => {
+              return new Promise((resolve, reject) => {
+                try {
+                  ac.decodeAudioData(buf.slice(0), resolve, reject);
+                } catch(err) {
+                  reject(err);
+                }
+              });
+            })
             .then(decoded => {
               williamBuffers[num] = decoded;
               williamLoading[num] = false;
@@ -2207,7 +2240,11 @@
 
         const decodeBuffer = (arrayBuf) => {
           return new Promise((resolve, reject) => {
-            ac.decodeAudioData(arrayBuf, resolve, reject);
+            try {
+              ac.decodeAudioData(arrayBuf.slice(0), resolve, reject);
+            } catch(err) {
+              reject(err);
+            }
           });
         };
 
@@ -2218,15 +2255,6 @@
             return res.arrayBuffer();
           })
           .then(decodeBuffer)
-          .catch(() => {
-            // 2. Secours automatique transparent : décoder la piste audio directement depuis trailer.mp4
-            return fetch('trailer.mp4')
-              .then(res => {
-                if (!res.ok) throw new Error('trailer.mp4 non trouvé (statut ' + res.status + ')');
-                return res.arrayBuffer();
-              })
-              .then(decodeBuffer);
-          })
           .then(decoded => {
             trailerBuffer = decoded;
             isTrailerLoading = false;
@@ -2765,7 +2793,7 @@
           osc.frequency.setValueAtTime(1350 + Math.random() * 300, t);
           osc.frequency.exponentialRampToValueAtTime(140, t + 0.022);
 
-          gain.gain.setValueAtTime(0.06, t);
+          gain.gain.setValueAtTime(0.24, t);
           gain.gain.exponentialRampToValueAtTime(0.001, t + 0.025);
 
           osc.connect(gain);
@@ -2786,7 +2814,7 @@
           const buffer = ac.createBuffer(1, bufferSize, ac.sampleRate);
           const data = buffer.getChannelData(0);
           for (let i = 0; i < bufferSize; i++) {
-            data[i] = (Math.random() * 2 - 1) * 0.14;
+            data[i] = (Math.random() * 2 - 1) * 0.28;
           }
           const noise = ac.createBufferSource();
           noise.buffer = buffer;
@@ -2797,7 +2825,7 @@
           filter.frequency.linearRampToValueAtTime(200, t + 0.07);
 
           const gain = ac.createGain();
-          gain.gain.setValueAtTime(0.05, t);
+          gain.gain.setValueAtTime(0.22, t);
           gain.gain.exponentialRampToValueAtTime(0.001, t + 0.075);
 
           noise.connect(filter);
@@ -2822,13 +2850,13 @@
           }).catch(() => {});
         }
 
-        // Si les oscillateurs tournent déjà, simplement ré-ajuster le volume vers 0.08
+        // Si les oscillateurs tournent déjà, simplement ré-ajuster le volume vers 0.12
         if (glitchDroneGain && glitchDroneOsc1) {
           try {
             const t = ac.currentTime;
             glitchDroneGain.gain.cancelScheduledValues(t);
             glitchDroneGain.gain.setValueAtTime(glitchDroneGain.gain.value || 0.001, t);
-            glitchDroneGain.gain.linearRampToValueAtTime(0.08, t + 0.6);
+            glitchDroneGain.gain.linearRampToValueAtTime(0.12, t + 0.6);
           } catch(e) {}
           return;
         }
@@ -2837,7 +2865,7 @@
           const t = ac.currentTime;
           glitchDroneGain = ac.createGain();
           glitchDroneGain.gain.setValueAtTime(0.001, t);
-          glitchDroneGain.gain.linearRampToValueAtTime(0.08, t + 0.8);
+          glitchDroneGain.gain.linearRampToValueAtTime(0.12, t + 0.8);
 
           droneFilter = ac.createBiquadFilter();
           droneFilter.type = 'lowpass';
@@ -2932,7 +2960,7 @@
             const buffer = ac.createBuffer(1, bufferSize, ac.sampleRate);
             const data = buffer.getChannelData(0);
             for (let i = 0; i < bufferSize; i++) {
-              data[i] = (Math.random() * 2 - 1) * (0.15 + chaosCoeff * 0.15);
+              data[i] = (Math.random() * 2 - 1) * (0.2 + chaosCoeff * 0.2);
             }
             const noise = ac.createBufferSource();
             noise.buffer = buffer;
@@ -2943,7 +2971,7 @@
             filter.Q.setValueAtTime(2.0 + Math.random() * 6.0, t);
 
             const gain = ac.createGain();
-            gain.gain.setValueAtTime(0.06, t);
+            gain.gain.setValueAtTime(0.24, t);
             gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
 
             noise.connect(filter);
@@ -2971,7 +2999,7 @@
 
             modGain.gain.setValueAtTime(300 * chaosCoeff, t);
 
-            outGain.gain.setValueAtTime(0.045, t);
+            outGain.gain.setValueAtTime(0.22, t);
             outGain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
 
             mod.connect(modGain);
@@ -2993,7 +3021,7 @@
               const clickGain = ac.createGain();
               clickOsc.type = 'square';
               clickOsc.frequency.setValueAtTime(180 + Math.random() * 2400, t + delay);
-              clickGain.gain.setValueAtTime(0.035, t + delay);
+              clickGain.gain.setValueAtTime(0.18, t + delay);
               clickGain.gain.exponentialRampToValueAtTime(0.0001, t + delay + 0.015);
 
               clickOsc.connect(clickGain);
@@ -3013,7 +3041,7 @@
             osc.frequency.setValueAtTime(startF, t);
             osc.frequency.exponentialRampToValueAtTime(endF, t + dur);
 
-            gain.gain.setValueAtTime(0.03, t);
+            gain.gain.setValueAtTime(0.16, t);
             gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
 
             osc.connect(gain);
@@ -3030,7 +3058,7 @@
             sub.frequency.setValueAtTime(75, t);
             sub.frequency.exponentialRampToValueAtTime(28, t + dur);
 
-            subG.gain.setValueAtTime(0.08 * chaosCoeff, t);
+            subG.gain.setValueAtTime(0.25 * chaosCoeff, t);
             subG.gain.exponentialRampToValueAtTime(0.0001, t + dur);
 
             sub.connect(subG);
@@ -3549,19 +3577,35 @@
         enterBtn.style.transform = 'scale(1)';
       }
 
-      enterBtn.addEventListener('click', () => {
+      let hasEntered = false;
+      function handleEnterExperience(e) {
+        if (hasEntered) return;
+        hasEntered = true;
         SiteAudio.unlockAudioEngine();
-        SiteAudio.playCleanTrailerAudio(video);
 
-        video.muted = true;
-        video.play().catch(err => {
-          console.warn('Video play note:', err);
-        });
+        // 1. Tenter la lecture native directe de la vidéo avec son stéréo
+        video.muted = false;
+        video.volume = 1.0;
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(err => {
+            console.warn('Lecture vidéo avec son restreinte par iOS, bascule vers mode muet + WebAudio:', err);
+            video.muted = true;
+            video.play().catch(() => {});
+            SiteAudio.playCleanTrailerAudio(video);
+          });
+        }
 
         curtain.style.opacity = '0';
         setTimeout(() => {
           if (curtain) curtain.style.display = 'none';
         }, 1200);
+      }
+
+      enterBtn.addEventListener('click', handleEnterExperience);
+      enterBtn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        handleEnterExperience(e);
       });
 
       video.addEventListener('timeupdate', () => {
@@ -3582,10 +3626,14 @@
         video.play().catch(() => {});
       });
 
-      learnMore.addEventListener('click', () => {
+      function handleLearnMore(e) {
+        if (e && e.type === 'touchend') e.preventDefault();
         clearTimeout(fallbackLearnMoreTimer);
+        SiteAudio.unlockAudioEngine();
         advanceToNextDepth();
-      });
+      }
+      learnMore.addEventListener('click', handleLearnMore);
+      learnMore.addEventListener('touchend', handleLearnMore);
     }
 
     // =========================================
@@ -5301,39 +5349,32 @@
           window.speechSynthesis.cancel();
         }
 
-        halSpeechTimeout = setTimeout(() => {
-          try {
-            if (window.speechSynthesis.paused) {
-              window.speechSynthesis.resume();
-            }
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'fr-FR';
-            utterance.rate = 0.84; // Débit calme, mesuré et posé
-            utterance.pitch = 0.65; // Tonalité grave et légèrement synthétique
-            utterance.volume = 0.95;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'fr-FR';
+        utterance.rate = 0.84; // Débit calme, mesuré et posé
+        utterance.pitch = 0.65; // Tonalité grave et légèrement synthétique
+        utterance.volume = 1.0;
 
-            utterance.onstart = () => {
-              if (onStartCb) onStartCb();
-            };
-            utterance.onend = () => {
-              if (onEndCb) onEndCb();
-            };
-            utterance.onerror = () => {
-              if (onEndCb) onEndCb();
-            };
+        utterance.onstart = () => {
+          if (onStartCb) onStartCb();
+        };
+        utterance.onend = () => {
+          if (onEndCb) onEndCb();
+        };
+        utterance.onerror = () => {
+          if (onEndCb) onEndCb();
+        };
 
-            const voices = window.speechSynthesis.getVoices();
-            const frVoice = voices.find(v => v.lang && v.lang.startsWith('fr') && (v.name.includes('Thomas') || v.name.includes('Nicolas') || v.name.includes('Male') || v.name.includes('Google') || v.name.includes('Paul') || v.name.includes('Daniel')));
-            if (frVoice) {
-              utterance.voice = frVoice;
-            } else {
-              const anyFr = voices.find(v => v.lang && v.lang.startsWith('fr'));
-              if (anyFr) utterance.voice = anyFr;
-            }
+        const voices = window.speechSynthesis.getVoices();
+        const frVoice = voices.find(v => v.lang && v.lang.startsWith('fr') && (v.name.includes('Thomas') || v.name.includes('Nicolas') || v.name.includes('Male') || v.name.includes('Google') || v.name.includes('Paul') || v.name.includes('Daniel')));
+        if (frVoice) {
+          utterance.voice = frVoice;
+        } else {
+          const anyFr = voices.find(v => v.lang && v.lang.startsWith('fr'));
+          if (anyFr) utterance.voice = anyFr;
+        }
 
-            window.speechSynthesis.speak(utterance);
-          } catch (e) {}
-        }, 25);
+        window.speechSynthesis.speak(utterance);
       } catch (e) {}
     }
 
@@ -5432,7 +5473,9 @@
 
       const stageEl = document.getElementById('hal-stage');
       let tapCount = 0;
-      stageEl.addEventListener('click', () => {
+      let isAdvancing = false;
+      function handleHalTap(e) {
+        if (isAdvancing) return;
         SiteAudio.unlockAudioEngine();
         // Si la voix n'a pas pu démarrer automatiquement (blocage iOS sans geste),
         // le premier tap déclenche la parole de HAL au lieu de sauter la page
@@ -5441,8 +5484,14 @@
           doSpeak();
           return;
         }
+        isAdvancing = true;
         SiteAudio.playProceduralGlitch(depth);
         advanceToNextDepth();
+      }
+      stageEl.addEventListener('click', handleHalTap);
+      stageEl.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        handleHalTap(e);
       });
     }
 
