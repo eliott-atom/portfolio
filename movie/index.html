@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LE REFUGE - Dossier d'Admission</title>
+  <title>love is love is love, le film</title>
   <style>
     *, *::before, *::after {
       margin: 0; padding: 0; box-sizing: border-box;
@@ -51,11 +51,18 @@
       font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em;
       background-color: #ff1493; color: white;
       border: none; border-radius: 50px; cursor: pointer;
-      opacity: 0; transform: scale(0.92);
-      transition: opacity 0.8s ease, transform 0.2s ease, background-color 0.2s ease;
+      opacity: 1; transform: scale(1);
+      transition: opacity 0.8s ease, transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
       box-shadow: 0 0 25px rgba(255, 20, 147, 0.6);
+      text-align: center;
+      box-sizing: border-box;
+      max-width: 90vw;
+      -webkit-appearance: none;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
     #enter-btn:hover { background-color: #ff69b4; transform: scale(0.98); }
+    #enter-btn:active { background-color: #e01282; transform: scale(0.95); }
     #p-learn-more {
       position: absolute; bottom: 8vh; left: 50%;
       transform: translateX(-50%); font-size: 1.1rem;
@@ -319,15 +326,7 @@
       75% { transform: translate(-2px, -4px); }
       100% { transform: translate(0, 0); }
     }
-
-    /* Indicateur de tournage & clap cinéma (organique, respecte le 4ème mur) */
-    .film-clap-indicator {
-      position: absolute; bottom: 18px; left: 22px; pointer-events: none; z-index: 85;
-      font-family: 'Courier New', monospace; font-size: 11px; font-weight: bold;
-      color: rgba(255, 255, 255, 0.6); letter-spacing: 0.18em; text-transform: uppercase;
-      background: rgba(0, 0, 0, 0.6); padding: 6px 12px; border-left: 2px solid #ff0055;
-    }
-
+    
     /* Lamelles de script découpées / broyées */
     .script-shred {
       position: absolute; pointer-events: none; z-index: 52;
@@ -554,72 +553,68 @@
     }
 
     /* =========================================
-       PHASE 4 : L'ORDINATEUR TYPE HAL 9000 & OEIL ROUGE (PROFONDEURS 68 À 82)
+       PHASE 4 : L'ORDINATEUR TYPE HAL 9000 (PROFONDEURS 68 À 82)
+       ASSETS : HAL-light.webp (reste allumé) & HAL-body.webp (opacité 0 à 1)
        ========================================= */
     #hal-stage {
       position: absolute; inset: 0; width: 100vw; height: 100vh;
-      overflow: hidden; background: #000000;
+      overflow: hidden; background: #010103;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       cursor: pointer; user-select: none;
       padding: 24px;
+      box-sizing: border-box;
     }
 
-    /* Le boîtier de l'œil HAL 9000 */
-    .hal-eye-unit {
+    /* Conteneur principal HAL occupant l'écran */
+    .hal-images-wrapper {
       position: relative;
-      width: clamp(170px, 22vw, 250px);
-      height: clamp(170px, 22vw, 250px);
-      border-radius: 50%;
-      background: radial-gradient(circle at 50% 50%, #16161a 0%, #08080a 65%, #000000 100%);
-      box-shadow: 
-        inset 0 0 15px rgba(0, 0, 0, 0.95),
-        0 0 0 3px #2d2d35,
-        0 0 0 6px #121216,
-        0 0 0 9px #444450,
-        0 0 30px rgba(0, 0, 0, 0.95);
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: clamp(32px, 7vh, 56px);
-      transition: filter 0.8s ease, transform 0.8s ease;
+      width: min(92vw, 680px);
+      height: min(60vh, 560px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: clamp(18px, 4vh, 38px);
     }
 
-    /* Anneau brossé interne */
-    .hal-inner-bezel {
-      width: 82%; height: 82%; border-radius: 50%;
-      background: radial-gradient(circle at 45% 45%, #25252c 0%, #101014 75%, #000000 100%);
-      box-shadow: inset 0 0 12px #000, 0 0 0 2px #383844;
-      display: flex; align-items: center; justify-content: center;
-      position: relative;
-    }
-
-    /* La lentille rougeoyante de HAL */
-    .hal-lens {
-      width: 68%; height: 68%; border-radius: 50%;
-      position: relative;
-      background: radial-gradient(circle at 48% 48%, 
-        #ff9999 0%, 
-        #ff0033 28%, 
-        #b3001e 55%, 
-        #4d000a 82%, 
-        #150003 100%);
-      transition: box-shadow 0.8s ease, filter 0.8s ease, opacity 0.8s ease;
-    }
-
-    /* Reflet de pupille / point incandescent central */
-    .hal-pupil-spark {
-      position: absolute; top: 50%; left: 50%;
+    .hal-layer {
+      position: absolute;
+      top: 50%;
+      left: 50%;
       transform: translate(-50%, -50%);
-      width: 14%; height: 14%; border-radius: 50%;
-      background: radial-gradient(circle, #ffffff 30%, #fff7a0 70%, #ff3300 100%);
-      box-shadow: 0 0 12px #ffffff, 0 0 24px #ff3300;
-      transition: opacity 0.8s ease, transform 0.8s ease;
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      user-select: none;
+      pointer-events: none;
     }
 
-    /* Halo atmosphérique projeté par la lentille */
-    .hal-halo-glow {
-      position: absolute; inset: -40px; border-radius: 50%;
-      pointer-events: none;
-      transition: opacity 0.8s ease, box-shadow 0.8s ease;
+    /* HAL-light.webp : diminue en opacité tout le long de la litanie */
+    .hal-light-layer {
+      z-index: 2;
+      filter: drop-shadow(0 0 45px rgba(255, 10, 45, 0.85)) drop-shadow(0 0 90px rgba(255, 0, 30, 0.5));
+      animation: halLightBreath 2.8s ease-in-out infinite;
+      transition: opacity 0.8s ease, filter 0.4s ease, transform 0.4s ease;
+    }
+
+    /* HAL-body.webp monte progressivement de 0 à 1 en opacité au fil du texte */
+    .hal-body-layer {
+      z-index: 3;
+      filter: drop-shadow(0 0 25px rgba(0, 0, 0, 0.95));
+      transition: opacity 0.8s ease;
+    }
+
+    @keyframes halLightBreath {
+      0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        filter: drop-shadow(0 0 45px rgba(255, 10, 45, 0.85)) drop-shadow(0 0 90px rgba(255, 0, 30, 0.5));
+      }
+      50% {
+        transform: translate(-50%, -50%) scale(1.035);
+        filter: drop-shadow(0 0 65px rgba(255, 30, 60, 0.98)) drop-shadow(0 0 120px rgba(255, 10, 40, 0.7));
+      }
     }
 
     /* Conteneur de parole cinématique HAL */
@@ -1980,8 +1975,24 @@
       100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
     }
 
-    /* Responsive global pour les mini-jeux */
+    /* Responsive global pour les mini-jeux & écran d'entrée */
     @media (max-width: 600px) {
+      #enter-btn {
+        font-size: 1.05rem;
+        padding: 15px 24px;
+        letter-spacing: 0.12em;
+        width: 88vw;
+        max-width: 360px;
+        text-align: center;
+        line-height: 1.35;
+      }
+      #p-learn-more {
+        font-size: 0.9rem;
+        letter-spacing: 0.2em;
+        bottom: 5vh;
+        width: 80vw;
+        text-align: center;
+      }
       .cw-grid {
         grid-template-columns: repeat(6, 32px);
         grid-template-rows: repeat(6, 32px);
@@ -1989,6 +2000,28 @@
       .cw-cell { font-size: 1rem; }
       .diff-comparer-wrap { flex-direction: column; align-items: center; }
       .diff-card { width: 92vw; min-width: auto; }
+    }
+
+    /* Transition Envahissement de Mousse Organique & Révélation HAL (Mousse p.67 -> HAL p.68) */
+    #moss-overwhelm-container {
+      position: fixed; inset: 0;
+      width: 100vw; height: 100vh;
+      overflow: hidden;
+      z-index: 99999;
+      pointer-events: none;
+      background: transparent;
+      transition: opacity 0.85s ease-out;
+    }
+    #moss-overwhelm-canvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+    .moss-overwhelm-vignette {
+      position: absolute; inset: 0;
+      pointer-events: none;
+      box-shadow: inset 0 0 160px rgba(0, 0, 0, 0.95);
+      transition: opacity 0.8s ease;
     }
 
   </style>
@@ -2024,6 +2057,7 @@
     }
 
     function advanceToNextDepth() {
+      SiteAudio.unlockAudioEngine();
       const current = getDepth();
       if (current < 15) {
         SiteAudio.playPageTurn();
@@ -2065,19 +2099,662 @@
       let isHissPlaying = false;
       let droneDriftInterval = null;
 
+      let isAudioUnlocked = false;
+      const williamBuffers = {};
+      const williamLoading = {};
+      let trailerBuffer = null;
+      let isTrailerLoading = false;
+      let deformedTrailerSource = null;
+      let deformedTrailerGain = null;
+      let deformedTrailerFilter = null;
+      let deformedTrailerModOsc = null;
+      let deformedTrailerModGain = null;
+      let deformedTrailerShaper = null;
+      let deformedTrailerInterval = null;
+      let cleanTrailerSource = null;
+      let cleanTrailerGain = null;
+
       function getAudioContext() {
         if (!audioCtx) {
           const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-          if (AudioContextClass) audioCtx = new AudioContextClass();
+          if (AudioContextClass) {
+            audioCtx = new AudioContextClass();
+            audioCtx.onstatechange = () => {
+              if (audioCtx && audioCtx.state === 'running') {
+                isAudioUnlocked = true;
+                updateForDepth(getDepth());
+              }
+            };
+          }
         }
-        if (audioCtx && audioCtx.state === 'suspended') {
-          audioCtx.resume();
+        if (audioCtx && (audioCtx.state === 'suspended' || audioCtx.state === 'interrupted')) {
+          audioCtx.resume().then(() => {
+            isAudioUnlocked = true;
+          }).catch(() => {});
         }
         return audioCtx;
       }
 
+      // Déblocage universel Web Audio pour iOS Safari / WebKit
+      function unlockAudioEngine() {
+        const ac = getAudioContext();
+        if (!ac) return;
+        if (ac.state === 'suspended' || ac.state === 'interrupted') {
+          ac.resume().then(() => {
+            isAudioUnlocked = true;
+            updateForDepth(getDepth());
+          }).catch(() => {});
+        } else if (ac.state === 'running') {
+          isAudioUnlocked = true;
+        }
+
+        // 1. Jouer un buffer silencieux pour forcer le matériel audio iOS à s'activer
+        try {
+          const buffer = ac.createBuffer(1, 1, 22050);
+          const source = ac.createBufferSource();
+          source.buffer = buffer;
+          source.connect(ac.destination);
+          source.start(0);
+        } catch (e) {}
+
+        // 2. Débloquer / amorcer SpeechSynthesis pour iOS Safari
+        if ('speechSynthesis' in window) {
+          try {
+            if (!window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
+              const prime = new SpeechSynthesisUtterance(' ');
+              prime.volume = 0;
+              window.speechSynthesis.speak(prime);
+            }
+          } catch(e) {}
+        }
+
+        // 3. Précharger les fichiers WAV de William et l'audio du Trailer en mémoire Web Audio
+        preloadWilliamAudio();
+        preloadTrailerAudio();
+      }
+
+      function preloadWilliamAudio() {
+        const ac = getAudioContext();
+        if (!ac) return;
+
+        [1, 2, 3].forEach(num => {
+          if (williamBuffers[num] || williamLoading[num]) return;
+          williamLoading[num] = true;
+          fetch(`william-${num}.wav`)
+            .then(res => {
+              if (!res.ok) throw new Error('Wav fetch failed');
+              return res.arrayBuffer();
+            })
+            .then(buf => ac.decodeAudioData(buf))
+            .then(decoded => {
+              williamBuffers[num] = decoded;
+              williamLoading[num] = false;
+            })
+            .catch(() => {
+              williamLoading[num] = false;
+            });
+        });
+      }
+
+      function loadTrailerAudioBuffer(onSuccess, onError) {
+        if (trailerBuffer) {
+          if (onSuccess) onSuccess(trailerBuffer);
+          return;
+        }
+        const ac = getAudioContext();
+        if (!ac) return;
+        isTrailerLoading = true;
+
+        const decodeBuffer = (arrayBuf) => {
+          return new Promise((resolve, reject) => {
+            ac.decodeAudioData(arrayBuf, resolve, reject);
+          });
+        };
+
+        // 1. Tenter d'abord le fichier audio dédié léger (trailer-audio.m4a)
+        fetch('trailer-audio.m4a')
+          .then(res => {
+            if (!res.ok) throw new Error('trailer-audio.m4a non trouvé (statut ' + res.status + ')');
+            return res.arrayBuffer();
+          })
+          .then(decodeBuffer)
+          .catch(() => {
+            // 2. Secours automatique transparent : décoder la piste audio directement depuis trailer.mp4
+            return fetch('trailer.mp4')
+              .then(res => {
+                if (!res.ok) throw new Error('trailer.mp4 non trouvé (statut ' + res.status + ')');
+                return res.arrayBuffer();
+              })
+              .then(decodeBuffer);
+          })
+          .then(decoded => {
+            trailerBuffer = decoded;
+            isTrailerLoading = false;
+            if (onSuccess) onSuccess(decoded);
+          })
+          .catch(err => {
+            console.warn('Échec du chargement audio du trailer:', err);
+            isTrailerLoading = false;
+            if (onError) onError(err);
+          });
+      }
+
+      function preloadTrailerAudio() {
+        if (trailerBuffer || isTrailerLoading) return;
+        loadTrailerAudioBuffer(decoded => {
+          const curDepth = getDepth();
+          if (curDepth >= 5 && curDepth <= 66 && ![32, 38, 44, 50, 54, 60].includes(curDepth)) {
+            startDeformedTrailer(curDepth);
+          }
+        });
+      }
+
+      function playWilliamVoiceBuffer(num, onEndedCb) {
+        const ac = getAudioContext();
+        if (!ac) return null;
+        if (ac.state === 'suspended' || ac.state === 'interrupted') {
+          ac.resume().catch(() => {});
+        }
+        if (williamBuffers[num]) {
+          try {
+            const src = ac.createBufferSource();
+            src.buffer = williamBuffers[num];
+            src.connect(ac.destination);
+            let endedDone = false;
+            src.onended = () => {
+              if (!endedDone) {
+                endedDone = true;
+                if (onEndedCb) onEndedCb();
+              }
+            };
+            src.start(0);
+            return src;
+          } catch(e) {}
+        }
+        return null;
+      }
+
+      // 1. Générateurs de distorsion harmonique et bitcrush non-linéaire
+      function makeDistortionCurve(amount) {
+        const k = typeof amount === 'number' ? amount : 50;
+        const n_samples = 44100;
+        const curve = new Float32Array(n_samples);
+        const deg = Math.PI / 180;
+        for (let i = 0; i < n_samples; ++i) {
+          const x = (i * 2) / n_samples - 1;
+          curve[i] = ((3 + k) * x * 20 * deg) / (Math.PI + k * Math.abs(x));
+        }
+        return curve;
+      }
+
+      function makeSteppedDistortionCurve(steps, drive) {
+        const n_samples = 44100;
+        const curve = new Float32Array(n_samples);
+        const stepSize = 2.0 / steps;
+        for (let i = 0; i < n_samples; ++i) {
+          let x = (i * 2) / n_samples - 1;
+          x = Math.max(-1, Math.min(1, x * drive));
+          curve[i] = Math.round(x / stepSize) * stepSize;
+        }
+        return curve;
+      }
+
+      function makeAsymmetricCurve(drive) {
+        const n_samples = 44100;
+        const curve = new Float32Array(n_samples);
+        for (let i = 0; i < n_samples; ++i) {
+          const x = (i * 2) / n_samples - 1;
+          if (x >= 0) {
+            curve[i] = Math.tanh(x * drive);
+          } else {
+            curve[i] = Math.max(-0.45, x * drive * 1.5);
+          }
+        }
+        return curve;
+      }
+
+      // Configuration dynamique des 6 archétypes mutants de torture audio slide par slide
+      function getTrailerArchetypeParams(depth) {
+        const decay = Math.min(1.0, Math.max(0.0, (depth - 5) / 55.0));
+        const archetype = depth % 6;
+        let rate = 1.0;
+        let filterType = 'bandpass';
+        let filterFreq = 1000;
+        let filterQ = 3.0;
+        let modType = 'sawtooth';
+        let modFreq = 15;
+        let modDepth = 0.35;
+        let curveType = 'standard';
+        let curveParam = 60;
+        let masterVol = Math.min(0.20, 0.08 + decay * 0.1);
+
+        switch (archetype) {
+          case 0:
+            // Archétype 0 : Demonic Sub-Octave Drone (Basse abyssale ralentie)
+            rate = 0.42 + (depth % 3) * 0.04; // 0.42x à 0.50x
+            filterType = 'lowpass';
+            filterFreq = 180 + (depth % 4) * 45;
+            filterQ = 4.2 + decay * 4.5;
+            modType = 'square';
+            modFreq = 3.5 + (depth % 3) * 1.2;
+            modDepth = 0.35 + decay * 0.3;
+            curveType = 'standard';
+            curveParam = 90 + decay * 80;
+            masterVol = 0.18;
+            break;
+
+          case 1:
+            // Archétype 1 : Granular Stutter / Broken Slicer (Hachoir granulaire frénétique)
+            rate = 0.88 + (depth % 4) * 0.12;
+            filterType = 'peaking';
+            filterFreq = 1150 + (depth % 5) * 160;
+            filterQ = 5.2;
+            modType = 'square';
+            modFreq = 18 + (depth % 7) * 2.5; // Découpage rapide à l'arrachée
+            modDepth = 0.65;
+            curveType = 'stepped';
+            curveParam = 5; // 5 pas de quantification 8-bit
+            masterVol = 0.16;
+            break;
+
+          case 2:
+            // Archétype 2 : Alien Ring-Mod / Cybernetic Carrier (Modulation en anneau robotique)
+            rate = 0.94 + (depth % 3) * 0.10;
+            filterType = 'bandpass';
+            filterFreq = 1600 + (depth % 6) * 140;
+            filterQ = 5.5 + decay * 3.5;
+            modType = 'sawtooth';
+            modFreq = 180 + (depth % 8) * 26; // Porteuse audio-rate -> intermodulation spectrale
+            modDepth = 0.52;
+            curveType = 'standard';
+            curveParam = 140 + decay * 60;
+            masterVol = 0.15;
+            break;
+
+          case 3:
+            // Archétype 3 : Soviet Shortwave Radio / Broken Walkie-Talkie (Radio fantôme soviétique)
+            rate = 1.06 + (depth % 5) * 0.05;
+            filterType = 'bandpass';
+            filterFreq = 880 + (depth % 4) * 90;
+            filterQ = 8.5;
+            modType = 'sine';
+            modFreq = 12 + (depth % 4) * 2;
+            modDepth = 0.42;
+            curveType = 'asymmetric';
+            curveParam = 3.2; // Diodes asymétriques
+            masterVol = 0.17;
+            break;
+
+          case 4:
+            // Archétype 4 : Psychotic Fast-Forward / Screaming Treble (Avance rapide aiguë psychotique)
+            rate = 1.62 + (depth % 4) * 0.14; // 1.6x à 2.1x
+            filterType = 'highpass';
+            filterFreq = 1200 + (depth % 5) * 180;
+            filterQ = 3.8;
+            modType = 'triangle';
+            modFreq = 8.5 + (depth % 5) * 2;
+            modDepth = 0.32;
+            curveType = 'standard';
+            curveParam = 75 + decay * 90;
+            masterVol = 0.14;
+            break;
+
+          case 5:
+          default:
+            // Archétype 5 : Tape-Stop Meltdown / Pitch Diver (Cabestan qui fond / chute de pitch)
+            rate = 0.62 + (depth % 3) * 0.14;
+            filterType = 'lowpass';
+            filterFreq = 340 + (depth % 5) * 120;
+            filterQ = 6.0;
+            modType = 'sawtooth';
+            modFreq = 6 + (depth % 3) * 2.5;
+            modDepth = 0.45;
+            curveType = 'stepped';
+            curveParam = 4;
+            masterVol = 0.17;
+            break;
+        }
+
+        return { archetype, rate, filterType, filterFreq, filterQ, modType, modFreq, modDepth, curveType, curveParam, masterVol };
+      }
+
+      // Lecture du Trailer DÉFORMÉ ET HORRIFIQUE (DSP Web Audio temps réel mutant)
+      function startDeformedTrailer(depth) {
+        const ac = getAudioContext();
+        if (!ac) return;
+        if (!trailerBuffer) {
+          loadTrailerAudioBuffer(() => startDeformedTrailer(depth));
+          return;
+        }
+
+        const p = getTrailerArchetypeParams(depth);
+        const now = ac.currentTime;
+
+        // Si déjà en cours de lecture, morphing et mutation instantanée slide par slide !
+        if (deformedTrailerSource && deformedTrailerGain) {
+          try {
+            // Effet d'arrêt de bande / saut de pitch à chaque changement de page
+            deformedTrailerSource.playbackRate.cancelScheduledValues(now);
+            deformedTrailerSource.playbackRate.setValueAtTime(deformedTrailerSource.playbackRate.value, now);
+            deformedTrailerSource.playbackRate.linearRampToValueAtTime(Math.max(0.24, p.rate * 0.45), now + 0.09);
+            deformedTrailerSource.playbackRate.exponentialRampToValueAtTime(p.rate, now + 0.36);
+
+            if (deformedTrailerFilter) {
+              deformedTrailerFilter.type = p.filterType;
+              deformedTrailerFilter.frequency.cancelScheduledValues(now);
+              deformedTrailerFilter.frequency.linearRampToValueAtTime(p.filterFreq, now + 0.4);
+              deformedTrailerFilter.Q.linearRampToValueAtTime(p.filterQ, now + 0.4);
+            }
+
+            if (deformedTrailerModOsc && deformedTrailerModGain) {
+              deformedTrailerModOsc.type = p.modType;
+              deformedTrailerModOsc.frequency.cancelScheduledValues(now);
+              deformedTrailerModOsc.frequency.linearRampToValueAtTime(p.modFreq, now + 0.3);
+              deformedTrailerModGain.gain.linearRampToValueAtTime(p.modDepth, now + 0.3);
+            }
+
+            if (deformedTrailerShaper) {
+              if (p.curveType === 'stepped') {
+                deformedTrailerShaper.curve = makeSteppedDistortionCurve(p.curveParam, 2.0);
+              } else if (p.curveType === 'asymmetric') {
+                deformedTrailerShaper.curve = makeAsymmetricCurve(p.curveParam);
+              } else {
+                deformedTrailerShaper.curve = makeDistortionCurve(p.curveParam);
+              }
+            }
+
+            deformedTrailerGain.gain.linearRampToValueAtTime(p.masterVol, now + 0.35);
+          } catch(e) {}
+          return;
+        }
+
+        try {
+          deformedTrailerSource = ac.createBufferSource();
+          deformedTrailerSource.buffer = trailerBuffer;
+          deformedTrailerSource.loop = true;
+
+          const offset = (depth * 3.4) % trailerBuffer.duration;
+          deformedTrailerSource.playbackRate.setValueAtTime(p.rate, now);
+
+          // 1. Shaper de distorsion non-linéaire / bitcrush
+          deformedTrailerShaper = ac.createWaveShaper();
+          if (p.curveType === 'stepped') {
+            deformedTrailerShaper.curve = makeSteppedDistortionCurve(p.curveParam, 2.0);
+          } else if (p.curveType === 'asymmetric') {
+            deformedTrailerShaper.curve = makeAsymmetricCurve(p.curveParam);
+          } else {
+            deformedTrailerShaper.curve = makeDistortionCurve(p.curveParam);
+          }
+          deformedTrailerShaper.oversample = '2x';
+
+          // 2. Filtre spectral morphant
+          deformedTrailerFilter = ac.createBiquadFilter();
+          deformedTrailerFilter.type = p.filterType;
+          deformedTrailerFilter.frequency.setValueAtTime(p.filterFreq, now);
+          deformedTrailerFilter.Q.setValueAtTime(p.filterQ, now);
+
+          // 3. Modulateur d'amplitude (Tremolo ou Ring-Mod)
+          deformedTrailerModOsc = ac.createOscillator();
+          deformedTrailerModOsc.type = p.modType;
+          deformedTrailerModOsc.frequency.setValueAtTime(p.modFreq, now);
+
+          deformedTrailerModGain = ac.createGain();
+          deformedTrailerModGain.gain.setValueAtTime(p.modDepth, now);
+          deformedTrailerModOsc.connect(deformedTrailerModGain.gain);
+
+          // 4. Volume global du trailer déformé
+          deformedTrailerGain = ac.createGain();
+          deformedTrailerGain.gain.setValueAtTime(0.001, now);
+          deformedTrailerGain.gain.linearRampToValueAtTime(p.masterVol, now + 0.5);
+
+          // Chaîne audio : source -> shaper -> filtre -> modulateur AM -> masterGain -> destination
+          deformedTrailerSource.connect(deformedTrailerShaper);
+          deformedTrailerShaper.connect(deformedTrailerFilter);
+          deformedTrailerFilter.connect(deformedTrailerModGain);
+          deformedTrailerModGain.connect(deformedTrailerGain);
+          deformedTrailerGain.connect(ac.destination);
+
+          deformedTrailerModOsc.start(now);
+          deformedTrailerSource.start(now, offset);
+
+          // Micro-dérives organiques de bande magnétique étirée
+          if (deformedTrailerInterval) clearInterval(deformedTrailerInterval);
+          deformedTrailerInterval = setInterval(() => {
+            if (!deformedTrailerSource || !audioCtx) return;
+            const t = audioCtx.currentTime;
+            const flutter = (Math.random() - 0.5) * 0.08;
+            try {
+              deformedTrailerSource.playbackRate.linearRampToValueAtTime(Math.max(0.25, p.rate + flutter), t + 0.6);
+            } catch(err) {}
+          }, 850);
+
+        } catch(e) {}
+      }
+
+      function stopDeformedTrailer() {
+        if (deformedTrailerInterval) {
+          clearInterval(deformedTrailerInterval);
+          deformedTrailerInterval = null;
+        }
+        if (!deformedTrailerGain || !audioCtx) return;
+        try {
+          const t = audioCtx.currentTime;
+          deformedTrailerGain.gain.linearRampToValueAtTime(0.0001, t + 0.35);
+          const src = deformedTrailerSource;
+          const osc = deformedTrailerModOsc;
+          setTimeout(() => {
+            try { if (src) { src.stop(); src.disconnect(); } } catch(e) {}
+            try { if (osc) { osc.stop(); osc.disconnect(); } } catch(e) {}
+          }, 400);
+          deformedTrailerSource = null;
+          deformedTrailerModOsc = null;
+          deformedTrailerModGain = null;
+          deformedTrailerFilter = null;
+          deformedTrailerShaper = null;
+          deformedTrailerGain = null;
+        } catch(e) {}
+      }
+
+      function stopCleanTrailerAudio() {
+        if (cleanTrailerSource) {
+          try {
+            cleanTrailerSource.stop();
+            cleanTrailerSource.disconnect();
+          } catch(e) {}
+          cleanTrailerSource = null;
+        }
+        if (cleanTrailerGain) {
+          try {
+            cleanTrailerGain.disconnect();
+          } catch(e) {}
+          cleanTrailerGain = null;
+        }
+      }
+
+      function playCleanTrailerAudio(videoEl) {
+        unlockAudioEngine();
+        const ac = getAudioContext();
+        if (!ac) return;
+
+        function startCleanSource(buf) {
+          try {
+            stopCleanTrailerAudio();
+            cleanTrailerSource = ac.createBufferSource();
+            cleanTrailerSource.buffer = buf;
+            cleanTrailerGain = ac.createGain();
+            cleanTrailerGain.gain.setValueAtTime(1.0, ac.currentTime);
+            cleanTrailerSource.connect(cleanTrailerGain);
+            cleanTrailerGain.connect(ac.destination);
+
+            const offset = videoEl ? Math.max(0, videoEl.currentTime || 0) : 0;
+            cleanTrailerSource.start(0, offset);
+
+            if (videoEl) {
+              const onPause = () => {
+                if (cleanTrailerGain && ac) cleanTrailerGain.gain.setValueAtTime(0, ac.currentTime);
+              };
+              const onPlay = () => {
+                if (cleanTrailerGain && ac) cleanTrailerGain.gain.setValueAtTime(1, ac.currentTime);
+              };
+              const onEnded = () => {
+                stopCleanTrailerAudio();
+              };
+              const onSeeked = () => {
+                if (cleanTrailerSource && !videoEl.paused) {
+                  playCleanTrailerAudio(videoEl);
+                }
+              };
+              videoEl.addEventListener('pause', onPause);
+              videoEl.addEventListener('play', onPlay);
+              videoEl.addEventListener('ended', onEnded, { once: true });
+              videoEl.addEventListener('seeked', onSeeked);
+            }
+          } catch(e) {}
+        }
+
+        loadTrailerAudioBuffer(decoded => {
+          startCleanSource(decoded);
+        }, () => {
+          if (videoEl) {
+            videoEl.muted = false;
+            videoEl.volume = 1.0;
+          }
+        });
+      }
+
+      // Son réaliste et percutant de bris de verre / rupture de réalité (Mousse -> HAL)
+      function playGlassShatter() {
+        unlockAudioEngine();
+        const ac = getAudioContext();
+        if (!ac) return;
+        try {
+          const t = ac.currentTime;
+
+          // 1. Éclatement blanc haute fréquence (impact et cassure de la vitre)
+          const bufferSize = Math.floor(ac.sampleRate * 0.45);
+          const noiseBuffer = ac.createBuffer(1, bufferSize, ac.sampleRate);
+          const data = noiseBuffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ac.sampleRate * 0.075));
+          }
+          const noiseSource = ac.createBufferSource();
+          noiseSource.buffer = noiseBuffer;
+
+          const noiseFilter = ac.createBiquadFilter();
+          noiseFilter.type = 'highpass';
+          noiseFilter.frequency.setValueAtTime(3400, t);
+          noiseFilter.frequency.exponentialRampToValueAtTime(700, t + 0.35);
+
+          const noiseGain = ac.createGain();
+          noiseGain.gain.setValueAtTime(0.38, t);
+          noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+
+          noiseSource.connect(noiseFilter);
+          noiseFilter.connect(noiseGain);
+          noiseGain.connect(ac.destination);
+          noiseSource.start(t);
+
+          // 2. Éclats cristallins multiples (fragments de verre qui s'entrechoquent et résonnent)
+          const frequencies = [2200, 2850, 3600, 4400, 5600, 7200];
+          frequencies.forEach((f, idx) => {
+            const osc = ac.createOscillator();
+            const g = ac.createGain();
+            const delay = Math.random() * 0.12;
+            const startT = t + delay;
+            const dur = 0.2 + Math.random() * 0.38;
+
+            osc.type = idx % 2 === 0 ? 'sine' : 'triangle';
+            osc.frequency.setValueAtTime(f, startT);
+            osc.frequency.exponentialRampToValueAtTime(f * (0.65 + Math.random() * 0.5), startT + dur);
+
+            g.gain.setValueAtTime(0.0001, startT);
+            g.gain.linearRampToValueAtTime(0.14, startT + 0.01);
+            g.gain.exponentialRampToValueAtTime(0.0001, startT + dur);
+
+            osc.connect(g);
+            g.connect(ac.destination);
+            osc.start(startT);
+            osc.stop(startT + dur + 0.05);
+          });
+
+          // 3. Onde de choc infrasonore (rupture physique du plan de réalité)
+          const sub = ac.createOscillator();
+          const subGain = ac.createGain();
+          sub.type = 'sine';
+          sub.frequency.setValueAtTime(85, t);
+          sub.frequency.exponentialRampToValueAtTime(26, t + 0.45);
+
+          subGain.gain.setValueAtTime(0.32, t);
+          subGain.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+
+          sub.connect(subGain);
+          subGain.connect(ac.destination);
+          sub.start(t);
+          sub.stop(t + 0.52);
+
+        } catch (e) {}
+      }
+
+      // Son organique d'envahissement végétal puis flétrissement (Mousse -> HAL)
+      function playMossOverwhelmSound() {
+        unlockAudioEngine();
+        const ac = getAudioContext();
+        if (!ac) return;
+        try {
+          const t = ac.currentTime;
+
+          // 1. Souffle végétal en expansion (bruit filtré qui monte en puissance)
+          const bufferSize = Math.floor(ac.sampleRate * 2.2);
+          const noiseBuffer = ac.createBuffer(1, bufferSize, ac.sampleRate);
+          const data = noiseBuffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            data[i] = (Math.random() * 2 - 1);
+          }
+          const noiseSource = ac.createBufferSource();
+          noiseSource.buffer = noiseBuffer;
+
+          const filter = ac.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(140, t);
+          filter.frequency.exponentialRampToValueAtTime(850, t + 1.1);
+          filter.frequency.exponentialRampToValueAtTime(120, t + 2.1);
+
+          const gain = ac.createGain();
+          gain.gain.setValueAtTime(0.001, t);
+          gain.gain.linearRampToValueAtTime(0.28, t + 0.9);
+          gain.gain.linearRampToValueAtTime(0.18, t + 1.5);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 2.2);
+
+          noiseSource.connect(filter);
+          filter.connect(gain);
+          gain.connect(ac.destination);
+          noiseSource.start(t);
+
+          // 2. Résonance harmonique organique (accord de spores qui s'ouvre puis dérive)
+          const freqs = [164.81, 196.00, 246.94, 329.63]; // Mi mineur 7
+          freqs.forEach((f) => {
+            const osc = ac.createOscillator();
+            const g = ac.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(f, t);
+            osc.frequency.linearRampToValueAtTime(f * 1.15, t + 1.0);
+            osc.frequency.exponentialRampToValueAtTime(f * 0.72, t + 2.0); // Chute de pitch en mourant
+
+            g.gain.setValueAtTime(0.0001, t);
+            g.gain.linearRampToValueAtTime(0.08, t + 0.8);
+            g.gain.exponentialRampToValueAtTime(0.0001, t + 2.1);
+
+            osc.connect(g);
+            g.connect(ac.destination);
+            osc.start(t);
+            osc.stop(t + 2.2);
+          });
+        } catch(e) {}
+      }
+
       // Clic mécanique rétro 1996
       function playRetroClick() {
+        unlockAudioEngine();
         const ac = getAudioContext();
         if (!ac) return;
         try {
@@ -2100,6 +2777,7 @@
 
       // Chuchotement de page tournée 1996
       function playPageTurn() {
+        unlockAudioEngine();
         const ac = getAudioContext();
         if (!ac) return;
         try {
@@ -2132,12 +2810,34 @@
       // Démarrage du Drone Vivant & Chaotique (Pitch-Drift + Resonant Filter Walk)
       function startGlitchDrone(depth) {
         const ac = getAudioContext();
-        if (!ac || glitchDroneGain) return;
+        if (!ac) return;
+
+        // Si le contexte est encore suspendu sur iOS, demander le réveil et relancer
+        if (ac.state === 'suspended' || ac.state === 'interrupted') {
+          ac.resume().then(() => {
+            const curDepth = getDepth();
+            if (curDepth >= 15 && curDepth <= 110) {
+              startGlitchDrone(curDepth);
+            }
+          }).catch(() => {});
+        }
+
+        // Si les oscillateurs tournent déjà, simplement ré-ajuster le volume vers 0.08
+        if (glitchDroneGain && glitchDroneOsc1) {
+          try {
+            const t = ac.currentTime;
+            glitchDroneGain.gain.cancelScheduledValues(t);
+            glitchDroneGain.gain.setValueAtTime(glitchDroneGain.gain.value || 0.001, t);
+            glitchDroneGain.gain.linearRampToValueAtTime(0.08, t + 0.6);
+          } catch(e) {}
+          return;
+        }
+
         try {
           const t = ac.currentTime;
           glitchDroneGain = ac.createGain();
           glitchDroneGain.gain.setValueAtTime(0.001, t);
-          glitchDroneGain.gain.linearRampToValueAtTime(0.08, t + 1.2);
+          glitchDroneGain.gain.linearRampToValueAtTime(0.08, t + 0.8);
 
           droneFilter = ac.createBiquadFilter();
           droneFilter.type = 'lowpass';
@@ -2180,9 +2880,11 @@
             const drift1 = baseF + (Math.random() - 0.5) * 4.5;
             const drift2 = (baseF * 1.05) + (Math.random() - 0.5) * 6.0;
             const filterSweep = 90 + Math.random() * 160 + (depth > 68 ? 80 : 0);
-            glitchDroneOsc1.frequency.linearRampToValueAtTime(drift1, now + 1.2);
-            glitchDroneOsc2.frequency.linearRampToValueAtTime(drift2, now + 1.2);
-            if (droneFilter) droneFilter.frequency.linearRampToValueAtTime(filterSweep, now + 1.4);
+            try {
+              glitchDroneOsc1.frequency.linearRampToValueAtTime(drift1, now + 1.2);
+              glitchDroneOsc2.frequency.linearRampToValueAtTime(drift2, now + 1.2);
+              if (droneFilter) droneFilter.frequency.linearRampToValueAtTime(filterSweep, now + 1.4);
+            } catch(e) {}
           }, 1400);
 
         } catch (e) {}
@@ -2731,17 +3433,36 @@
         const interactiveDepths = [32, 38, 44, 50, 54, 60, 67];
         if (interactiveDepths.includes(depth)) {
           stopGlitchDrone();
+          stopDeformedTrailer();
           stopHiss();
           return;
         }
 
-        if (depth < 15) {
+        if (depth > 0) {
+          stopCleanTrailerAudio();
+        }
+
+        if (depth < 5) {
           stopGlitchDrone();
+          stopDeformedTrailer();
           stopHiss();
-        } else if (depth >= 15 && depth <= 82) {
+        } else if (depth >= 5 && depth <= 14) {
+          // Niveaux 5 à 14 : Vidéo trailer progressive & déformation sonore horrifique
+          stopGlitchDrone();
+          startDeformedTrailer(depth);
+          stopHiss();
+        } else if (depth >= 15 && depth <= 66) {
+          // Niveaux 15 à 66 : Drone glitch vivant + trailer déformé horrifique
+          startGlitchDrone(depth);
+          startDeformedTrailer(depth);
+          stopHiss();
+        } else if (depth >= 68 && depth <= 82) {
+          // Séquence HAL 9000 : extinction du trailer, sub-bass abyssal et voix
+          stopDeformedTrailer();
           startGlitchDrone(depth);
           stopHiss();
         } else if (depth >= 83 && depth <= 135) {
+          stopDeformedTrailer();
           const t = (depth - 83) / 52.0;
           if (t < 0.55) {
             startGlitchDrone(depth);
@@ -2754,6 +3475,7 @@
           const hissVol = 0.03 + t * 0.14;
           setHissVolume(hissVol);
         } else if (depth >= 136) {
+          stopDeformedTrailer();
           stopGlitchDrone();
           setHissVolume(0.16);
         }
@@ -2761,6 +3483,16 @@
 
       return {
         getAudioContext,
+        unlockAudioEngine,
+        playWilliamVoiceBuffer,
+        preloadWilliamAudio,
+        preloadTrailerAudio,
+        startDeformedTrailer,
+        stopDeformedTrailer,
+        playCleanTrailerAudio,
+        stopCleanTrailerAudio,
+        playGlassShatter,
+        playMossOverwhelmSound,
         playRetroClick,
         playPageTurn,
         playProceduralGlitch,
@@ -2778,16 +3510,18 @@
         updateForDepth,
         stopAll: function() {
           stopGlitchDrone();
+          stopDeformedTrailer();
+          stopCleanTrailerAudio();
           stopHiss();
         }
       };
     })();
 
-    // Déblocage automatique du Web Audio sur premier geste utilisateur
-    ['click', 'touchstart', 'keydown'].forEach(evt => {
+    // Déblocage universel Web Audio & Synthèse Vocale sur TOUS les gestes tactiles et clics (iOS Safari & Desktop)
+    ['touchstart', 'touchend', 'click', 'pointerdown', 'pointerup', 'keydown'].forEach(evt => {
       window.addEventListener(evt, () => {
-        SiteAudio.getAudioContext();
-      }, { passive: true });
+        SiteAudio.unlockAudioEngine();
+      }, { capture: true, passive: true });
     });
 
     // =========================================
@@ -2796,7 +3530,7 @@
     function renderDepth0() {
       stage.innerHTML = `
         <div id="trailer-view">
-          <video id="p-trailer" playsinline preload="auto" src="trailer.mp4"></video>
+          <video id="p-trailer" playsinline webkit-playsinline preload="auto" src="trailer.mp4"></video>
           <div id="loading-curtain">
             <button id="enter-btn">Presser pour entrer dans l'Amour</button>
           </div>
@@ -2809,15 +3543,25 @@
       const enterBtn = document.getElementById('enter-btn');
       const learnMore = document.getElementById('p-learn-more');
 
-      video.addEventListener('loadeddata', () => {
+      // Garantir la visibilité immédiate du bouton sur Safari & tous les navigateurs
+      if (enterBtn) {
         enterBtn.style.opacity = '1';
         enterBtn.style.transform = 'scale(1)';
-      });
+      }
 
       enterBtn.addEventListener('click', () => {
+        SiteAudio.unlockAudioEngine();
+        SiteAudio.playCleanTrailerAudio(video);
+
+        video.muted = true;
+        video.play().catch(err => {
+          console.warn('Video play note:', err);
+        });
+
         curtain.style.opacity = '0';
-        setTimeout(() => { curtain.style.display = 'none'; }, 1200);
-        video.play();
+        setTimeout(() => {
+          if (curtain) curtain.style.display = 'none';
+        }, 1200);
       });
 
       video.addEventListener('timeupdate', () => {
@@ -2826,12 +3570,22 @@
         }
       });
 
+      // Secours Safari / Mobile : au cas où la vidéo met du temps ou ne démarre pas
+      const fallbackLearnMoreTimer = setTimeout(() => {
+        if (learnMore && !learnMore.classList.contains('visible')) {
+          learnMore.classList.add('visible');
+        }
+      }, 8000);
+
       video.addEventListener('ended', () => {
         video.currentTime = Math.max(0, video.duration - 10);
-        video.play();
+        video.play().catch(() => {});
       });
 
-      learnMore.addEventListener('click', advanceToNextDepth);
+      learnMore.addEventListener('click', () => {
+        clearTimeout(fallbackLearnMoreTimer);
+        advanceToNextDepth();
+      });
     }
 
     // =========================================
@@ -3447,7 +4201,6 @@
             <button class="retro-btn" id="btn-browser-forward" title="Page suivante">Suivant</button>
             <button class="retro-btn" id="btn-browser-home" title="Accueil du Refuge">Accueil</button>
             <button class="retro-btn" id="btn-browser-reload" title="Recharger la page">Recharger</button>
-            <a href="test3d.html" class="retro-btn" style="text-decoration:none; color:#000080; font-weight:bold;" title="Ouvrir le laboratoire d'animation 3D">🎭 Salon 3D ➔</a>
             <button class="retro-btn" style="margin-left:auto;" id="btn-browser-status">${mosaicTitle}</button>
           </div>
 
@@ -3954,8 +4707,6 @@
 
           ${hintHtml}
 
-          <div class="film-clap-indicator">LE REFUGE // EFFILOCHEMENT DU SIGNAL</div>
-          <div id="glitch-subtle-reset" style="position:absolute; bottom:14px; right:18px; font-family:'Courier New',monospace; font-size:10px; color:rgba(255,255,255,0.28); cursor:pointer; z-index:90; letter-spacing:0.12em; text-transform:uppercase;">[RETOUR AU REFUGE]</div>
         </div>
       `;
 
@@ -4153,13 +4904,15 @@
         }
       }, timerSpeed);
 
-      subtleReset.addEventListener('click', (e) => {
-        e.stopPropagation();
-        resetToDepth0();
-      });
+      if (subtleReset) {
+        subtleReset.addEventListener('click', (e) => {
+          e.stopPropagation();
+          resetToDepth0();
+        });
+      }
 
       abyss.addEventListener('click', (e) => {
-        if (e.target !== subtleReset) {
+        if (!subtleReset || e.target !== subtleReset) {
           SiteAudio.playProceduralGlitch(depth);
           advanceToNextDepth();
         }
@@ -4200,8 +4953,6 @@
 
           ${hintHtml}
 
-          <div class="film-clap-indicator">LE REFUGE // DÉSORGANISATION DU SIGNAL</div>
-          <div id="glitch-subtle-reset" style="position:absolute; bottom:14px; right:18px; font-family:'Courier New',monospace; font-size:10px; color:rgba(255,255,255,0.28); cursor:pointer; z-index:90; letter-spacing:0.12em; text-transform:uppercase;">[RETOUR AU REFUGE]</div>
         </div>
       `;
 
@@ -4292,13 +5043,15 @@
         }
       }, 150);
 
-      subtleReset.addEventListener('click', (e) => {
-        e.stopPropagation();
-        resetToDepth0();
-      });
+      if (subtleReset) {
+        subtleReset.addEventListener('click', (e) => {
+          e.stopPropagation();
+          resetToDepth0();
+        });
+      }
 
       abyss.addEventListener('click', (e) => {
-        if (e.target !== subtleReset) {
+        if (!subtleReset || e.target !== subtleReset) {
           SiteAudio.playProceduralGlitch(depth);
           advanceToNextDepth();
         }
@@ -4345,8 +5098,6 @@
 
           ${hintHtml}
 
-          <div class="film-clap-indicator" style="background:#ff0044; color:#fff;">LE REFUGE // SURCHAUFFE CRITIQUE</div>
-          <div id="glitch-subtle-reset" style="position:absolute; bottom:14px; right:18px; font-family:'Courier New',monospace; font-size:10px; color:rgba(255,255,255,0.28); cursor:pointer; z-index:90; letter-spacing:0.12em; text-transform:uppercase;">[RETOUR AU REFUGE]</div>
         </div>
       `;
 
@@ -4516,13 +5267,15 @@
         }
       }, 95);
 
-      subtleReset.addEventListener('click', (e) => {
-        e.stopPropagation();
-        resetToDepth0();
-      });
+      if (subtleReset) {
+        subtleReset.addEventListener('click', (e) => {
+          e.stopPropagation();
+          resetToDepth0();
+        });
+      }
 
       abyss.addEventListener('click', (e) => {
-        if (e.target !== subtleReset) {
+        if (!subtleReset || e.target !== subtleReset) {
           SiteAudio.playProceduralGlitch(depth);
           advanceToNextDepth();
         }
@@ -4532,26 +5285,55 @@
     // =========================================================================
     // 🔴 SYNTHÉTISEUR VOCAL DU SITE (ROBOTIQUE & SÉPULCRAL TYPE HAL 9000)
     // =========================================================================
-    function speakHalSentence(text) {
-      if (!('speechSynthesis' in window)) return;
-      try {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'fr-FR';
-        utterance.rate = 0.84; // Débit calme, mesuré et posé
-        utterance.pitch = 0.65; // Tonalité grave et légèrement synthétique
-        utterance.volume = 0.95;
+    let halSpeechTimeout = null;
 
-        const voices = window.speechSynthesis.getVoices();
-        const frVoice = voices.find(v => v.lang.startsWith('fr') && (v.name.includes('Thomas') || v.name.includes('Nicolas') || v.name.includes('Male') || v.name.includes('Google') || v.name.includes('Paul') || v.name.includes('Daniel')));
-        if (frVoice) {
-          utterance.voice = frVoice;
-        } else {
-          const anyFr = voices.find(v => v.lang.startsWith('fr'));
-          if (anyFr) utterance.voice = anyFr;
+    function speakHalSentence(text, onStartCb, onEndCb) {
+      if (!('speechSynthesis' in window)) return;
+      if (halSpeechTimeout) {
+        clearTimeout(halSpeechTimeout);
+        halSpeechTimeout = null;
+      }
+      try {
+        if (window.speechSynthesis.paused) {
+          window.speechSynthesis.resume();
+        }
+        if (window.speechSynthesis.speaking) {
+          window.speechSynthesis.cancel();
         }
 
-        window.speechSynthesis.speak(utterance);
+        halSpeechTimeout = setTimeout(() => {
+          try {
+            if (window.speechSynthesis.paused) {
+              window.speechSynthesis.resume();
+            }
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'fr-FR';
+            utterance.rate = 0.84; // Débit calme, mesuré et posé
+            utterance.pitch = 0.65; // Tonalité grave et légèrement synthétique
+            utterance.volume = 0.95;
+
+            utterance.onstart = () => {
+              if (onStartCb) onStartCb();
+            };
+            utterance.onend = () => {
+              if (onEndCb) onEndCb();
+            };
+            utterance.onerror = () => {
+              if (onEndCb) onEndCb();
+            };
+
+            const voices = window.speechSynthesis.getVoices();
+            const frVoice = voices.find(v => v.lang && v.lang.startsWith('fr') && (v.name.includes('Thomas') || v.name.includes('Nicolas') || v.name.includes('Male') || v.name.includes('Google') || v.name.includes('Paul') || v.name.includes('Daniel')));
+            if (frVoice) {
+              utterance.voice = frVoice;
+            } else {
+              const anyFr = voices.find(v => v.lang && v.lang.startsWith('fr'));
+              if (anyFr) utterance.voice = anyFr;
+            }
+
+            window.speechSynthesis.speak(utterance);
+          } catch (e) {}
+        }, 25);
       } catch (e) {}
     }
 
@@ -4599,62 +5381,66 @@
       const index = Math.max(0, Math.min(HAL_COMPUTER_SENTENCES.length - 1, depth - 68));
       const sentence = HAL_COMPUTER_SENTENCES[index];
 
-      // Progression de l'extinction : 0.0 (pleine intensité) à 1.0 (extinction presque complète)
-      const dimProgress = (depth - 68) / 14.0;
-      const lightPower = Math.max(0.02, Math.pow(1.0 - dimProgress, 1.6));
-
-      const bloomRadius = Math.round(10 + lightPower * 90);
-      const bloomAlpha = (lightPower * 0.9).toFixed(2);
-      const sparkScale = (0.15 + lightPower * 0.85).toFixed(2);
-      const sparkOpacity = (lightPower * 1.2).toFixed(2);
-      const textOpacity = (0.3 + lightPower * 0.7).toFixed(2);
+      // Progression dans le texte : depth 68 (0.0) à depth 82 (1.0)
+      const progress = (depth - 68) / 14.0;
+      const bodyOpacity = Math.max(0, Math.min(1, progress)).toFixed(3);
+      // La light de HAL diminue en opacité tout le long de sa litanie (de 1.0 à 0.0)
+      const lightOpacity = Math.max(0.0, Math.min(1.0, 1.0 - progress)).toFixed(3);
+      const textOpacity = Math.max(0.25, (1.0 - progress * 0.4)).toFixed(2);
+      const glowSpread = Math.round(15 + Math.max(0, 1.0 - progress) * 60);
+      const glowAlpha = Math.max(0, (1.0 - progress) * 0.85).toFixed(2);
 
       stage.innerHTML = `
         <div id="hal-stage">
-          <div class="hal-eye-unit">
-            <div class="hal-inner-bezel">
-              <div class="hal-lens" style="
-                box-shadow: 0 0 ${bloomRadius}px rgba(255, 10, 45, ${bloomAlpha}), inset 0 0 15px rgba(0,0,0,0.85);
-                filter: brightness(${Math.max(0.08, (lightPower * 1.25).toFixed(2))}) saturate(${Math.max(0.15, (lightPower * 1.4).toFixed(2))});
-              ">
-                <div class="hal-pupil-spark" style="
-                  transform: translate(-50%, -50%) scale(${sparkScale});
-                  opacity: ${sparkOpacity};
-                "></div>
-              </div>
-            </div>
-            <div class="hal-halo-glow" style="
-              box-shadow: 0 0 ${Math.round(bloomRadius * 1.6)}px rgba(255, 0, 30, ${(lightPower * 0.4).toFixed(2)});
-            "></div>
+          <div class="hal-images-wrapper">
+            <img src="HAL-light.webp" id="hal-light-img" class="hal-layer hal-light-layer" style="opacity: ${lightOpacity}; filter: drop-shadow(0 0 ${glowSpread}px rgba(255, 10, 45, ${glowAlpha})) drop-shadow(0 0 ${glowSpread * 1.8}px rgba(255, 0, 30, ${(glowAlpha * 0.5).toFixed(2)}));" alt="HAL 9000 Light" />
+            <img src="HAL-body.webp" id="hal-body-img" class="hal-layer hal-body-layer" style="opacity: ${bodyOpacity};" alt="HAL 9000 Body" />
           </div>
 
           <div class="hal-speech-container">
             <div class="hal-speech-text" style="opacity: ${textOpacity};">
               « ${sentence} »
             </div>
+            <div class="hal-subtle-hint">[ touchez pour avancer dans sa mémoire ]</div>
           </div>
         </div>
       `;
 
-      // Déclenchement de la voix synthétique
-      speakHalSentence(sentence);
+      let hasActuallySpoken = false;
+      function doSpeak() {
+        speakHalSentence(sentence, () => {
+          hasActuallySpoken = true;
+          const lightImg = document.getElementById('hal-light-img');
+          if (lightImg && lightOpacity > 0.04) {
+            lightImg.style.filter = `drop-shadow(0 0 ${glowSpread + 20}px rgba(255, 30, 60, 1)) drop-shadow(0 0 ${glowSpread * 2.2}px rgba(255, 10, 40, 0.8))`;
+          }
+        }, () => {
+          const lightImg = document.getElementById('hal-light-img');
+          if (lightImg) lightImg.style.filter = `drop-shadow(0 0 ${glowSpread}px rgba(255, 10, 45, ${glowAlpha})) drop-shadow(0 0 ${glowSpread * 1.8}px rgba(255, 0, 30, ${(glowAlpha * 0.5).toFixed(2)}))`;
+        });
+      }
 
-      // Micro-scintillement organique de l'œil rouge
-      const lensEl = stage.querySelector('.hal-lens');
-      const sparkEl = stage.querySelector('.hal-pupil-spark');
-      let pulseTimer = null;
-      if (lightPower > 0.08) {
-        pulseTimer = setInterval(() => {
-          if (!lensEl || !sparkEl) return;
-          const jitter = (Math.random() - 0.5) * 0.08 * lightPower;
-          lensEl.style.opacity = (1.0 + jitter).toFixed(2);
-          sparkEl.style.opacity = (sparkOpacity * (1.0 + jitter * 1.5)).toFixed(2);
-        }, 180);
+      // Déclenchement de la voix synthétique
+      doSpeak();
+
+      // Au cas où les voix iOS chargent de manière asynchrone
+      if (window.speechSynthesis && window.speechSynthesis.onvoiceschanged !== undefined) {
+        window.speechSynthesis.onvoiceschanged = () => {
+          if (!hasActuallySpoken) doSpeak();
+        };
       }
 
       const stageEl = document.getElementById('hal-stage');
+      let tapCount = 0;
       stageEl.addEventListener('click', () => {
-        if (pulseTimer) clearInterval(pulseTimer);
+        SiteAudio.unlockAudioEngine();
+        // Si la voix n'a pas pu démarrer automatiquement (blocage iOS sans geste),
+        // le premier tap déclenche la parole de HAL au lieu de sauter la page
+        if (!hasActuallySpoken && !window.speechSynthesis.speaking && tapCount === 0) {
+          tapCount++;
+          doSpeak();
+          return;
+        }
         SiteAudio.playProceduralGlitch(depth);
         advanceToNextDepth();
       });
@@ -4789,15 +5575,9 @@
       const btnContinueP33 = document.getElementById('btn-continue-p33');
       const timerDisplay = document.getElementById('auto-advance-timer');
 
-      // Audio Synthesizer (Web Audio API)
-      let audioCtx = null;
+      // Audio Synthesizer (Web Audio API partagé)
       function getAudioCtx() {
-        if (!audioCtx) {
-          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-          if (AudioContextClass) audioCtx = new AudioContextClass();
-        }
-        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-        return audioCtx;
+        return SiteAudio.getAudioContext();
       }
 
       function playPlaneSfx(type) {
@@ -5489,25 +6269,19 @@
                   </div>
                 </div>
 
-                <!-- Frequency readout & fine tuning -->
-                <div class="dial-controls-row">
-                  <button id="btn-dial-prev" class="btn-tuning">◀ -0.6 kHz</button>
+                <!-- Frequency readout -->
+                <div class="dial-controls-row" style="justify-content: center;">
                   <div class="dial-readout-box">
                     <span id="freq-val" class="freq-digits">52.0</span>
                     <span class="freq-unit">kHz</span>
                   </div>
-                  <button id="btn-dial-next" class="btn-tuning">+0.6 kHz ▶</button>
                 </div>
 
                 <!-- Live Fragment Display Box -->
                 <div id="fragment-box" class="fragment-box">
                   <div id="fragment-tag" class="fragment-tag">STATUT : SIGNAL BROUILLÉ</div>
-                  <div id="fragment-text" class="fragment-text">« Balayez le cadran pour retrouver la trace acoustique des résidents... »</div>
+                  <div id="fragment-text" class="fragment-text">« Faites glisser l'aiguille du cadran pour aligner les fréquences enfouies... »</div>
                 </div>
-
-                <button id="btn-capture-fragment" class="btn-capture" disabled>
-                  <span>⏺ FIXER LE FRAGMENT ACOUSTIQUE</span>
-                </button>
               </div>
             </div>
           </div>
@@ -5517,9 +6291,9 @@
             <div class="modal-card">
               <div class="modal-badge">RÉSONANCE VIBRATOIRE • SALLE 54</div>
               <h2>Chambre d'écoute soviétique</h2>
-              <p>Des centaines de personnes ont séjourné ici. Leurs rires, leurs attentes et leurs adieux se sont déposés dans les murs sous forme de fréquences. Ajustez le cadran pour syntoniser 3 fragments émotionnels.</p>
+              <p>Des centaines de personnes ont séjourné ici. Leurs rires, leurs attentes et leurs adieux se sont déposés dans les murs sous forme de fréquences. Ajustez le cadran en faisant glisser l'aiguille pour syntoniser 3 fragments émotionnels. La capture s'effectue automatiquement.</p>
               <div class="modal-keys">
-                <span class="key-pill">GLISSER L'AIGUILLE</span> ou touches <span class="key-pill">←</span> <span class="key-pill">→</span>
+                <span class="key-pill">GLISSEZ L'AIGUILLE SUR LE CADRAN</span> ou touches <span class="key-pill">←</span> <span class="key-pill">→</span>
               </div>
               <button id="btn-start-memory" class="btn-game-primary">OUVRIR LA FRÉQUENCE ➔</button>
               <div class="flyer-quote">« Il est interdit de parler pendant l'écoute. »</div>
@@ -5551,9 +6325,6 @@
       const dialTrack = document.getElementById('dial-track');
       const dialNeedle = document.getElementById('dial-needle');
       const freqValEl = document.getElementById('freq-val');
-      const btnDialPrev = document.getElementById('btn-dial-prev');
-      const btnDialNext = document.getElementById('btn-dial-next');
-      const btnCapture = document.getElementById('btn-capture-fragment');
       const targetCounter = document.getElementById('target-counter');
       const magicEye = document.getElementById('magic-eye');
       const fragmentTag = document.getElementById('fragment-tag');
@@ -5623,9 +6394,8 @@
 
       function getAudio() {
         if (!audioCtx) {
-          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-          if (!AudioContextClass) return null;
-          audioCtx = new AudioContextClass();
+          audioCtx = SiteAudio.getAudioContext();
+          if (!audioCtx) return null;
 
           // 1. Radio Static Generator (White noise)
           const bufSize = audioCtx.sampleRate * 2;
@@ -5733,21 +6503,29 @@
         const c = getAudio();
         const now = c ? c.currentTime : 0;
 
-        if (minDiff <= 2.2) {
-          // Locked in!
+        if (minDiff <= 2.6) {
+          // Locked in! Auto-capture immédiatement sans bouton à cliquer !
           if (!closest.captured) {
-            btnCapture.disabled = false;
-            btnCapture.classList.add('ready');
-            btnCapture.textContent = '🔴 CAPTURER LE FRAGMENT (ESPACE)';
-            fragmentTag.textContent = `${closest.title} - SYNTONISATION ACTIVE`;
+            closest.captured = true;
+            capturedCount++;
+            playChimeSound();
+
+            const dot = document.getElementById(closest.dotId);
+            if (dot) dot.classList.add('captured');
+            targetCounter.textContent = `${capturedCount} / 3`;
+
+            fragmentTag.textContent = `${closest.title} - ÉMOTION FOSSILISÉE CAPTURÉE !`;
             fragmentTag.className = 'fragment-status-tag active';
             fragmentText.textContent = closest.text;
-            magicEye.style.boxShadow = '0 0 16px #4ade80';
+            magicEye.style.boxShadow = '0 0 18px #4ade80';
             magicEye.style.background = 'radial-gradient(circle, #4ade80 40%, #15803d 90%)';
+
+            if (capturedCount >= 3) {
+              setTimeout(() => {
+                triggerVictory();
+              }, 700);
+            }
           } else {
-            btnCapture.disabled = true;
-            btnCapture.classList.remove('ready');
-            btnCapture.textContent = 'FRAGMENT DÉJÀ FOSSILISÉ';
             fragmentTag.textContent = `${closest.title} - ARCHIVÉ`;
             fragmentTag.className = 'fragment-status-tag active';
             fragmentText.textContent = closest.text;
@@ -5763,10 +6541,7 @@
           }
         } else if (minDiff <= 6.5) {
           // Approaching!
-          btnCapture.disabled = true;
-          btnCapture.classList.remove('ready');
-          btnCapture.textContent = 'SYNTONISEZ PLUS PRÉCISÉMENT...';
-          fragmentTag.textContent = 'SIGNAL VIBRATOIRE DÉTECTÉ - AJUSTEZ L\'AIGUILLE...';
+          fragmentTag.textContent = 'SIGNAL VIBRATOIRE DÉTECTÉ - GLISSEZ VERS LE POINT...';
           fragmentTag.className = 'fragment-status-tag';
           fragmentText.textContent = '« Les harmoniques émergent des murs... approchez-vous de la fréquence... »';
           magicEye.style.boxShadow = '0 0 6px #22c55e';
@@ -5782,10 +6557,7 @@
           }
         } else {
           // Off frequency: static noise
-          btnCapture.disabled = true;
-          btnCapture.classList.remove('ready');
-          btnCapture.textContent = 'CAPTURER LE FRAGMENT (ESPACE)';
-          fragmentTag.textContent = 'BRUIT STATIQUE - BALAYEZ LA BANDE DE FRÉQUENCES...';
+          fragmentTag.textContent = 'BRUIT STATIQUE - FAITES GLISSER L\'AIGUILLE SUR LA BANDE...';
           fragmentTag.className = 'fragment-status-tag';
           fragmentText.textContent = '« Déplacez l\'aiguille pour faire émerger les vibrations du passé. »';
           magicEye.style.boxShadow = 'none';
@@ -5796,23 +6568,6 @@
             whistleGain.gain.setTargetAtTime(0.0001, now, 0.08);
             chordGain.gain.setTargetAtTime(0.0001, now, 0.08);
           }
-        }
-      }
-
-      function captureCurrentTarget() {
-        if (!activeTarget || activeDiff > 2.2 || activeTarget.captured) return;
-        activeTarget.captured = true;
-        capturedCount++;
-        playChimeSound();
-
-        const dot = document.getElementById(activeTarget.dotId);
-        if (dot) dot.classList.add('captured');
-        targetCounter.textContent = `${capturedCount} / 3`;
-
-        updateTuning(currentFreq);
-
-        if (capturedCount >= 3) {
-          triggerVictory();
         }
       }
 
@@ -5835,24 +6590,25 @@
         }, 1000);
       }
 
-      // Dragging on dial track
+      // Dragging on dial track (Mouse, Pointer & Touch)
       function handleTrackPointer(e) {
         const rect = dialTrack.getBoundingClientRect();
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientX = (e.touches && e.touches[0]) ? e.touches[0].clientX : (e.clientX || 0);
         const x = clientX - rect.left;
         const pct = Math.max(0, Math.min(100, (x / rect.width) * 100));
         updateTuning(pctToFreq(pct));
       }
 
-      dialTrack.addEventListener('mousedown', (e) => {
+      dialTrack.addEventListener('pointerdown', (e) => {
         isDragging = true;
         getAudio();
         handleTrackPointer(e);
+        try { dialTrack.setPointerCapture(e.pointerId); } catch(err) {}
       });
-      window.addEventListener('mousemove', (e) => {
+      window.addEventListener('pointermove', (e) => {
         if (isDragging) handleTrackPointer(e);
       });
-      window.addEventListener('mouseup', () => {
+      window.addEventListener('pointerup', () => {
         isDragging = false;
       });
 
@@ -5860,25 +6616,12 @@
         isDragging = true;
         getAudio();
         handleTrackPointer(e);
-      }, { passive: false });
+      }, { passive: true });
       window.addEventListener('touchmove', (e) => {
         if (isDragging) handleTrackPointer(e);
-      }, { passive: false });
+      }, { passive: true });
       window.addEventListener('touchend', () => {
         isDragging = false;
-      });
-
-      btnDialPrev.addEventListener('click', () => {
-        getAudio();
-        updateTuning(currentFreq - 2.0);
-      });
-      btnDialNext.addEventListener('click', () => {
-        getAudio();
-        updateTuning(currentFreq + 2.0);
-      });
-
-      btnCapture.addEventListener('click', () => {
-        captureCurrentTarget();
       });
 
       btnStartMemory.addEventListener('click', () => {
@@ -6001,11 +6744,197 @@
           try { noiseSource.stop(); noiseSource.disconnect(); } catch (e) {}
           noiseSource = null;
         }
-        if (audioCtx) {
-          try { audioCtx.close(); } catch (e) {}
-          audioCtx = null;
+        if (whistleGain) {
+          try { whistleGain.disconnect(); } catch (e) {}
         }
+        if (chordGain) {
+          try { chordGain.disconnect(); } catch (e) {}
+        }
+        audioCtx = null;
       };
+    }
+
+    // =========================================
+    // TRANSITION ENVAHISSEMENT DE MOUSSE & RÉVÉLATION HAL 9000 (MOUSSE -> HAL)
+    // =========================================
+    function triggerMossOverwhelmAndRevealHal() {
+      // 1. Déverrouiller et amorcer la voix pour Safari/Mobile avant la transition
+      SiteAudio.unlockAudioEngine();
+      try {
+        if ('speechSynthesis' in window && !window.speechSynthesis.speaking) {
+          const primer = new SpeechSynthesisUtterance(' ');
+          primer.volume = 0;
+          window.speechSynthesis.speak(primer);
+        }
+      } catch(e) {}
+
+      // Son d'envahissement végétal
+      SiteAudio.playMossOverwhelmSound();
+
+      // 2. Création du conteneur d'animation plein écran
+      const container = document.createElement('div');
+      container.id = 'moss-overwhelm-container';
+
+      const canvas = document.createElement('canvas');
+      canvas.id = 'moss-overwhelm-canvas';
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      canvas.width = w;
+      canvas.height = h;
+      container.appendChild(canvas);
+
+      const vignette = document.createElement('div');
+      vignette.className = 'moss-overwhelm-vignette';
+      container.appendChild(vignette);
+
+      const targetParent = document.body || document.documentElement;
+      targetParent.appendChild(container);
+
+      const ctx = canvas.getContext('2d');
+
+      // 3. Calcul de l'origine : le bac de mousse (#moss-canvas ou #moss-garden-box)
+      const mossElem = document.getElementById('moss-canvas') || document.getElementById('moss-garden-box');
+      const rect = mossElem ? mossElem.getBoundingClientRect() : {
+        left: w * 0.2, top: h * 0.25, width: w * 0.6, height: h * 0.5
+      };
+      const originX = rect.left + rect.width / 2;
+      const originY = rect.top + rect.height / 2;
+
+      // 4. Génération de filaments et clusters de mousse qui sortent de leur boîte
+      const numClusters = 190;
+      const clusters = [];
+      const lushPalette = ['#14532d', '#166534', '#15803d', '#22c55e', '#4ade80', '#052e16', '#2d6a4f'];
+      const deadPalette = ['#3b2318', '#2b1a13', '#1e130d', '#121212', '#0a0a0a', '#1a1816'];
+
+      for (let i = 0; i < numClusters; i++) {
+        const startX = rect.left + Math.random() * rect.width;
+        const startY = rect.top + Math.random() * rect.height;
+        const angle = Math.atan2(startY - originY, startX - originX) + (Math.random() - 0.5) * 0.85;
+        const distToCorner = Math.hypot(w, h);
+        const targetDist = 60 + Math.random() * distToCorner;
+        const targetX = originX + Math.cos(angle) * targetDist;
+        const targetY = originY + Math.sin(angle) * targetDist;
+        const maxRadius = 70 + Math.random() * 180;
+
+        clusters.push({
+          startX, startY,
+          targetX, targetY,
+          x: startX,
+          y: startY,
+          radius: 12 + Math.random() * 24,
+          maxRadius,
+          lushColor: lushPalette[Math.floor(Math.random() * lushPalette.length)],
+          deadColor: deadPalette[Math.floor(Math.random() * deadPalette.length)],
+          growDelay: Math.random() * 0.35,
+          jitterX: (Math.random() - 0.5) * 22,
+          jitterY: (Math.random() - 0.5) * 22
+        });
+      }
+
+      // 5. Boucle d'animation d'envahissement & flétrissement
+      let animId = null;
+      const startTime = performance.now();
+      let hasAdvanced = false;
+
+      function renderFrame(now) {
+        const elapsed = now - startTime;
+
+        // Phase 1 : Envahissement (0ms -> 1050ms)
+        const pExpand = Math.min(1.0, elapsed / 950);
+        // Phase 2 : Mort / Flétrissement (950ms -> 2000ms)
+        const pDie = Math.max(0.0, Math.min(1.0, (elapsed - 950) / 950));
+
+        ctx.clearRect(0, 0, w, h);
+
+        // Fond organique qui envahit tout l'écran
+        if (pExpand > 0) {
+          const bgAlpha = Math.min(0.98, pExpand * 1.25);
+          if (pDie > 0) {
+            const r = Math.round(5 + (1 - pDie) * 5);
+            const g = Math.round(5 + (1 - pDie) * 35);
+            const b = Math.round(5 + (1 - pDie) * 15);
+            ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${bgAlpha})`;
+          } else {
+            ctx.fillStyle = `rgba(5, 32, 14, ${bgAlpha})`;
+          }
+          ctx.fillRect(0, 0, w, h);
+        }
+
+        // Dessin des amas et spores de mousse
+        for (let i = 0; i < clusters.length; i++) {
+          const c = clusters[i];
+          const localP = Math.max(0, Math.min(1.0, (pExpand - c.growDelay) / (1.0 - c.growDelay || 0.01)));
+          if (localP <= 0) continue;
+
+          // Écartement exponentiel hors de la boîte
+          const ease = 1 - Math.pow(1 - localP, 2.5);
+          c.x = c.startX + (c.targetX - c.startX) * ease + Math.sin(elapsed * 0.003 + i) * 3;
+          c.y = c.startY + (c.targetY - c.startY) * ease + Math.cos(elapsed * 0.003 + i) * 3;
+          const currentR = c.radius + (c.maxRadius - c.radius) * ease;
+
+          ctx.beginPath();
+          ctx.arc(c.x, c.y, currentR, 0, Math.PI * 2);
+          if (pDie > 0.05) {
+            ctx.fillStyle = c.deadColor;
+            ctx.globalAlpha = Math.max(0.2, 0.95 - pDie * 0.45);
+          } else {
+            ctx.fillStyle = c.lushColor;
+            ctx.globalAlpha = 0.88;
+          }
+          ctx.fill();
+
+          // Micro-spores périphériques
+          if (pDie < 0.8) {
+            ctx.beginPath();
+            ctx.arc(c.x + c.jitterX * 1.5, c.y + c.jitterY * 1.5, currentR * 0.25, 0, Math.PI * 2);
+            ctx.fillStyle = pDie > 0.1 ? '#2b1b17' : '#86efac';
+            ctx.globalAlpha = 0.6;
+            ctx.fill();
+          }
+        }
+        ctx.globalAlpha = 1.0;
+
+        // Fissures de dessèchement quand la mousse meurt
+        if (pDie > 0.25) {
+          ctx.strokeStyle = `rgba(10, 10, 10, ${Math.min(0.85, (pDie - 0.25) * 1.8)})`;
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          for (let f = 0; f < 18; f++) {
+            const fx = (w / 18) * f + (Math.sin(f * 2) * 25);
+            ctx.moveTo(fx, 0);
+            ctx.lineTo(fx + Math.cos(f) * 40, h * 0.45);
+            ctx.lineTo(fx + Math.sin(f) * 60, h);
+          }
+          ctx.stroke();
+        }
+
+        // Révélation de HAL (depth 68) pendant la phase de mort de la mousse
+        if (elapsed >= 1700 && !hasAdvanced) {
+          hasAdvanced = true;
+          advanceToNextDepth();
+        }
+
+        // Dissolution finale de la mousse morte révélant l'image de HAL
+        if (elapsed >= 1850) {
+          container.style.opacity = '0';
+        }
+
+        if (elapsed < 2750) {
+          animId = requestAnimationFrame(renderFrame);
+        } else {
+          // Nettoyage complet
+          if (container && container.parentNode) {
+            container.parentNode.removeChild(container);
+          }
+        }
+      }
+
+      animId = requestAnimationFrame(renderFrame);
+    }
+
+    // Alias de compatibilité
+    function triggerGlassShatterToHal() {
+      triggerMossOverwhelmAndRevealHal();
     }
 
     // =========================================
@@ -6089,7 +7018,6 @@
       let lastX = 0;
       let lastY = 0;
       let animFrameId = null;
-      let audioCtx = null;
       let lastSfxTime = 0;
 
       // Offscreen canvas to hold persistent moss artwork
@@ -6115,12 +7043,7 @@
 
       // Web Audio Synthesizer
       function getAudio() {
-        if (!audioCtx) {
-          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-          if (AudioContextClass) audioCtx = new AudioContextClass();
-        }
-        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-        return audioCtx;
+        return SiteAudio.getAudioContext();
       }
 
       function playMossSfx(type) {
@@ -6467,11 +7390,19 @@
         btnTea.innerHTML = '🍵 L\'INFUSION VOUS ENVELOPPE D\'UNE CHALEUR APAISANTE...';
         btnTea.style.background = '#05200c';
         btnTea.style.color = '#00ff66';
+        SiteAudio.unlockAudioEngine();
+        try {
+          if ('speechSynthesis' in window && !window.speechSynthesis.speaking) {
+            const p = new SpeechSynthesisUtterance(' ');
+            p.volume = 0;
+            window.speechSynthesis.speak(p);
+          }
+        } catch(e) {}
         playMossSfx('tea');
 
         setTimeout(() => {
-          advanceToNextDepth();
-        }, 1300);
+          triggerMossOverwhelmAndRevealHal();
+        }, 400);
       });
 
       // Ambient Animation Loop (Render moss art + drifting spores)
@@ -6509,10 +7440,6 @@
       // Cleanup
       window.mossGameCleanup = function() {
         if (animFrameId) cancelAnimationFrame(animFrameId);
-        if (audioCtx) {
-          try { audioCtx.close(); } catch (e) {}
-          audioCtx = null;
-        }
       };
     }
 
@@ -6654,17 +7581,33 @@
       const figureEl = document.getElementById('william-figure');
       const mechEl = document.getElementById('william-mechanism');
 
+      const fallbackAudios = {
+        1: new Audio('william-1.wav'),
+        2: new Audio('william-2.wav'),
+        3: new Audio('william-3.wav')
+      };
+      Object.values(fallbackAudios).forEach(a => {
+        try { a.preload = 'auto'; } catch(e) {}
+      });
+      SiteAudio.preloadWilliamAudio();
+
       let isDragging = false;
       let isSnapping = false;
       let startY = 0;
       let currentY = 25;
       let pullCount = 0;
       let currentAudio = null;
+      let activeBufferSrc = null;
 
       function onPointerDown(e) {
         if (isSnapping || pullCount >= 3) return;
+        SiteAudio.unlockAudioEngine();
+        const nextNum = Math.min(3, pullCount + 1);
+        if (fallbackAudios[nextNum]) {
+          try { fallbackAudios[nextNum].load(); } catch(err) {}
+        }
         isDragging = true;
-        startY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+        startY = (e.touches && e.touches[0]) ? e.touches[0].clientY : (e.clientY || 0);
         if (mechEl.setPointerCapture && e.pointerId) {
           try { mechEl.setPointerCapture(e.pointerId); } catch(err) {}
         }
@@ -6672,7 +7615,7 @@
 
       function onPointerMove(e) {
         if (!isDragging) return;
-        const clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+        const clientY = (e.touches && e.touches[0]) ? e.touches[0].clientY : (e.clientY || 0);
         const delta = clientY - startY;
         currentY = Math.max(25, Math.min(220, 25 + delta));
         ringEl.style.top = currentY + 'px';
@@ -6722,16 +7665,13 @@
           try { currentAudio.pause(); } catch(e) {}
           currentAudio = null;
         }
+        if (activeBufferSrc) {
+          try { activeBufferSrc.stop(); } catch(e) {}
+          activeBufferSrc = null;
+        }
 
         const wavNum = Math.min(3, Math.max(1, index));
-        const audio = new Audio(`william-${wavNum}.wav`);
-        currentAudio = audio;
-
         figureEl.classList.add('speaking');
-
-        audio.play().catch(err => {
-          console.warn('Audio play error:', err);
-        });
 
         let finishedCalled = false;
         const onFinished = () => {
@@ -6745,27 +7685,48 @@
           }
         };
 
-        audio.onended = onFinished;
+        // Essayer d'abord la lecture Web Audio (totalement immunisé aux restrictions iOS hors-geste)
+        const bufferSrc = SiteAudio.playWilliamVoiceBuffer(wavNum, onFinished);
+        if (bufferSrc) {
+          activeBufferSrc = bufferSrc;
+        } else {
+          // Fallback HTML5 Audio
+          const audio = fallbackAudios[wavNum] || new Audio(`william-${wavNum}.wav`);
+          currentAudio = audio;
+          audio.onended = onFinished;
+          audio.play().catch(err => {
+            console.warn('Audio play error:', err);
+          });
+        }
 
-        // Fallback en cas d'absence d'événement onended
-        const fallbackTimes = { 1: 2600, 2: 2000, 3: 2800 };
+        // Sécurité en cas d'absence d'événement de fin
+        const fallbackTimes = { 1: 2800, 2: 2200, 3: 3000 };
         setTimeout(() => {
-          if (currentAudio === audio) {
-            onFinished();
-          }
+          onFinished();
         }, fallbackTimes[wavNum] || 2600);
       }
 
       mechEl.addEventListener('pointerdown', onPointerDown);
+      mechEl.addEventListener('touchstart', onPointerDown, { passive: true });
       window.addEventListener('pointermove', onPointerMove);
+      window.addEventListener('touchmove', onPointerMove, { passive: true });
       window.addEventListener('pointerup', onPointerUp);
+      window.addEventListener('touchend', onPointerUp, { passive: true });
 
       window.williamCleanup = function() {
+        mechEl.removeEventListener('pointerdown', onPointerDown);
+        mechEl.removeEventListener('touchstart', onPointerDown);
         window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('touchmove', onPointerMove);
         window.removeEventListener('pointerup', onPointerUp);
+        window.removeEventListener('touchend', onPointerUp);
         if (currentAudio) {
           try { currentAudio.pause(); } catch(e) {}
           currentAudio = null;
+        }
+        if (activeBufferSrc) {
+          try { activeBufferSrc.stop(); } catch(e) {}
+          activeBufferSrc = null;
         }
       };
     }
