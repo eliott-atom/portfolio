@@ -14,19 +14,26 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
+            overflow: hidden; 
+        }
+
         body {
             background-color: #000000;
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             font-weight: 500;
             font-size: 20px;
-            overflow: hidden; 
         }
 
         #content-layer {
             position: fixed;
             inset: 0;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
             background-color: #000000;
             z-index: 1;
             transition: background-color 0.8s ease, filter 0.8s linear; 
@@ -64,7 +71,9 @@
 
         div.grid-wrapper {
             display: grid;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
             place-items: center; 
             position: relative; 
         }
@@ -72,6 +81,7 @@
         img, video {
             width: 75%;
             max-width: 500px;
+            max-width: min(500px, 75dvh);
             display: block;
             aspect-ratio: 1 / 1;
             object-fit: cover;
@@ -126,7 +136,7 @@
         /* LE TITRE */
         #main-title {
             position: fixed;
-            top: 47.5%;
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             font-weight: 900;
@@ -274,7 +284,7 @@
 
                 if (i > 0) {
                     i--;
-                    setTimeout(untype, speed);
+                    registerTimeout(untype, speed);
                 } else if (callback) {
                     element.innerHTML = ''; 
                     callback();
@@ -289,17 +299,28 @@
             animationCycle++;
             const currentCycle = animationCycle;
 
+            // Enregistre que l'intro a été initiée dans cette session
+            try {
+                sessionStorage.setItem('introPlayed', 'true');
+            } catch (e) {}
+
             // 1. Déverrouille les clics et le rideau noir
             isTransitioning = false;
             document.body.style.pointerEvents = 'auto';
 
             const overlay = document.getElementById('black-overlay');
+            overlay.style.transition = 'none';
             overlay.classList.remove('show');
             overlay.style.opacity = '0';
+            void overlay.offsetWidth;
+            overlay.style.transition = '';
 
             // 2. Réinitialise le conteneur principal
             const contentLayer = document.getElementById('content-layer');
+            contentLayer.style.transition = 'none';
             contentLayer.classList.remove('theme-white', 'theme-inverted');
+            void contentLayer.offsetWidth;
+            contentLayer.style.transition = '';
 
             // 3. Masque et stoppe toutes les vidéos
             document.querySelectorAll('.interactive-video').forEach(vid => {
@@ -322,8 +343,11 @@
 
             // 5. Réinitialise le titre et les boutons de coin
             const titleEl = document.getElementById('main-title');
+            titleEl.style.transition = 'none';
             titleEl.classList.remove('move-to-header');
             titleEl.innerHTML = '';
+            void titleEl.offsetWidth;
+            titleEl.style.transition = '';
 
             linksData.forEach(link => {
                 const el = document.getElementById(link.id);
@@ -384,16 +408,109 @@
             }, 2000);
         }
 
-        // CHARGEMENT INITIAL
-        window.addEventListener('load', () => {
-            startIntroSequence();
-        });
+        // AFFICHAGE DIRECT SANS ANIMATIONS (RETOUR SUR LA PAGE)
+        function skipIntroSequence() {
+            clearAllTimeouts();
+            animationCycle++;
 
-        // GESTION DU RETOUR ARRIÈRE MOBILE (SAFARI BFCACHE)
+            try {
+                sessionStorage.setItem('introPlayed', 'true');
+            } catch (e) {}
+
+            isTransitioning = false;
+            document.body.style.pointerEvents = 'auto';
+
+            // 1. Overlay noir masqué
+            const overlay = document.getElementById('black-overlay');
+            overlay.style.transition = 'none';
+            overlay.classList.remove('show');
+            overlay.style.opacity = '0';
+            void overlay.offsetWidth;
+            overlay.style.transition = '';
+
+            // 2. Conteneur principal en thème blanc immédiat
+            const contentLayer = document.getElementById('content-layer');
+            contentLayer.style.transition = 'none';
+            contentLayer.classList.remove('theme-inverted');
+            contentLayer.classList.add('theme-white');
+            void contentLayer.offsetWidth;
+            contentLayer.style.transition = '';
+
+            // 3. Masque et stoppe toutes les vidéos
+            document.querySelectorAll('.interactive-video').forEach(vid => {
+                vid.pause();
+                vid.currentTime = 0;
+                vid.style.display = 'none';
+            });
+
+            const vidReveil = document.getElementById('vid-reveil');
+            vidReveil.pause();
+            vidReveil.currentTime = 0;
+            vidReveil.style.opacity = '0';
+            vidReveil.style.display = 'none';
+
+            // 4. Affiche directement la tête idle
+            document.getElementById('head-idle').style.display = 'block';
+
+            // 5. Réinitialise la bulle
+            const bubble = document.getElementById('speech-bubble');
+            bubble.classList.remove('show');
+            bubble.innerHTML = '';
+
+            // 6. Titre centré directement
+            const titleEl = document.getElementById('main-title');
+            titleEl.style.transition = 'none';
+            titleEl.classList.remove('move-to-header');
+            titleEl.innerText = 'eliott atom\ncroubalian';
+            void titleEl.offsetWidth;
+            titleEl.style.transition = '';
+
+            // 7. Boutons de coin avec texte complet et cliquables
+            linksData.forEach(link => {
+                const el = document.getElementById(link.id);
+                if (el) {
+                    el.classList.remove('is-active');
+                    el.innerText = link.text;
+                    el.style.pointerEvents = 'auto';
+                }
+            });
+        }
+
+        function shouldSkipIntro() {
+            const navEntries = performance.getEntriesByType && performance.getEntriesByType('navigation');
+            const navType = (navEntries && navEntries.length > 0) ? navEntries[0].type : '';
+
+            // Rechargement manuel de la page (F5 / Cmd+R / Reload button) : rejoue l'intro
+            if (navType === 'reload') {
+                return false;
+            }
+
+            // Retour arrière navigateur (historique)
+            if (navType === 'back_forward') {
+                return true;
+            }
+
+            // Si l'intro a déjà été vue dans cette session (ex: retour via le bouton retour de cv, contact, content)
+            try {
+                if (sessionStorage.getItem('introPlayed') === 'true') {
+                    return true;
+                }
+            } catch (e) {}
+
+            return false;
+        }
+
+        // CHARGEMENT INITIAL OU RETOUR
+        if (shouldSkipIntro()) {
+            skipIntroSequence();
+        } else {
+            startIntroSequence();
+        }
+
+        // GESTION DU RETOUR ARRIÈRE MOBILE ET DESKTOP (SAFARI / CHROME BFCACHE)
         window.addEventListener('pageshow', (event) => {
-            // Se déclenche si la page vient du cache ou si une transition avait été amorcée
-            if (event.persisted || isTransitioning) {
-                startIntroSequence();
+            if (event.persisted || isTransitioning || shouldSkipIntro()) {
+                skipIntroSequence();
             }
         });
 
@@ -431,11 +548,11 @@
                         playPromise.catch(() => {});
                     }
 
-                    setTimeout(() => {
+                    registerTimeout(() => {
                         video.pause();
                         document.getElementById('content-layer').classList.add('theme-inverted');
 
-                        setTimeout(() => {
+                        registerTimeout(() => {
                             if (item.btnId === 'btn-index') {
                                 const titleEl = document.getElementById('main-title');
                                 titleEl.innerHTML = 'eliott atom\ncroubalian'; 
@@ -446,12 +563,12 @@
                             
                             typeWriterOut(document.getElementById(item.btnId), 25); 
 
-                            setTimeout(() => {
+                            registerTimeout(() => {
                                 const overlay = document.getElementById('black-overlay');
                                 overlay.style.opacity = '1';
                                 overlay.classList.add('show');
                                 
-                                setTimeout(() => {
+                                registerTimeout(() => {
                                     window.location.href = targetUrl;
                                 }, 300);
 
