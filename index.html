@@ -172,16 +172,16 @@
         #black-overlay.show {
             opacity: 1;
         }
-        /* --- MOBILE RESPONSIVENESS POUR LE TITRE --- */
-        @media (max-width: 768px) {
+        /* --- ADAPTATION MOBILE (Par ratio écran, alignée sur content.html) --- */
+        @media (max-aspect-ratio: 4/5) {
             #main-title {
                 font-size: 12vw; /* Rend le texte 2x plus gros sur téléphone */
             }
             
             #main-title.move-to-header {
-                top: 4vw; /* Assure que le texte va bien en haut à gauche après le clic */
+                top: 2vw; /* Aligné sur le top: 2vw de content.html */
                 left: 4vw;
-                font-size: 15.6px; 
+                font-size: 15.6px; /* 1.2em * 13px de content.html */
             }
         }
     </style>
@@ -273,7 +273,9 @@
         }
 
         function typeWriterOut(element, speed, callback) {
-            let text = element.textContent || element.innerText; 
+            let text = (element.id === 'main-title') 
+                ? 'eliott atom\ncroubalian' 
+                : (element.textContent || element.innerText); 
             let i = text.length;
 
             function untype() {
@@ -461,7 +463,7 @@
             const titleEl = document.getElementById('main-title');
             titleEl.style.transition = 'none';
             titleEl.classList.remove('move-to-header');
-            titleEl.innerText = 'eliott atom\ncroubalian';
+            titleEl.innerHTML = 'eliott atom\ncroubalian';
             void titleEl.offsetWidth;
             titleEl.style.transition = '';
 
@@ -470,33 +472,51 @@
                 const el = document.getElementById(link.id);
                 if (el) {
                     el.classList.remove('is-active');
-                    el.innerText = link.text;
+                    el.innerHTML = link.text;
                     el.style.pointerEvents = 'auto';
                 }
             });
         }
 
         function shouldSkipIntro() {
-            const navEntries = performance.getEntriesByType && performance.getEntriesByType('navigation');
-            const navType = (navEntries && navEntries.length > 0) ? navEntries[0].type : '';
-
-            // Rechargement manuel de la page (F5 / Cmd+R / Reload button) : rejoue l'intro
-            if (navType === 'reload') {
-                return false;
+            // 1. Si le paramètre ?return=true est présent dans l'URL (clic sur un bouton "retour")
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('return') === 'true' || window.location.hash === '#return') {
+                try {
+                    window.history.replaceState({}, '', window.location.pathname);
+                } catch (e) {}
+                return true;
             }
 
-            // Retour arrière navigateur (historique)
+            // 2. Retour arrière navigateur (historique back / forward)
+            const navEntries = performance.getEntriesByType && performance.getEntriesByType('navigation');
+            const navType = (navEntries && navEntries.length > 0) ? navEntries[0].type : '';
             if (navType === 'back_forward') {
                 return true;
             }
 
-            // Si l'intro a déjà été vue dans cette session (ex: retour via le bouton retour de cv, contact, content)
-            try {
-                if (sessionStorage.getItem('introPlayed') === 'true') {
-                    return true;
+            // 3. Si l'utilisateur revient depuis une sous-page du portfolio (referrer)
+            if (document.referrer) {
+                try {
+                    const refUrl = new URL(document.referrer);
+                    if (refUrl.pathname.endsWith('cv.html') || 
+                        refUrl.pathname.endsWith('contact.html') || 
+                        refUrl.pathname.endsWith('content.html') || 
+                        refUrl.pathname.endsWith('info.html')) {
+                        return true;
+                    }
+                } catch (e) {
+                    if (document.referrer.includes('cv.html') || 
+                        document.referrer.includes('contact.html') || 
+                        document.referrer.includes('content.html') || 
+                        document.referrer.includes('info.html')) {
+                        return true;
+                    }
                 }
-            } catch (e) {}
+            }
 
+            // Pour tout nouvel onglet, lien envoyé à quelqu'un, rechargement, etc. :
+            // Toujours jouer l'animation de réveil !
             return false;
         }
 
