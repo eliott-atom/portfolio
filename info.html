@@ -2,8 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>portfolio digital</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>experience 2 // dynamic text exclusion & hole flow</title>
+    
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <style>
         * {
             margin: 0;
@@ -11,31 +16,1006 @@
             box-sizing: border-box;
         }
 
-        body {
-            background-color: #000000;
-            background-image: url('background.webp'); /* Remplace par le nom de ton image */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            color: #ffffff;
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        :root {
+            --red: #e60000;         /* Rouge éclatant */
+            --white: #ffffff;
+            --black: #000000;
+            --font-poster: "Arial Black", sans-serif;
+            --font-condensed: "Helvetica Neue Condensed", sans-serif;
+            --font-text: "Helvetica Neue", sans-serif;
+            --top-bar-h: 12vh;
+            
         }
 
-        h1 {
-            font-weight: 700;
-            font-size: 1.5rem;
+        html, body {
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
+            overflow: hidden !important; /* STRICTEMENT AUCUN SCROLL */
+            position: fixed;
+            inset: 0;
+            background-color: var(--white);
+            font-family: var(--font-text);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            
+        }
+
+        .poster-container {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            position: relative;
+            display: flex;
+            
+            flex-direction: column;
+        }
+
+        /* 1. BANDEAU HAUT ROUGE : love is love is love */
+        .poster-top-bar {
+            height: var(--top-bar-h);
+            flex: 0 0 var(--top-bar-h);
+            
+            background-color: var(--red);
+            border-bottom: 2.5px solid var(--white);        }
+
+        .title-svg {
+            transform: translateX(-1vh);
+            width: 100%;
+            height: 100%;
+            display: block;
+                        overflow: visible;
+
+                        
+        }
+
+        .svg-title-text {
+            font-family: var(--font-poster);
+            font-size: 126px;
+            font-style: italic;
+            
+            font-weight: 400;
+            transform: translateX(10px);
+            fill: var(--white);
             text-transform: lowercase;
-            letter-spacing: 1px;
+            letter-spacing: -1px;
+        }
+
+        .poster-back-btn {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            z-index: 70;
+            font-family: var(--font-condensed);
+            font-size: clamp(10px, 1.4vh, 14px);
+            font-weight: 700;
+            color: var(--white);
+            background-color: rgba(0, 0, 0, 0.45);
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-decoration: none;
+            text-transform: lowercase;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(4px);
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .poster-back-btn:hover {
+            background-color: var(--white);
+            color: var(--red);
+        }
+
+        /* 2. CORPS DE L'AFFICHE (2/3 BLANC EN HAUT, 1/3 ROUGE EN BAS) */
+        .poster-main-body {
+            flex: 1 1 auto;
+            width: 100%;
+            height: calc(100vh - var(--top-bar-h));
+            height: calc(100dvh - var(--top-bar-h));
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            z-index: 1;
+        }
+
+        .body-white-zone {
+            flex: 2 1 0;
+            height: 66.6667%;
+            background-color: var(--white);
+            width: 100%;
+        }
+
+        .body-red-zone {
+            flex: 1 1 0;
+            height: 33.3333%;
+            background-color: var(--red);
+            width: 100%;
+        }
+
+        /* 3. FULL VIEWPORT TEXT STAGE */
+        #text-stage {
+            position: absolute;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            pointer-events: none;
+            z-index: 15;
+        }
+
+        .text-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            display: block;
+            pointer-events: none;
+        }
+
+        .text-segment {
+            position: absolute;
+            top: 0;
+            white-space: nowrap;
+            overflow: visible;
+            font-family: var(--font-text);
+            font-weight: 400;
+            pointer-events: none;
+        }
+
+        .text-segment.segment-black {
+            color: var(--black);
+        }
+
+        .text-segment.segment-white {
+            color: var(--white);
+        }
+
+        /* Clickable trailer & teaser links */
+        .text-segment a {
+            color: inherit;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            pointer-events: auto;
+            cursor: pointer;
+            transition: opacity 0.2s ease, text-decoration-color 0.2s ease;
+        }
+
+        .text-segment a:hover {
+            opacity: 0.65;
+            text-decoration-color: var(--red);
+        }
+
+        .text-segment a:focus-visible,
+        .poster-back-btn:focus-visible {
+            outline: 2px solid var(--white);
+            outline-offset: 3px;
+        }
+
+        /* Underlined credit categories */
+        .credit-cat {
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            font-weight: 600;
+        }
+
+        /* Screen-reader accessible container */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* 4. ANCHORED CUTOUT IMAGE */
+        #card {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        #card-img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: contain;
+            object-position: left bottom;
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-drag: none;
         }
     </style>
 </head>
 <body>
 
-    <h1>more to come</h1>
+<div class="poster-container">
 
+    <!-- Accessible text version for assistive tech and search engines -->
+    <section class="sr-only" id="accessible-poster-content" aria-label="Poster Content"></section>
+
+    <!-- BANDEAU HAUT ROUGE : love is love is love -->
+    <header class="poster-top-bar">
+        <svg class="title-svg" viewBox="0 0 1000 110" preserveAspectRatio="none" role="img" aria-label="love is love is love">
+            <text id="poster-title-text" x="0" y="96" textLength="1000" lengthAdjust="spacingAndGlyphs" class="svg-title-text">love is love is love</text>
+        </svg>
+        <a id="poster-back-btn" href="index.html?return=true" class="poster-back-btn">retour ✕</a>
+    </header>
+
+    <!-- CORPS PRINCIPAL : FOND 2/3 BLANC ET 1/3 ROUGE -->
+    <div class="poster-main-body">
+        <div class="body-white-zone"></div>
+        <div class="body-red-zone"></div>
+    </div>
+
+    <!-- FULL VIEWPORT TEXT STAGE -->
+    <main id="text-stage" aria-hidden="true"></main>
+
+    <!-- ANCHORED IMAGE CARD (ANCHORED TO THE GROUND) -->
+    <div id="card">
+        <img id="card-img" src="movie/poster.webp" alt="Anchored movie character cutout">
+    </div>
+
+</div>
+
+    <!-- ENGINE JAVASCRIPT -->
+    <script>
+        (function() {
+            'use strict';
+
+            // ====================================================================
+            // 1. POSTER CONTENT & CONFIGURATION (EASILY EDITABLE)
+            // ====================================================================
+            const POSTER_DATA = {
+                // Header Banner and Back button
+                header: {
+                    title: "love is love is love",
+                    backButton: {
+                        label: "retour ✕",
+                        href: "index.html?return=true"
+                    }
+                },
+
+                // Ground-anchored Cutout Character Image
+                cutout: {
+                    src: "movie/poster.webp",
+                    alt: "Anchored movie character cutout",
+                    aspectRatio: 1000 / 1051, // Native image aspect ratio (width / height)
+                    heightRatio: 0.85          // Cutout height as a fraction of screen height (85vh)
+                },
+
+                // White Zone Blocks (Top 2/3 of the poster)
+                // - scale: Relative font scale multiplier (2.0 = large title, 1.5 = subhead, 1.0 = normal body)
+                // - text: Content to display, flowing around and through character silhouettes
+                // - href: Optional link (URL or local page). Consecutive words in the block become a clickable link
+                whiteZone: [
+                    {
+                        scale: 2.0,
+                        text: "a movie by eliott croubalian and jodie trontin",
+                        href: null
+                    },
+                    {
+                        scale: 1.5,
+                        text: "",
+                        href: null
+                    },
+                    {
+                        scale: 1.0,
+                        text: "Une traversée baroque et rétro et camp entre romance, gloire factice et creation compulsive. Une comédie noire et vertigineuse où l'artifice n'a d'égal que le désespoir des sentiments.",
+                        href: null
+                    },
+                    {
+                        scale: 1.7,
+                        text: "trailer",
+                        href: "https://www.youtube.com/watch?v=A_REMPLACER"
+                    },
+                    {
+                        scale: 1.7,
+                        text: "teaser",
+                        href: "movie/index.html"
+                    }
+                ],
+
+                // Red Zone Credits (Bottom 1/3 of the poster)
+                // Supports <u>category</u> or [category] for underlined headers,
+                // and 'role = person' or individual names.
+                redCredits: `
+<u>casting</u>
+jodie & agathe & myrtille = jodie trontin
+eliott & gaspard & eugène = eliott croubalian
+maîtresse de maison = bénédicte tauran
+britney = anne rosset
+adrien & assistant photo = stanislas dupanloup
+myrtille rebooted = ludmila temple
+sophie = anaël ritter
+intervieweur = adrien sabbah
+star allemande = joëlle croubalian
+producteur véreux = marcel croubalian
+producteur malhonnête = louis neerman
+
+<u>doublures</u>
+anaël ritter
+manon sundberg
+haoran chen
+joël trontin
+
+<u>figuration</u>
+shanon thévenaz
+mathilde
+tara
+mathis
+lou
+anaël ritter
+nathalie novarina
+florence trontin
+arthur legrand
+alicia
+joël trontin
+stanislas dupanloup
+anka
+
+<u>costume</u>
+mathilde deslaurriers franco
+adrien sabbah
+
+<u>remerciements</u>
+veronique delacoste
+bernard delacoste
+fred dupanloup
+adrien beck
+stanislas dupanloup
+
+<u>production</u>
+eliott croubalian
+jodie trontin
+`,
+
+                // Geometry & Typography Settings
+                settings: {
+                    fontFamily: '"Corsiva Hebrew", "Apple Chancery", cursive, sans-serif',
+                    fontWeight: 400,
+                    padX: 20,        // Horizontal viewport margin (pixels)
+                    buffer: 10,        // Clearance cushion around cutout contour (pixels)
+                    minSegWidth: 10,  // Minimum segment width to allow text inside (filters slivers)
+                    safetyPad: 20     // Extra safety breathing room inside segments so words never clip
+                }
+            };
+
+            // 2. RUNTIME CONFIGURATION
+            const CONFIG = {
+                fontFamily: POSTER_DATA.settings.fontFamily,
+                fontWeight: POSTER_DATA.settings.fontWeight,
+                padX: POSTER_DATA.settings.padX,
+                buffer: POSTER_DATA.settings.buffer,
+                minSegWidth: POSTER_DATA.settings.minSegWidth,
+                safetyPad: POSTER_DATA.settings.safetyPad,
+                aspectRatio: POSTER_DATA.cutout.aspectRatio,
+                heightRatio: POSTER_DATA.cutout.heightRatio
+            };
+
+            // 3. PARSE TOKENS FOR WHITE & RED ZONES
+            const WHITE_TOKENS = [];
+            POSTER_DATA.whiteZone.forEach((block, bIdx) => {
+                const words = block.text.trim().split(/\s+/).filter(Boolean);
+                words.forEach((w, wIdx) => {
+                    WHITE_TOKENS.push({
+                        text: w,
+                        em: block.scale || 1.0,
+                        href: block.href || null,
+                        blockIndex: bIdx,
+                        breakAfter: (wIdx === words.length - 1)
+                    });
+                });
+            });
+
+            const RED_TOKENS = [];
+            POSTER_DATA.redCredits.trim().split(/\s+/).forEach(w => {
+                if (!w) return;
+                let isCat = false;
+                let text = w;
+                if (w.startsWith('<u>') && w.endsWith('</u>')) {
+                    isCat = true;
+                    text = w.slice(3, -4);
+                } else if (w.startsWith('[') && w.endsWith(']')) {
+                    isCat = true;
+                    text = w.slice(1, -1);
+                }
+                RED_TOKENS.push({ text, isCat });
+            });
+
+            // 4. PRECOMPUTED SILHOUETTE & HOLES FOR poster.webp
+            const PRECOMPUTED_SILHOUETTE = [[0.608, 0.738], [0.467, 0.739], [0.449, 0.743], [0.397, 0.747], [0.376, 0.754], [0.358, 0.795], [0.345, 0.822], [0.334, 0.829], [0.321, 0.833], [0.303, 0.846], [0.282, 0.85], [0.261, 0.856], [0.244, 0.854], [0.227, 0.86], [0.202, 0.863], [0.181, 0.867], [0.17, 0.866], [0.156, 0.868], [0.14, 0.869], [0.127, 0.875], [0.118, 0.875], [0.109, 0.886], [0.103, 0.886], [0.098, 0.88], [0.094, 0.872], [0.085, 0.872], [0.077, 0.871], [0.071, 0.867], [0.07, 0.867], [0.07, 0.865], [0.074, 0.863], [0.08, 0.865], [0.088, 0.862], [0.098, 0.855], [0.108, 0.853], [0.11, 0.854], [0.109, 0.853], [0.108, 0.85], [0.105, 0.845], [0.104, 0.835], [0.102, 0.819], [0.101, 0.815], [0.099, 0.803], [0.098, 0.801], [0.096, 0.801], [0.095, 0.779], [0.094, 0.773], [0.093, 0.759], [0.092, 0.751], [0.092, 0.748], [0.09, 0.742], [0.089, 0.735], [0.089, 0.74], [0.088, 0.742], [0.087, 0.746], [0.087, 0.752], [0.086, 0.759], [0.085, 0.768], [0.085, 0.82], [0.084, 0.856], [0.084, 0.888], [0.083, 0.922], [0.082, 0.963], [0.081, 0.976], [0.081, 0.975], [0.081, 0.967], [0.08, 0.958], [0.08, 0.952], [0.08, 0.946], [0.079, 0.939], [0.078, 0.932], [0.077, 0.925], [0.077, 0.918], [0.076, 0.91], [0.076, 0.901], [0.076, 0.893], [0.076, 0.883], [0.074, 0.872], [0.072, 0.859], [0.071, 0.843], [0.07, 0.819], [0.068, 0.819], [0.067, 0.82], [0.066, 0.82], [0.064, 0.821], [0.063, 0.822], [0.062, 0.824], [0.06, 0.825], [0.059, 0.827], [0.057, 0.829], [0.057, 0.83], [0.056, 0.832], [0.055, 0.833], [0.053, 0.834], [0.051, 0.836], [0.051, 0.837], [0.049, 0.839], [0.048, 0.844], [0.047, 0.844], [0.046, 0.839], [0.045, 0.84], [0.045, 0.84], [0.044, 0.84], [0.042, 0.844], [0.041, 0.853], [0.041, 0.852], [0.041, 0.841], [0.04, 0.839], [0.039, 0.834], [0.038, 0.823], [0.037, 0.817], [0.036, 0.815], [0.035, 0.803], [0.033, 0.782], [0.029, 0.776], [0.027, 0.762], [0.024, 0.75], [0.02, 0.739], [0.016, 0.728], [0.016, 0.708]];
+            const PRECOMPUTED_HOLES = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, [0.161, 0.219], [0.16, 0.234], [0.159, 0.253], [0.158, 0.271], [0.157, 0.281], [0.156, 0.286], [0.155, 0.292], [0.154, 0.298], [0.153, 0.305], [0.152, 0.306], [0.151, 0.305], [0.149, 0.303], [0.148, 0.3], [0.147, 0.298], [0.146, 0.295], [0.144, 0.291], [0.144, 0.288], [0.142, 0.284], [0.142, 0.282], [0.14, 0.278], [0.139, 0.275], [0.138, 0.272], [0.137, 0.269], [0.136, 0.265], [0.135, 0.261], [0.134, 0.257], [0.133, 0.252], [0.132, 0.246], [0.131, 0.24], [0.13, 0.235], [0.129, 0.226], [0.128, 0.216], [0.128, 0.208], [0.127, 0.2], [0.126, 0.192], [0.126, 0.185], [0.124, 0.178], [0.123, 0.172], [0.122, 0.166], null, null, null, null, null, null, [0.587, 0.635], [0.577, 0.639], [0.567, 0.642], [0.558, 0.645], [0.551, 0.648], [0.542, 0.652], [0.537, 0.655], [0.535, 0.658], [0.534, 0.661], [0.532, 0.665], [0.532, 0.668], [0.533, 0.672], [0.536, 0.676], [0.536, 0.681], [0.536, 0.685], [0.533, 0.688], [0.531, 0.689], [0.53, 0.689], [0.528, 0.69], [0.526, 0.679], [0.524, 0.671], [0.522, 0.664], [0.52, 0.655], [0.517, 0.64], [0.514, 0.635], [0.511, 0.629], [0.508, 0.626], [0.505, 0.602], null, null, null, null, null, null];
+
+            // 5. DOM ELEMENTS
+            const stage = document.getElementById('text-stage');
+            const card = document.getElementById('card');
+            const cardImg = document.getElementById('card-img');
+
+            // 6. OFFSCREEN MEASUREMENT CANVAS
+            const measureCanvas = document.createElement('canvas');
+            const ctx = measureCanvas.getContext('2d');
+
+            // 7. POSITION & LAYOUT STATE
+            let stageW = window.innerWidth;
+            let stageH = window.innerHeight;
+            let cardX = 0;
+            let cardY = 0;
+            let cardW = 0;
+            let cardH = 0;
+
+            // Responsive dynamic geometry configuration (updated per viewport in setupStage)
+            let activeSettings = {
+                padX: CONFIG.padX,
+                buffer: CONFIG.buffer,
+                minSegWidth: CONFIG.minSegWidth,
+                safetyPad: CONFIG.safetyPad
+            };
+
+            // 8. HORIZONTAL LINE SEGMENTS EXTRACTION (HOLE & EXCLUSION ALGORITHM)
+            function getLineSegments(lineTop, lineBottom) {
+                const areaLeft = activeSettings.padX;
+                const areaRight = stageW - areaLeft;
+                const buffer = activeSettings.buffer;
+                const minSegWidth = activeSettings.minSegWidth;
+                const numSlices = PRECOMPUTED_SILHOUETTE.length;
+
+                // Line completely above or below cutout (or invalid zero/negative card height)
+                if (cardH <= 0 || lineBottom < cardY - buffer || lineTop > cardY + cardH + buffer) {
+                    return [{ left: areaLeft, width: areaRight - areaLeft }];
+                }
+
+                let minObsX = Infinity;
+                let maxObsX = -Infinity;
+                let hasObstacle = false;
+
+                let maxHoleL = -Infinity;
+                let minHoleR = Infinity;
+                let lineHasHole = true;
+                let slicesInLine = 0;
+
+                const startS = Math.max(0, Math.floor(((lineTop - cardY - buffer) / cardH) * numSlices));
+                const endS = Math.min(numSlices, Math.ceil(((lineBottom - cardY + buffer) / cardH) * numSlices));
+
+                for (let s = startS; s < endS; s++) {
+                    const bounds = PRECOMPUTED_SILHOUETTE[s];
+                    if (!bounds) continue;
+
+                    const sliceNormY = (s + 0.5) / numSlices;
+                    const sliceScreenY = cardY + sliceNormY * cardH;
+
+                    let dy = 0;
+                    if (sliceScreenY < lineTop) {
+                        dy = lineTop - sliceScreenY;
+                    } else if (sliceScreenY > lineBottom) {
+                        dy = sliceScreenY - lineBottom;
+                    }
+
+                    if (dy <= buffer) {
+                        const padX = Math.sqrt(Math.max(0, buffer * buffer - dy * dy));
+                        const obsLeft = cardX + bounds[0] * cardW - padX;
+                        const obsRight = cardX + bounds[1] * cardW + padX;
+
+                        if (obsLeft < minObsX) minObsX = obsLeft;
+                        if (obsRight > maxObsX) maxObsX = obsRight;
+                        hasObstacle = true;
+
+                        const hBounds = PRECOMPUTED_HOLES[s];
+                        if (hBounds) {
+                            const hLeft = cardX + hBounds[0] * cardW + padX;
+                            const hRight = cardX + hBounds[1] * cardW - padX;
+                            if (hLeft > maxHoleL) maxHoleL = hLeft;
+                            if (hRight < minHoleR) minHoleR = hRight;
+                            slicesInLine++;
+                        } else {
+                            lineHasHole = false;
+                        }
+                    }
+                }
+
+                if (slicesInLine === 0) {
+                    lineHasHole = false;
+                }
+
+                if (!hasObstacle) {
+                    return [{ left: areaLeft, width: areaRight - areaLeft }];
+                }
+
+                const obsL = Math.max(areaLeft, minObsX);
+                const obsR = Math.min(areaRight, maxObsX);
+                const leftSegW = obsL - areaLeft;
+                const rightSegW = areaRight - obsR;
+                const segs = [];
+
+                // 1. Left of figure
+                if (leftSegW >= minSegWidth) {
+                    segs.push({ left: areaLeft, width: leftSegW });
+                }
+
+                // 2. Inside hole (arm hole or leg hole)
+                if (lineHasHole) {
+                    const holeL = Math.max(areaLeft, maxHoleL);
+                    const holeR = Math.min(areaRight, minHoleR);
+                    const holeW = holeR - holeL;
+                    if (holeW >= minSegWidth && holeL >= obsL - buffer && holeR <= obsR + buffer) {
+                        segs.push({ left: holeL, width: holeW });
+                    }
+                }
+
+                // 3. Right of figure
+                if (rightSegW >= minSegWidth) {
+                    segs.push({ left: obsR, width: rightSegW });
+                }
+
+                return segs;
+            }
+
+            // 9. WHITE ZONE CONTINUOUS MULTI-SCALE SIMULATION & LAYOUT
+            function simulateWhiteLayout(baseFS, whiteTop, whiteHeight, allowPartial) {
+                const padY = activeSettings.padX;
+                const whiteBottom = whiteTop + whiteHeight - padY;
+                let curY = whiteTop + padY;
+                let tIdx = 0;
+                const lines = [];
+
+                // Performance optimization: Pre-measure all token widths and space widths for this baseFS
+                // Grouping by unique em multiplier sets ctx.font only once per distinct font scale.
+                const tokenWidths = new Float32Array(WHITE_TOKENS.length);
+                const spaceWidths = new Map();
+                const emGroups = new Map();
+
+                for (let i = 0; i < WHITE_TOKENS.length; i++) {
+                    const em = WHITE_TOKENS[i].em;
+                    let group = emGroups.get(em);
+                    if (!group) {
+                        group = [];
+                        emGroups.set(em, group);
+                    }
+                    group.push(i);
+                }
+
+                for (const [em, indices] of emGroups.entries()) {
+                    const tokFS = baseFS * em;
+                    ctx.font = `${CONFIG.fontWeight} ${tokFS}px ${CONFIG.fontFamily}`;
+                    spaceWidths.set(em, Math.ceil(ctx.measureText(' ').width * 1.10));
+                    for (let j = 0; j < indices.length; j++) {
+                        const idx = indices[j];
+                        tokenWidths[idx] = Math.ceil(ctx.measureText(WHITE_TOKENS[idx].text).width * 1.10) + 1;
+                    }
+                }
+
+                while (tIdx < WHITE_TOKENS.length) {
+                    const currentEm = WHITE_TOKENS[tIdx].em;
+                    const fs = baseFS * currentEm;
+                    const lineH = Math.round(fs * 1.30);
+
+                    if (curY + lineH > whiteBottom) {
+                        return { fits: false, lines: lines };
+                    }
+
+                    const segs = getLineSegments(curY, curY + lineH);
+                    let lineHadWord = false;
+                    let blockFinishedOnLine = false;
+                    const lineSegmentsData = [];
+
+                    for (let s = 0; s < segs.length; s++) {
+                        if (blockFinishedOnLine) break;
+                        const segW = segs[s].width;
+                        let curW = 0;
+                        const segTokens = [];
+
+                        while (tIdx < WHITE_TOKENS.length) {
+                            const tok = WHITE_TOKENS[tIdx];
+                            const wW = tokenWidths[tIdx];
+                            const spaceW = spaceWidths.get(tok.em) || 4;
+                            const needed = segTokens.length === 0 ? wW : (curW + spaceW + wW);
+
+                            // STRICT FIT: Word MUST fit inside segment with safety padding
+                            if (needed <= segW - activeSettings.safetyPad) {
+                                curW = needed;
+                                segTokens.push(tok);
+                                tIdx++;
+                                lineHadWord = true;
+                                if (tok.breakAfter) {
+                                    blockFinishedOnLine = true;
+                                    break;
+                                }
+                            } else {
+                                break;
+                            }
+                        }
+
+                        if (segTokens.length > 0) {
+                            lineSegmentsData.push({
+                                left: segs[s].left,
+                                width: segW,
+                                tokens: segTokens
+                            });
+                        }
+                    }
+
+                    if (!lineHadWord) {
+                        curY += Math.max(8, Math.round(lineH * 0.5));
+                        if (curY + lineH > whiteBottom) {
+                            return { fits: false, lines: lines };
+                        }
+                        continue;
+                    }
+
+                    lines.push({
+                        top: curY,
+                        height: lineH,
+                        fontSize: fs,
+                        segments: lineSegmentsData
+                    });
+                    curY += lineH;
+                }
+
+                return {
+                    fits: true,
+                    lines: lines,
+                    totalHeight: curY - (whiteTop + padY)
+                };
+            }
+
+            function findOptimalWhiteBaseFS(whiteTop, whiteHeight) {
+                let low = 4.0;
+                let high = 35.0;
+                let bestResult = null;
+
+                for (let iter = 0; iter < 20; iter++) {
+                    const mid = +((low + high) / 2).toFixed(2);
+                    const res = simulateWhiteLayout(mid, whiteTop, whiteHeight, false);
+
+                    if (res.fits) {
+                        bestResult = res;
+                        bestResult.baseFS = mid;
+                        low = mid; // Try larger font size to fill vertical space
+                    } else {
+                        high = mid; // Too large, text overflowed
+                    }
+                }
+
+                if (!bestResult) {
+                    bestResult = simulateWhiteLayout(4.0, whiteTop, whiteHeight, true);
+                    bestResult.baseFS = 4.0;
+                }
+                return bestResult;
+            }
+
+            // 10. RED ZONE SINGLE-SCALE SIMULATION & LAYOUT
+            function simulateRedLayout(fontSize, redTop, redHeight) {
+                const lineH = Math.round(fontSize * 1.30);
+                const minPad = activeSettings.padX;
+                const usableH = Math.max(0, redHeight - 2 * minPad);
+                const lineCount = Math.floor(usableH / lineH);
+                if (lineCount <= 0) return { fits: false, lines: [] };
+
+                const startY = redTop + minPad;
+
+                ctx.font = `${CONFIG.fontWeight} ${fontSize}px ${CONFIG.fontFamily}`;
+                const spaceW = ctx.measureText(' ').width;
+                const tokenWidths = new Float32Array(RED_TOKENS.length);
+                for (let i = 0; i < RED_TOKENS.length; i++) {
+                    tokenWidths[i] = ctx.measureText(RED_TOKENS[i].text).width;
+                }
+
+                let tIdx = 0;
+                const lines = [];
+
+                for (let l = 0; l < lineCount; l++) {
+                    const lineTop = startY + l * lineH;
+                    const lineBottom = lineTop + lineH;
+                    const segs = getLineSegments(lineTop, lineBottom);
+                    const lineSegmentsData = [];
+
+                    for (let s = 0; s < segs.length; s++) {
+                        const segW = segs[s].width;
+                        let curW = 0;
+                        const segTokens = [];
+
+                        while (tIdx < RED_TOKENS.length) {
+                            const tok = RED_TOKENS[tIdx];
+                            const wW = tokenWidths[tIdx];
+                            const needed = segTokens.length === 0 ? wW : (curW + spaceW + wW);
+
+                            // STRICT FIT: Word MUST fit inside segment with safety padding
+                            if (needed <= segW - activeSettings.safetyPad) {
+                                curW = needed;
+                                segTokens.push(tok);
+                                tIdx++;
+                            } else {
+                                break;
+                            }
+                        }
+
+                        if (segTokens.length > 0) {
+                            lineSegmentsData.push({
+                                left: segs[s].left,
+                                width: segW,
+                                tokens: segTokens
+                            });
+                        }
+                    }
+
+                    if (lineSegmentsData.length > 0) {
+                        lines.push({
+                            top: lineTop,
+                            height: lineH,
+                            fontSize: fontSize,
+                            segments: lineSegmentsData
+                        });
+                    }
+                }
+
+                if (tIdx >= RED_TOKENS.length) {
+                    return { fits: true, lines: lines };
+                }
+                return { fits: false, lines: lines };
+            }
+
+            function findOptimalRedFS(redTop, redHeight) {
+                let low = 4.0;
+                let high = 35.0;
+                let bestResult = null;
+
+                for (let iter = 0; iter < 20; iter++) {
+                    const mid = +((low + high) / 2).toFixed(2);
+                    const res = simulateRedLayout(mid, redTop, redHeight);
+
+                    if (res.fits) {
+                        bestResult = res;
+                        bestResult.fontSize = mid;
+                        low = mid; // Try larger font to fill more vertical space
+                    } else {
+                        high = mid; // Too large, word overflowed segment
+                    }
+                }
+
+                if (!bestResult) {
+                    bestResult = simulateRedLayout(4.0, redTop, redHeight);
+                    bestResult.fontSize = 4.0;
+                }
+                return bestResult;
+            }
+
+            // 11. HTML RENDERERS FOR WHITE & RED SEGMENTS
+            function renderWhiteHTML(tokens) {
+                let html = '';
+                let currentHref = null;
+                let linkWords = [];
+
+                function flushLink() {
+                    if (currentHref) {
+                        const isExt = currentHref.startsWith('http');
+                        const targetAttr = isExt ? ' target="_blank" rel="noopener noreferrer"' : '';
+                        html += `<a href="${currentHref}"${targetAttr}>${linkWords.join(' ')}</a> `;
+                    } else {
+                        html += linkWords.join(' ') + ' ';
+                    }
+                    linkWords = [];
+                    currentHref = null;
+                }
+
+                for (let i = 0; i < tokens.length; i++) {
+                    const tok = tokens[i];
+                    if (tok.href !== currentHref) {
+                        if (linkWords.length > 0) flushLink();
+                        currentHref = tok.href;
+                    }
+                    linkWords.push(tok.text);
+                }
+                if (linkWords.length > 0) flushLink();
+                return html.trim();
+            }
+
+            function renderRedHTML(tokens) {
+                return tokens.map(tok => {
+                    if (tok.isCat) {
+                        return `<span class="credit-cat">${tok.text}</span>`;
+                    }
+                    return tok.text;
+                }).join(' ');
+            }
+
+            // 12. STAGE INITIALIZATION & MULTI-SCALE DYNAMIC REFLOW
+            function setupStage() {
+                stageW = window.innerWidth;
+                stageH = window.innerHeight;
+
+                const topBarEl = document.querySelector('.poster-top-bar');
+                const headerH = topBarEl ? topBarEl.getBoundingClientRect().height : Math.round(stageH * 0.12);
+                const mainBodyEl = document.querySelector('.poster-main-body');
+                const mainBodyH = mainBodyEl ? mainBodyEl.getBoundingClientRect().height : (stageH - headerH);
+                const whiteZoneEl = document.querySelector('.body-white-zone');
+                const whiteZoneH = whiteZoneEl ? whiteZoneEl.getBoundingClientRect().height : Math.round(mainBodyH * (2 / 3));
+                const redZoneH = mainBodyH - whiteZoneH;
+                const splitY = headerH + whiteZoneH;
+
+                const isMobile = stageW < 768 || (stageW / stageH < 0.85);
+
+                // Responsive geometry parameters (allows text into tight corners & close to borders on mobile)
+                const padX = isMobile ? Math.max(8, Math.min(16, Math.round(stageW * 0.03))) : CONFIG.padX;
+                const buffer = isMobile ? 4 : CONFIG.buffer;
+                const minSegWidth = isMobile ? Math.max(16, Math.min(26, Math.round(stageW * 0.055))) : CONFIG.minSegWidth;
+                const safetyPad = isMobile ? 4 : CONFIG.safetyPad;
+
+                activeSettings = { padX, buffer, minSegWidth, safetyPad };
+
+                // Ground-anchored cutout sizing & positioning
+                if (isMobile) {
+                    // Mobile / portrait viewports:
+                    // Scale cutout height so it anchors at the bottom without blocking the entire screen width
+                    const targetHRatio = Math.min(0.56, Math.max(0.48, (stageW / stageH) * 1.05));
+                    cardH = Math.round(stageH * targetHRatio);
+                    cardW = Math.round(cardH * CONFIG.aspectRatio);
+
+                    // Ensure cardW never exceeds 82% of stageW so a clear vertical text column is guaranteed
+                    if (cardW > stageW * 0.82) {
+                        cardW = Math.round(stageW * 0.82);
+                        cardH = Math.round(cardW / CONFIG.aspectRatio);
+                    }
+                    cardY = stageH - cardH;
+
+                    // Align cutout to the right / center-right side:
+                    // Her head is around normalized x=0.67 and right body edge is ~0.85.
+                    // This creates an open column on the left where trailer links and red credits cascade cleanly.
+                    cardX = Math.round(stageW - 0.84 * cardW);
+                } else {
+                    // Desktop / landscape screens: original full-height ground-anchored style
+                    cardH = Math.round(stageH * (CONFIG.heightRatio || 0.85));
+                    cardW = Math.round(cardH * CONFIG.aspectRatio);
+                    cardY = stageH - cardH;
+
+                    const minSilhouetteX = 0.070;
+                    const elbowTouchX = -Math.round(minSilhouetteX * cardW);
+                    const centeredX = Math.round((stageW - cardW) / 2);
+
+                    if (stageW >= cardW) {
+                        cardX = centeredX;
+                    } else {
+                        cardX = Math.max(elbowTouchX, stageW - cardW);
+                    }
+                }
+
+                updateCardDOM();
+
+                // Compute layout for both zones
+                // A. WHITE ZONE (Multi-scale: title, starring, synopsis, trailer/teaser links)
+                const whiteLayout = findOptimalWhiteBaseFS(headerH, whiteZoneH);
+
+                // B. RED ZONE (Credits list, single scale)
+                const redLayout = findOptimalRedFS(splitY, redZoneH);
+
+                // Build DOM nodes off-DOM using a DocumentFragment to eliminate layout thrashing
+                const fragment = document.createDocumentFragment();
+
+                whiteLayout.lines.forEach(line => {
+                    const lineDiv = document.createElement('div');
+                    lineDiv.className = 'text-line';
+                    // Exact simulated line position ensures segments align 100% with the cutout contour
+                    lineDiv.style.top = `${line.top}px`;
+                    lineDiv.style.height = `${line.height}px`;
+
+                    line.segments.forEach(seg => {
+                        const spanEl = document.createElement('span');
+                        spanEl.className = 'text-segment segment-black';
+                        spanEl.style.left = `${Math.round(seg.left)}px`;
+                        spanEl.style.width = `${Math.round(seg.width)}px`;
+                        spanEl.style.fontSize = `${line.fontSize}px`;
+                        spanEl.style.lineHeight = `${line.height}px`;
+                        spanEl.innerHTML = renderWhiteHTML(seg.tokens);
+                        lineDiv.appendChild(spanEl);
+                    });
+                    fragment.appendChild(lineDiv);
+                });
+
+                redLayout.lines.forEach(line => {
+                    const lineDiv = document.createElement('div');
+                    lineDiv.className = 'text-line';
+                    lineDiv.style.top = `${line.top}px`;
+                    lineDiv.style.height = `${line.height}px`;
+
+                    line.segments.forEach(seg => {
+                        const spanEl = document.createElement('span');
+                        spanEl.className = 'text-segment segment-white';
+                        spanEl.style.left = `${Math.round(seg.left)}px`;
+                        spanEl.style.width = `${Math.round(seg.width)}px`;
+                        spanEl.style.fontSize = `${line.fontSize}px`;
+                        spanEl.style.lineHeight = `${line.height}px`;
+                        spanEl.innerHTML = renderRedHTML(seg.tokens);
+                        lineDiv.appendChild(spanEl);
+                    });
+                    fragment.appendChild(lineDiv);
+                });
+
+                // Atomic DOM replacement
+                if (stage.replaceChildren) {
+                    stage.replaceChildren(fragment);
+                } else {
+                    stage.innerHTML = '';
+                    stage.appendChild(fragment);
+                }
+            }
+
+            function updateCardDOM() {
+                card.style.transform = `translate3d(${Math.round(cardX)}px, ${Math.round(cardY)}px, 0)`;
+                card.style.width = `${Math.round(cardW)}px`;
+                card.style.height = `${Math.round(cardH)}px`;
+            }
+
+            // 13. DOM SYNCHRONIZATION FOR CONTENT & ACCESSIBILITY
+            function syncContentWithDOM() {
+                const titleEl = document.getElementById('poster-title-text');
+                if (titleEl && POSTER_DATA.header.title) {
+                    titleEl.textContent = POSTER_DATA.header.title;
+                    const svgEl = titleEl.closest('svg');
+                    if (svgEl) svgEl.setAttribute('aria-label', POSTER_DATA.header.title);
+                }
+
+                const backBtnEl = document.getElementById('poster-back-btn');
+                if (backBtnEl && POSTER_DATA.header.backButton) {
+                    backBtnEl.textContent = POSTER_DATA.header.backButton.label;
+                    backBtnEl.href = POSTER_DATA.header.backButton.href;
+                }
+
+                if (cardImg && POSTER_DATA.cutout) {
+                    if (POSTER_DATA.cutout.src && cardImg.getAttribute('src') !== POSTER_DATA.cutout.src) {
+                        cardImg.src = POSTER_DATA.cutout.src;
+                    }
+                    if (POSTER_DATA.cutout.alt) {
+                        cardImg.alt = POSTER_DATA.cutout.alt;
+                    }
+                }
+
+                // Accessible screen reader section
+                const srEl = document.getElementById('accessible-poster-content');
+                if (srEl) {
+                    let srHtml = `<h1>${POSTER_DATA.header.title}</h1>`;
+                    POSTER_DATA.whiteZone.forEach(block => {
+                        if (block.href) {
+                            srHtml += `<p><a href="${block.href}">${block.text}</a></p>`;
+                        } else {
+                            srHtml += `<p>${block.text}</p>`;
+                        }
+                    });
+                    srHtml += `<h2>Credits</h2><pre>${POSTER_DATA.redCredits.trim()}</pre>`;
+                    srEl.innerHTML = srHtml;
+                }
+            }
+
+            // 14. UNIFIED SCHEDULER & EVENT LISTENERS
+            let rafId = null;
+            function scheduleStageUpdate() {
+                if (rafId !== null) cancelAnimationFrame(rafId);
+                rafId = requestAnimationFrame(() => {
+                    rafId = null;
+                    setupStage();
+                });
+            }
+
+            // Window resize (passive, debounced with requestAnimationFrame)
+            window.addEventListener('resize', scheduleStageUpdate, { passive: true });
+
+            // Font readiness listener
+            if (document.fonts) {
+                document.fonts.ready.then(scheduleStageUpdate);
+            }
+
+            // Cutout image load listener
+            if (!cardImg.complete) {
+                cardImg.addEventListener('load', scheduleStageUpdate, { once: true });
+            }
+
+            // 15. BOOTSTRAP
+            syncContentWithDOM();
+            scheduleStageUpdate();
+        })();
+    </script>
 </body>
 </html>
