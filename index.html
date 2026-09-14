@@ -92,6 +92,11 @@
         /* Curseur spécifique pour la tête pour indiquer qu'elle est cliquable */
         #head-idle {
             cursor: pointer;
+            z-index: 2;
+        }
+
+        .interactive-video {
+            z-index: 3;
         }
 
         #head-idle, #vid-reveil, .interactive-video {
@@ -199,7 +204,7 @@
     <div id="content-layer">
         <div class="grid-wrapper">
             
-            <video id="vid-reveil" muted playsinline>
+            <video id="vid-reveil" preload="auto" muted playsinline>
                 <source src="reveil.mp4" type="video/mp4">
             </video>
 
@@ -208,16 +213,16 @@
             <!-- LA BULLE DE DIALOGUE -->
             <div id="speech-bubble"></div>
             
-            <video id="vid-top-left" class="interactive-video" muted playsinline>
+            <video id="vid-top-left" class="interactive-video" poster="tete-centre.webp" preload="auto" muted playsinline>
                 <source src="regarde-haut-gauche.mp4" type="video/mp4">
             </video>
-            <video id="vid-top-right" class="interactive-video" muted playsinline>
+            <video id="vid-top-right" class="interactive-video" poster="tete-centre.webp" preload="auto" muted playsinline>
                 <source src="regarde-haut-droite.mp4" type="video/mp4">
             </video>
-            <video id="vid-bottom-left" class="interactive-video" muted playsinline>
+            <video id="vid-bottom-left" class="interactive-video" poster="tete-centre.webp" preload="auto" muted playsinline>
                 <source src="regarde-bas-gauche.mp4" type="video/mp4">
             </video>
-            <video id="vid-bottom-right" class="interactive-video" muted playsinline>
+            <video id="vid-bottom-right" class="interactive-video" poster="tete-centre.webp" preload="auto" muted playsinline>
                 <source src="regarde-bas-droite.mp4" type="video/mp4">
             </video>
 
@@ -342,6 +347,7 @@
             const bubble = document.getElementById('speech-bubble');
             bubble.classList.remove('show');
             bubble.innerHTML = '';
+            bubble.style.display = '';
 
             // 5. Réinitialise le titre et les boutons de coin
             const titleEl = document.getElementById('main-title');
@@ -458,6 +464,7 @@
             const bubble = document.getElementById('speech-bubble');
             bubble.classList.remove('show');
             bubble.innerHTML = '';
+            bubble.style.display = '';
 
             // 6. Titre centré directement
             const titleEl = document.getElementById('main-title');
@@ -558,15 +565,36 @@
                     const targetUrl = this.href;
 
                     this.classList.add('is-active');
-                    document.getElementById('head-idle').style.display = 'none';
-                    document.getElementById('vid-reveil').style.display = 'none';
-                    document.getElementById('speech-bubble').style.display = 'none';
+                    const speechBubble = document.getElementById('speech-bubble');
+                    if (speechBubble) speechBubble.style.display = 'none';
+                    const vidReveil = document.getElementById('vid-reveil');
+                    if (vidReveil) vidReveil.style.display = 'none';
                     
+                    const headIdle = document.getElementById('head-idle');
+
+                    video.currentTime = 0;
                     video.style.display = 'block';
+
                     let playPromise = video.play();
                     if (playPromise !== undefined) {
                         playPromise.catch(() => {});
                     }
+
+                    // Masquer l'image fixe uniquement quand la vidéo affiche réellement sa première frame
+                    let headHidden = false;
+                    const hideIdleHead = () => {
+                        if (!headHidden) {
+                            headHidden = true;
+                            if (headIdle) headIdle.style.display = 'none';
+                        }
+                    };
+
+                    if ('requestVideoFrameCallback' in video) {
+                        video.requestVideoFrameCallback(hideIdleHead);
+                    } else {
+                        video.addEventListener('playing', hideIdleHead, { once: true });
+                    }
+                    registerTimeout(hideIdleHead, 120);
 
                     registerTimeout(() => {
                         video.pause();
