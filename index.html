@@ -7,6 +7,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;900&display=swap" rel="stylesheet">
+    <script>
+        if (window.location.pathname.endsWith('.html')) {
+            let clean = window.location.pathname.replace(/\/index\.html$/, '/').replace(/\.html$/, '');
+            if (!clean) clean = '/';
+            window.history.replaceState(null, '', clean + window.location.search + window.location.hash);
+        }
+    </script>
     <style>
         * {
             margin: 0;
@@ -196,10 +203,10 @@
     <div id="black-overlay"></div>
 
     <!-- BOUTONS -->
-    <a href="content.html" class="corner-link top-left" id="btn-index"></a>
-    <a href="info.html" class="corner-link top-right" id="btn-info"></a>
-    <a href="cv.html" class="corner-link bottom-left" id="btn-cv"></a>
-    <a href="contact.html" class="corner-link bottom-right" id="btn-contact"></a>
+    <a href="portfolio" class="corner-link top-left" id="btn-index"></a>
+    <a href="info" class="corner-link top-right" id="btn-info"></a>
+    <a href="cv" class="corner-link bottom-left" id="btn-cv"></a>
+    <a href="contact" class="corner-link bottom-right" id="btn-contact"></a>
 
     <div id="content-layer">
         <div class="grid-wrapper">
@@ -506,17 +513,20 @@
             if (document.referrer) {
                 try {
                     const refUrl = new URL(document.referrer);
-                    if (refUrl.pathname.endsWith('cv.html') || 
-                        refUrl.pathname.endsWith('contact.html') || 
-                        refUrl.pathname.endsWith('content.html') || 
-                        refUrl.pathname.endsWith('info.html')) {
+                    const cleanRef = refUrl.pathname.replace(/\/$/, '').replace(/\.html$/, '');
+                    if (cleanRef.endsWith('cv') || 
+                        cleanRef.endsWith('contact') || 
+                        cleanRef.endsWith('portfolio') || 
+                        cleanRef.endsWith('content') || 
+                        cleanRef.endsWith('info')) {
                         return true;
                     }
                 } catch (e) {
-                    if (document.referrer.includes('cv.html') || 
-                        document.referrer.includes('contact.html') || 
-                        document.referrer.includes('content.html') || 
-                        document.referrer.includes('info.html')) {
+                    if (document.referrer.includes('cv') || 
+                        document.referrer.includes('contact') || 
+                        document.referrer.includes('portfolio') || 
+                        document.referrer.includes('content') || 
+                        document.referrer.includes('info')) {
                         return true;
                     }
                 }

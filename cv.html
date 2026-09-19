@@ -8,6 +8,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <script>
+        if (window.location.pathname.endsWith('.html')) {
+            let clean = window.location.pathname.replace(/\/index\.html$/, '/').replace(/\.html$/, '');
+            if (!clean) clean = '/';
+            window.history.replaceState(null, '', clean + window.location.search + window.location.hash);
+        }
+    </script>
     <style>
         * { 
             margin: 0; 
@@ -418,7 +425,7 @@
     <div class="spray-cursor" id="spray-cursor"></div>
 
 <!-- Bouton pour revenir à l'accueil/CV -->
-    <a href="index.html?return=true" class="back-btn">retour</a>
+    <a href="./?return=true" class="back-btn">retour</a>
 
 
     <!-- CV Stage -->
