@@ -1,2 +1,6 @@
 .DS_Store
 movie/.DS_Store
+*.md
+portfolio_image_descriptions.xlsx
+portfolio_image_descriptions_corrections.xlsx
+~$portfolio_image_descriptions_corrections.xlsx

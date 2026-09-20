@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>welcome</title>
+    <title>bienvenue</title>
     <link rel="icon" type="image/png" href="favicon-dark.png" media="(prefers-color-scheme: light)">
     <link rel="icon" type="image/png" href="favicon-light.png" media="(prefers-color-scheme: dark)">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -98,7 +98,6 @@
             grid-area: 1 / 1;
         }
 
-        /* Curseur spécifique pour la tête pour indiquer qu'elle est cliquable */
         #head-idle {
             cursor: pointer;
             z-index: 2;
@@ -116,38 +115,33 @@
             transition: opacity 0.5s ease;
         }
 
-        /* --- BULLE DE DIALOGUE EASTER EGG --- */
         #speech-bubble {
             position: absolute;
             top: 25%;
-            left: 55%; /* Se place en haut à droite de la tête */
+            left: 55%;
             max-width: 250px;
             background-color: #ff00ff;
             color: #ffffff;
             padding: 15px 25px;
-            border-radius: 30px 30px 30px 5px; /* Forme de bulle */
+            border-radius: 30px 30px 30px 5px;
             font-family: "Libre Franklin", sans-serif;
             font-weight: 900;
             font-size: 16px;
             line-height: 1.2;
             z-index: 20;
             pointer-events: none;
-            
-            /* Animation de base (cachée) */
             opacity: 0;
             transform: scale(0);
             transform-origin: bottom left; 
-            transition: opacity 0.2s ease, transform 0s ease; /* Transform à 0s pour reset instantané */
+            transition: opacity 0.2s ease, transform 0s ease;
         }
 
-        /* État actif de la bulle (effet rebond élastique) */
         #speech-bubble.show {
             opacity: 1;
             transform: scale(1);
             transition: opacity 0.2s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* LE TITRE */
         #main-title {
             position: fixed;
             top: 50%;
@@ -173,7 +167,6 @@
             text-align: left;
         }
 
-        /* L'ÉCRAN NOIR FINAL */
         #black-overlay {
             position: fixed;
             inset: 0;
@@ -186,16 +179,16 @@
         #black-overlay.show {
             opacity: 1;
         }
-        /* --- ADAPTATION MOBILE (Par ratio écran, alignée sur content.html) --- */
+
         @media (max-aspect-ratio: 4/5) {
             #main-title {
-                font-size: 12vw; /* Rend le texte 2x plus gros sur téléphone */
+                font-size: 12vw;
             }
             
             #main-title.move-to-header {
-                top: 2vw; /* Aligné sur le top: 2vw de content.html */
+                top: 2vw;
                 left: 4vw;
-                font-size: 15.6px; /* 1.2em * 13px de content.html */
+                font-size: 15.6px;
             }
         }
 
@@ -276,10 +269,6 @@
         .lang-switch.is-dragging .lang-switch-knob {
             transition: none;
         }
-
-       
-
-        
     </style>
 </head>
 <body>
@@ -287,15 +276,15 @@
     <div id="black-overlay"></div>
 
     <!-- BOUTONS -->
-    <a href="portfolio" class="corner-link top-left" id="btn-index"></a>
-    <a href="info" class="corner-link top-right" id="btn-info"></a>
-    <a href="cv" class="corner-link bottom-left" id="btn-cv"></a>
-    <a href="contact" class="corner-link bottom-right" id="btn-contact"></a>
+    <a href="portfolio_fr" class="corner-link top-left" id="btn-index"></a>
+    <a href="info_fr" class="corner-link top-right" id="btn-info"></a>
+    <a href="cv_fr" class="corner-link bottom-left" id="btn-cv"></a>
+    <a href="contact_fr" class="corner-link bottom-right" id="btn-contact"></a>
 
-    <!-- TOGGLE SWITCH LANGUE (EN / FR) -->
-    <div id="lang-toggle-wrap" class="lang-toggle-wrap" title="Version française">
-        <div id="lang-switch" class="lang-switch" role="switch" aria-checked="false" tabindex="0" aria-label="Passer en version française">
-            <div class="lang-switch-knob" id="lang-switch-knob">en</div>
+    <!-- TOGGLE SWITCH LANGUE (FR / EN) -->
+    <div id="lang-toggle-wrap" class="lang-toggle-wrap" title="English version">
+        <div id="lang-switch" class="lang-switch is-on" role="switch" aria-checked="true" tabindex="0" aria-label="Passer en version anglaise">
+            <div class="lang-switch-knob" id="lang-switch-knob">fr</div>
         </div>
     </div>
 
@@ -306,9 +295,8 @@
                 <source src="reveil.mp4" type="video/mp4">
             </video>
 
-            <img id="head-idle" src="tete-centre.webp" alt="Intro Animation">
+            <img id="head-idle" src="tete-centre.webp" alt="Animation d'introduction">
             
-            <!-- LA BULLE DE DIffALOGUE -->
             <div id="speech-bubble"></div>
             
             <video id="vid-top-left" class="interactive-video" poster="tete-centre.webp" preload="auto" muted playsinline>
@@ -355,7 +343,6 @@
             clearTimeout(bubbleTypeTimeout);
         }
 
-        // MACHINE À ÉCRIRE AVEC SÉCURITÉ DE CYCLE
         function typeWriterIn(element, text, speed, cycle, callback) {
             let i = 0;
             function type() {
@@ -398,18 +385,15 @@
             untype();
         }
 
-        // CYCLE D'INTRODUCTION COMPLET ET RÉINITIALISABLE
         function startIntroSequence() {
             clearAllTimeouts();
             animationCycle++;
             const currentCycle = animationCycle;
 
-            // Enregistre que l'intro a été initiée dans cette session
             try {
                 sessionStorage.setItem('introPlayed', 'true');
             } catch (e) {}
 
-            // 1. Déverrouille les clics et le rideau noir
             isTransitioning = false;
             document.body.style.pointerEvents = 'auto';
 
@@ -420,14 +404,12 @@
             void overlay.offsetWidth;
             overlay.style.transition = '';
 
-            // 2. Réinitialise le conteneur principal
             const contentLayer = document.getElementById('content-layer');
             contentLayer.style.transition = 'none';
             contentLayer.classList.remove('theme-white', 'theme-inverted');
             void contentLayer.offsetWidth;
             contentLayer.style.transition = '';
 
-            // 3. Masque et stoppe toutes les vidéos
             document.querySelectorAll('.interactive-video').forEach(vid => {
                 vid.pause();
                 vid.currentTime = 0;
@@ -440,7 +422,6 @@
             vidReveil.style.opacity = '0';
             vidReveil.style.display = 'none';
 
-            // 4. Masque la tête idle et la bulle
             document.getElementById('head-idle').style.display = 'none';
             const bubble = document.getElementById('speech-bubble');
             bubble.classList.remove('show');
@@ -450,7 +431,6 @@
             const langWrap = document.getElementById('lang-toggle-wrap');
             if (langWrap) langWrap.classList.remove('is-visible');
 
-            // 5. Réinitialise le titre et les boutons de coin
             const titleEl = document.getElementById('main-title');
             titleEl.style.transition = 'none';
             titleEl.classList.remove('move-to-header');
@@ -467,7 +447,6 @@
                 }
             });
 
-            // 6. Lance le déroulement temporel
             registerTimeout(() => {
                 if (currentCycle !== animationCycle) return;
                 contentLayer.classList.add('theme-white');
@@ -519,7 +498,6 @@
             }, 2000);
         }
 
-        // AFFICHAGE DIRECT SANS ANIMATIONS (RETOUR SUR LA PAGE)
         function skipIntroSequence() {
             clearAllTimeouts();
             animationCycle++;
@@ -531,7 +509,6 @@
             isTransitioning = false;
             document.body.style.pointerEvents = 'auto';
 
-            // 1. Overlay noir masqué
             const overlay = document.getElementById('black-overlay');
             overlay.style.transition = 'none';
             overlay.classList.remove('show');
@@ -539,7 +516,6 @@
             void overlay.offsetWidth;
             overlay.style.transition = '';
 
-            // 2. Conteneur principal en thème blanc immédiat
             const contentLayer = document.getElementById('content-layer');
             contentLayer.style.transition = 'none';
             contentLayer.classList.remove('theme-inverted');
@@ -547,7 +523,6 @@
             void contentLayer.offsetWidth;
             contentLayer.style.transition = '';
 
-            // 3. Masque et stoppe toutes les vidéos
             document.querySelectorAll('.interactive-video').forEach(vid => {
                 vid.pause();
                 vid.currentTime = 0;
@@ -560,16 +535,13 @@
             vidReveil.style.opacity = '0';
             vidReveil.style.display = 'none';
 
-            // 4. Affiche directement la tête idle
             document.getElementById('head-idle').style.display = 'block';
 
-            // 5. Réinitialise la bulle
             const bubble = document.getElementById('speech-bubble');
             bubble.classList.remove('show');
             bubble.innerHTML = '';
             bubble.style.display = '';
 
-            // 6. Titre centré directement
             const titleEl = document.getElementById('main-title');
             titleEl.style.transition = 'none';
             titleEl.classList.remove('move-to-header');
@@ -577,7 +549,6 @@
             void titleEl.offsetWidth;
             titleEl.style.transition = '';
 
-            // 7. Boutons de coin avec texte complet et cliquables
             linksData.forEach(link => {
                 const el = document.getElementById(link.id);
                 if (el) {
@@ -592,7 +563,6 @@
         }
 
         function shouldSkipIntro() {
-            // 1. Si le paramètre ?return=true est présent dans l'URL (clic sur un bouton "retour")
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('return') === 'true' || window.location.hash === '#return') {
                 try {
@@ -601,23 +571,26 @@
                 return true;
             }
 
-            // 2. Retour arrière navigateur (historique back / forward)
             const navEntries = performance.getEntriesByType && performance.getEntriesByType('navigation');
             const navType = (navEntries && navEntries.length > 0) ? navEntries[0].type : '';
             if (navType === 'back_forward') {
                 return true;
             }
 
-            // 3. Si l'utilisateur revient depuis une sous-page du portfolio (referrer)
             if (document.referrer) {
                 try {
                     const refUrl = new URL(document.referrer);
                     const cleanRef = refUrl.pathname.replace(/\/$/, '').replace(/\.html$/, '');
                     if (cleanRef.endsWith('cv') || 
+                        cleanRef.endsWith('cv_fr') || 
                         cleanRef.endsWith('contact') || 
+                        cleanRef.endsWith('contact_fr') || 
                         cleanRef.endsWith('portfolio') || 
+                        cleanRef.endsWith('portfolio_fr') || 
                         cleanRef.endsWith('content') || 
-                        cleanRef.endsWith('info')) {
+                        cleanRef.endsWith('content_fr') || 
+                        cleanRef.endsWith('info') ||
+                        cleanRef.endsWith('info_fr')) {
                         return true;
                     }
                 } catch (e) {
@@ -631,26 +604,21 @@
                 }
             }
 
-            // Pour tout nouvel onglet, lien envoyé à quelqu'un, rechargement, etc. :
-            // Toujours jouer l'animation de réveil !
             return false;
         }
 
-        // CHARGEMENT INITIAL OU RETOUR
         if (shouldSkipIntro()) {
             skipIntroSequence();
         } else {
             startIntroSequence();
         }
 
-        // GESTION DU RETOUR ARRIÈRE MOBILE ET DESKTOP (SAFARI / CHROME BFCACHE)
         window.addEventListener('pageshow', (event) => {
             if (event.persisted || isTransitioning || shouldSkipIntro()) {
                 skipIntroSequence();
             }
         });
 
-        // SORTIES DE PAGE VERS LES AUTRES SECTIONS
         const interactions = [
             { btnId: 'btn-index', vidId: 'vid-top-left' },
             { btnId: 'btn-info', vidId: 'vid-top-right' },
@@ -696,7 +664,6 @@
                         playPromise.catch(() => {});
                     }
 
-                    // Masquer l'image fixe uniquement quand la vidéo affiche réellement sa première frame
                     let headHidden = false;
                     const hideIdleHead = () => {
                         if (!headHidden) {
@@ -745,38 +712,36 @@
             }
         });
 
-        // EASTER EGG BULLE DE DIALOGUE
         const phrases = [
-            "stop poking my face.",
-            "i'm trying to look professional.",
-            "the links are in the corners.",
-            "ouch.",
-            "do i know you?",
-            "yes, i actually look like this.",
-            "are we playing a game?",
-            "stop poking my face.",
-    "concussion incoming.",
-    "you're ruining my hair.",
-    "please respect the personal bubble.",
-    "error 404: reaction not found.",
-    "made of 100% recycled concrete.",
-    "smells like foam board and cyanoacrylate.",
-    "don't ask about the render times.",
-    "built entirely out of cardboard and coffee.",
-    "take 43... action.",
-    "i studied for this.",
-    "fix my face in post.",
-    "it burns!          just kidding",
-    "the lighting was actually great that day.",
-    "prize winner (allegedly).",
-    "harder!",
-    "now with 20% more magenta.",
-    "contains small parts. choking hazard.",
-    "recidive",
-    "beep boop. wait, i'm a human.",
-    "why are you still here?",
-    "you found the secret dialogue! (there is no prize).",
-    "do not feed after midnight"
+            "arrête de me tripoter le visage.",
+            "j'essaie d'avoir l'air professionnel.",
+            "les liens sont dans les coins.",
+            "aïe.",
+            "on se connaît ?",
+            "oui, je ressemble vraiment à ça.",
+            "on joue à un jeu ?",
+            "commotion cérébrale imminente.",
+            "tu ruines mes cheveux.",
+            "merci de respecter ma bulle personnelle.",
+            "erreur 404 : réaction introuvable.",
+            "100% béton recyclé.",
+            "odeur de carton plume et de cyanoacrylate.",
+            "ne me parle pas des temps de rendu.",
+            "bâti exclusivement de carton et de café.",
+            "prise 43... action.",
+            "j'ai fait des études pour ça.",
+            "on arrangera mon visage en post-prod.",
+            "ça brûle !          je plaisante",
+            "la lumière était vraiment belle ce jour-là.",
+            "primé (à ce qu'il paraît).",
+            "plus fort !",
+            "maintenant avec 20% de magenta en plus.",
+            "contient de petits éléments. risque d'étouffement.",
+            "récidive",
+            "bip boop. attends, je suis humain.",
+            "pourquoi es-tu encore là ?",
+            "tu as trouvé le dialogue secret ! (il n'y a rien à gagner).",
+            "ne pas nourrir après minuit"
         ];
 
         document.getElementById('head-idle').addEventListener('click', function() {
@@ -813,7 +778,7 @@
         });
 
         // ==========================================
-        // TOGGLE SWITCH (EN -> FR)
+        // TOGGLE SWITCH (FR -> EN)
         // ==========================================
         (function() {
             const toggle = document.getElementById('lang-switch');
@@ -822,7 +787,7 @@
 
             let isDragging = false;
             let startX = 0;
-            let currentX = 0;
+            let currentX = 20;
             let hasMoved = false;
             const maxTravel = 20;
 
@@ -840,16 +805,16 @@
             function triggerSwitch() {
                 if (isTransitioning) return;
                 isTransitioning = true;
-                toggle.classList.add('is-on');
-                toggle.setAttribute('aria-checked', 'true');
+                toggle.classList.remove('is-on');
+                toggle.setAttribute('aria-checked', 'false');
                 toggle.style.backgroundColor = '';
                 toggle.style.boxShadow = '';
-                knob.style.transform = `translateX(${maxTravel}px)`;
+                knob.style.transform = 'translateX(0px)';
                 
                 document.body.style.pointerEvents = 'none';
                 
                 const isHtmlEnv = window.location.pathname.endsWith('.html') || window.location.protocol === 'file:';
-                const targetUrl = isHtmlEnv ? 'index_fr.html?return=true' : 'index_fr?return=true';
+                const targetUrl = isHtmlEnv ? 'index.html?return=true' : './?return=true';
                 
                 setTimeout(() => {
                     window.location.href = targetUrl;
@@ -857,8 +822,8 @@
             }
 
             function resetSwitch() {
-                toggle.classList.remove('is-on');
-                toggle.setAttribute('aria-checked', 'false');
+                toggle.classList.add('is-on');
+                toggle.setAttribute('aria-checked', 'true');
                 toggle.style.backgroundColor = '';
                 toggle.style.boxShadow = '';
                 knob.style.transform = '';
@@ -869,7 +834,7 @@
                 isDragging = true;
                 hasMoved = false;
                 startX = e.clientX;
-                currentX = 0;
+                currentX = maxTravel;
                 toggle.classList.add('is-dragging');
                 try {
                     toggle.setPointerCapture(e.pointerId);
@@ -882,7 +847,7 @@
                 if (Math.abs(deltaX) > 3) {
                     hasMoved = true;
                 }
-                updateKnob(deltaX);
+                updateKnob(maxTravel + deltaX);
             });
 
             function onPointerEnd(e) {
@@ -896,7 +861,7 @@
                 if (!hasMoved) {
                     triggerSwitch();
                 } else {
-                    if (currentX >= maxTravel * 0.5) {
+                    if (currentX <= maxTravel * 0.5) {
                         triggerSwitch();
                     } else {
                         resetSwitch();
@@ -917,3 +882,4 @@
     </script>
 </body>
 </html>
+

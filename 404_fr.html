@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Redirection...</title>
+  <script>
+    const currentPath = window.location.pathname;
+
+    // Vérifie si le 404 est survenu dans le projet movie
+    if (currentPath.includes('/movie')) {
+      // 1. Sauvegarde l'URL visée
+      sessionStorage.setItem('redirect_path', currentPath);
+
+      // 2. Extrait la base jusqu'à "/movie/"
+      const movieIdx = currentPath.indexOf('/movie');
+      const targetBase = currentPath.substring(0, movieIdx + '/movie/'.length);
+
+      // 3. Redirige vers movie/index.html
+      window.location.replace(targetBase);
+    } else {
+      document.write('<h1 style="font-family:sans-serif;padding:40px;">404 - Page introuvable</h1>');
+    }
+  </script>
+</head>
+<body></body>
+</html>
+
