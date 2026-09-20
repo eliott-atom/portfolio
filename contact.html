@@ -53,11 +53,20 @@
             100% { opacity: 0; visibility: hidden; }
         }
 
-        /* BOUTON RETOUR (Pillule Rose) */
-        .back-btn {
+        /* TOP NAV (RETOUR + LANG SWITCH) */
+        .top-nav-group {
             position: absolute;
             top: 40px;
             right: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            z-index: 100;
+        }
+
+        /* BOUTON RETOUR (Pillule Rose) */
+        .back-btn {
             -webkit-appearance: none;
             appearance: none;
             border: none;
@@ -74,7 +83,6 @@
             border-radius: 30px;
             cursor: pointer;
             transition: background-color 0.2s ease, transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 100;
         }
 
         .back-btn:hover {
@@ -84,6 +92,47 @@
 
         .back-btn:active {
             transform: scale(0.97);
+        }
+
+        .lang-switch {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: lowercase;
+            color: #111111;
+            display: flex;
+            align-items: baseline;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .lang-switch a,
+        .lang-switch span {
+            color: #111111;
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+
+        .lang-switch a {
+            cursor: pointer;
+        }
+
+        .lang-switch .is-active {
+            font-weight: 900;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .lang-switch a:hover {
+            color: #ff00ff;
+            font-weight: 900;
+        }
+
+        .lang-switch .lang-sep {
+            color: #111111;
+            font-weight: 500;
+            cursor: default;
+            pointer-events: none;
         }
 
         /* INDEX GÉANT DES CONTACTS */
@@ -101,31 +150,29 @@
         }
 
         .contact-item {
-            position: relative;
             display: flex;
-            align-items: flex-start;
+            align-items: baseline;
+            width: 100%;
         }
 
-        /* Le petit numéro technique devant le lien (ex: 01) */
+        /* NUMÉROS GAUCHE (Gris clair par défaut) */
         .contact-index {
-            font-family: "Libre Franklin", sans-serif;
-            font-weight: 700;
-            font-size: 12px;
-            color: #111111;
-            margin-top: 1vw; /* Aligne avec le haut des grosses lettres */
-            margin-right: 2vw;
-            opacity: 0.5;
-            transition: opacity 0.3s ease;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 2vw;
+            font-weight: 300;
+            color: #000000;
+            opacity: 0.25;
+            margin-right: 3vw;
+            width: 50px;
+            transition: color 0.2s ease, opacity 0.2s ease;
         }
 
-        /* La typographie massive */
+        /* LIENS TEXTUELS GÉANTS */
         .contact-link {
             font-family: "Libre Franklin", sans-serif;
             font-weight: 900;
-            /* Le texte s'adapte à la taille de l'écran (clamp = min, fluide, max) */
-            font-size: clamp(3rem, 9vw, 9rem); 
-            line-height: 0.85;
-            letter-spacing: -0.04em;
+            font-size: 8vw; /* Remplissage visuel imposant */
+            line-height: 0.95;
             color: #111111;
             text-decoration: none;
             text-transform: lowercase;
@@ -146,7 +193,7 @@
 
         /* MEDIA QUERY POUR MOBILE */
         @media (max-width: 768px) {
-            .back-btn {
+            .top-nav-group {
                 top: 20px;
                 right: 20px;
             }
@@ -171,8 +218,13 @@
     <!-- L'écran noir qui disparaît au chargement -->
     <div class="black-fade-overlay"></div>
 
-    <!-- Bouton pour revenir à l'accueil/CV -->
-    <a href="./?return=true" class="back-btn">retour</a>
+    <!-- Navigation haut-droite : retour + switch langue -->
+    <div class="top-nav-group">
+        <a href="./?return=true" class="back-btn">retour</a>
+        <nav class="lang-switch" aria-label="Language selection">
+            <span class="is-active" aria-current="page">en</span><span class="lang-sep">/</span><a href="contact_fr.html">fr</a>
+        </nav>
+    </div>
 
     <div class="contact-container">
         <ul class="contact-list">

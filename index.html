@@ -199,87 +199,61 @@
             }
         }
 
-        /* TOGGLE SWITCH EN / FR (Bottom Center) */
-        .lang-toggle-wrap {
+        /* MINIMALIST LANG SWITCH (EN / FR) */
+        .lang-switch {
             position: fixed;
-            bottom: max(18px, 3.2vw);
+            bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 7px;
+            padding-bottom: 4vw;
             z-index: 25;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.5s ease;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 20px;
+            font-weight: 500;
+            text-transform: lowercase;
+            color: #000000;
+            display: flex;
+            align-items: baseline;
             user-select: none;
             -webkit-user-select: none;
+            pointer-events: none;
+            opacity: 0;
         }
 
-        .lang-toggle-wrap.is-visible {
+        .lang-switch.is-visible {
             opacity: 1;
             pointer-events: auto;
         }
 
-        .lang-switch {
-            position: relative;
-            width: 51px;
-            height: 31px;
-            border-radius: 31px;
-            background-color: #e9e9ea;
-            box-shadow: inset 0 0 0 1.5px rgba(0, 0, 0, 0.12);
+        .lang-switch a,
+        .lang-switch span {
+            color: #000000;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.15s ease;
+        }
+
+        .lang-switch a {
             cursor: pointer;
-            touch-action: none;
-            transition: background-color 0.25s ease, box-shadow 0.25s ease;
-            outline: none;
         }
 
-        .lang-switch:focus-visible {
-            box-shadow: inset 0 0 0 1.5px rgba(0, 0, 0, 0.25), 0 0 0 3px rgba(255, 0, 255, 0.35);
-        }
-
-        .lang-switch.is-on {
-            background-color: #ff00ff;
-            box-shadow: inset 0 0 0 1.5px #ff00ff;
-        }
-
-        .lang-switch-knob {
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 27px;
-            height: 27px;
-            border-radius: 50%;
-            background-color: #ffffff;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18), 0 1px 2px rgba(0, 0, 0, 0.1);
-            transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), color 0.25s ease;
-            pointer-events: none;
-            will-change: transform;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: "Libre Franklin", sans-serif;
+        .lang-switch .is-active {
             font-weight: 900;
-            font-size: 11px;
-            line-height: 1;
-            letter-spacing: -0.2px;
-            text-transform: lowercase;
-            color: #111111;
+            cursor: default;
+            pointer-events: none;
         }
 
-        .lang-switch.is-on .lang-switch-knob {
-            transform: translateX(20px);
+        .lang-switch a:hover {
             color: #ff00ff;
+            font-weight: 900;
         }
 
-        .lang-switch.is-dragging .lang-switch-knob {
-            transition: none;
+        .lang-switch .lang-sep {
+            color: #000000;
+            font-weight: 500;
+            cursor: default;
+            pointer-events: none;
         }
-
-       
-
-        
     </style>
 </head>
 <body>
@@ -292,12 +266,10 @@
     <a href="cv" class="corner-link bottom-left" id="btn-cv"></a>
     <a href="contact" class="corner-link bottom-right" id="btn-contact"></a>
 
-    <!-- TOGGLE SWITCH LANGUE (EN / FR) -->
-    <div id="lang-toggle-wrap" class="lang-toggle-wrap" title="Version française">
-        <div id="lang-switch" class="lang-switch" role="switch" aria-checked="false" tabindex="0" aria-label="Passer en version française">
-            <div class="lang-switch-knob" id="lang-switch-knob">en</div>
-        </div>
-    </div>
+    <!-- SÉLECTEUR DE LANGUE (EN / FR) -->
+    <nav id="lang-switch" class="lang-switch" aria-label="Language selection">
+        <span class="is-active" aria-current="page">en</span><span class="lang-sep">/</span><a href="index_fr.html?return=true" id="lang-link-fr">fr</a>
+    </nav>
 
     <div id="content-layer">
         <div class="grid-wrapper">
@@ -398,6 +370,77 @@
             untype();
         }
 
+        function renderLangSwitchHtml(charsVisible) {
+            let enVis = Math.max(0, Math.min(2, charsVisible));
+            let enHid = 2 - enVis;
+            let sepVis = (charsVisible >= 3) ? 1 : 0;
+            let frVis = Math.max(0, Math.min(2, charsVisible - 3));
+            let frHid = 2 - frVis;
+
+            let enText = 'en';
+            let frText = 'fr';
+
+            let html = '';
+            // en part (active on index.html)
+            html += '<span class="is-active" aria-current="page">';
+            if (enVis > 0) html += enText.substring(0, enVis);
+            if (enHid > 0) html += '<span style="visibility: hidden;">' + enText.substring(enVis) + '</span>';
+            html += '</span>';
+
+            // sep part
+            html += '<span class="lang-sep">';
+            if (sepVis > 0) html += '/';
+            else html += '<span style="visibility: hidden;">/</span>';
+            html += '</span>';
+
+            // fr part (link on index.html)
+            html += '<a href="index_fr.html?return=true" id="lang-link-fr">';
+            if (frVis > 0) html += frText.substring(0, frVis);
+            if (frHid > 0) html += '<span style="visibility: hidden;">' + frText.substring(frVis) + '</span>';
+            html += '</a>';
+
+            return html;
+        }
+
+        function typeWriterLangIn(cycle, callback) {
+            const el = document.getElementById('lang-switch');
+            if (!el) return;
+            el.classList.add('is-visible');
+            let i = 0;
+            function type() {
+                if (cycle !== animationCycle) return;
+                el.innerHTML = renderLangSwitchHtml(i);
+                if (i < 5) {
+                    i++;
+                    registerTimeout(type, 60);
+                } else if (callback) {
+                    callback();
+                }
+            }
+            type();
+        }
+
+        function typeWriterLangOut(speed, callback) {
+            const el = document.getElementById('lang-switch');
+            if (!el) {
+                if (callback) callback();
+                return;
+            }
+            let i = 5;
+            function untype() {
+                el.innerHTML = renderLangSwitchHtml(i);
+                if (i > 0) {
+                    i--;
+                    registerTimeout(untype, speed || 25);
+                } else {
+                    el.innerHTML = '';
+                    el.classList.remove('is-visible');
+                    if (callback) callback();
+                }
+            }
+            untype();
+        }
+
         // CYCLE D'INTRODUCTION COMPLET ET RÉINITIALISABLE
         function startIntroSequence() {
             clearAllTimeouts();
@@ -447,8 +490,12 @@
             bubble.innerHTML = '';
             bubble.style.display = '';
 
-            const langWrap = document.getElementById('lang-toggle-wrap');
-            if (langWrap) langWrap.classList.remove('is-visible');
+            const langWrap = document.getElementById('lang-switch');
+            if (langWrap) {
+                langWrap.classList.remove('is-visible');
+                langWrap.innerHTML = '';
+                langWrap.style.pointerEvents = 'none';
+            }
 
             // 5. Réinitialise le titre et les boutons de coin
             const titleEl = document.getElementById('main-title');
@@ -482,6 +529,10 @@
                         typeWriterIn(el, link.text, 60, currentCycle);
                     }, index * 250); 
                 });
+                registerTimeout(() => {
+                    if (currentCycle !== animationCycle) return;
+                    typeWriterLangIn(currentCycle);
+                }, 4 * 250);
             }, 800); 
 
             registerTimeout(() => {
@@ -512,7 +563,7 @@
                         link.style.pointerEvents = 'auto';
                     });
 
-                    if (langWrap) langWrap.classList.add('is-visible');
+                    if (langWrap) langWrap.style.pointerEvents = 'auto';
 
                 }, 3500);
 
@@ -587,8 +638,12 @@
                 }
             });
 
-            const langWrap = document.getElementById('lang-toggle-wrap');
-            if (langWrap) langWrap.classList.add('is-visible');
+            const langWrap = document.getElementById('lang-switch');
+            if (langWrap) {
+                langWrap.innerHTML = renderLangSwitchHtml(5);
+                langWrap.classList.add('is-visible');
+                langWrap.style.pointerEvents = 'auto';
+            }
         }
 
         function shouldSkipIntro() {
@@ -677,8 +732,8 @@
                         targetUrl += '.html';
                     }
 
-                    const langWrap = document.getElementById('lang-toggle-wrap');
-                    if (langWrap) langWrap.classList.remove('is-visible');
+                    const langWrap = document.getElementById('lang-switch');
+                    if (langWrap) langWrap.style.pointerEvents = 'none';
 
                     this.classList.add('is-active');
                     const speechBubble = document.getElementById('speech-bubble');
@@ -726,6 +781,7 @@
                             }
                             
                             typeWriterOut(document.getElementById(item.btnId), 25); 
+                            typeWriterLangOut(25);
 
                             registerTimeout(() => {
                                 const overlay = document.getElementById('black-overlay');
@@ -813,105 +869,24 @@
         });
 
         // ==========================================
-        // TOGGLE SWITCH (EN -> FR)
+        // SÉLECTEUR DE LANGUE (EN -> FR)
         // ==========================================
         (function() {
-            const toggle = document.getElementById('lang-switch');
-            const knob = document.getElementById('lang-switch-knob');
-            if (!toggle || !knob) return;
+            const langSwitch = document.getElementById('lang-switch');
+            if (!langSwitch) return;
 
-            let isDragging = false;
-            let startX = 0;
-            let currentX = 0;
-            let hasMoved = false;
-            const maxTravel = 20;
-
-            function updateKnob(pos) {
-                currentX = Math.max(0, Math.min(maxTravel, pos));
-                knob.style.transform = `translateX(${currentX}px)`;
-                const ratio = currentX / maxTravel;
-                const r = Math.round(233 + (255 - 233) * ratio);
-                const g = Math.round(233 + (0 - 233) * ratio);
-                const b = Math.round(234 + (255 - 234) * ratio);
-                toggle.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
-                toggle.style.boxShadow = `inset 0 0 0 1.5px rgb(${r}, ${g}, ${b})`;
-            }
-
-            function triggerSwitch() {
+            langSwitch.addEventListener('click', function(e) {
+                const targetLink = e.target.closest('a#lang-link-fr');
+                if (!targetLink) return;
                 if (isTransitioning) return;
+
                 isTransitioning = true;
-                toggle.classList.add('is-on');
-                toggle.setAttribute('aria-checked', 'true');
-                toggle.style.backgroundColor = '';
-                toggle.style.boxShadow = '';
-                knob.style.transform = `translateX(${maxTravel}px)`;
-                
+                e.preventDefault();
                 document.body.style.pointerEvents = 'none';
-                
+
                 const isHtmlEnv = window.location.pathname.endsWith('.html') || window.location.protocol === 'file:';
                 const targetUrl = isHtmlEnv ? 'index_fr.html?return=true' : 'index_fr?return=true';
-                
-                setTimeout(() => {
-                    window.location.href = targetUrl;
-                }, 220);
-            }
-
-            function resetSwitch() {
-                toggle.classList.remove('is-on');
-                toggle.setAttribute('aria-checked', 'false');
-                toggle.style.backgroundColor = '';
-                toggle.style.boxShadow = '';
-                knob.style.transform = '';
-            }
-
-            toggle.addEventListener('pointerdown', (e) => {
-                if (isTransitioning) return;
-                isDragging = true;
-                hasMoved = false;
-                startX = e.clientX;
-                currentX = 0;
-                toggle.classList.add('is-dragging');
-                try {
-                    toggle.setPointerCapture(e.pointerId);
-                } catch (err) {}
-            });
-
-            toggle.addEventListener('pointermove', (e) => {
-                if (!isDragging) return;
-                const deltaX = e.clientX - startX;
-                if (Math.abs(deltaX) > 3) {
-                    hasMoved = true;
-                }
-                updateKnob(deltaX);
-            });
-
-            function onPointerEnd(e) {
-                if (!isDragging) return;
-                isDragging = false;
-                toggle.classList.remove('is-dragging');
-                try {
-                    toggle.releasePointerCapture(e.pointerId);
-                } catch (err) {}
-
-                if (!hasMoved) {
-                    triggerSwitch();
-                } else {
-                    if (currentX >= maxTravel * 0.5) {
-                        triggerSwitch();
-                    } else {
-                        resetSwitch();
-                    }
-                }
-            }
-
-            toggle.addEventListener('pointerup', onPointerEnd);
-            toggle.addEventListener('pointercancel', onPointerEnd);
-
-            toggle.addEventListener('keydown', (e) => {
-                if (e.key === ' ' || e.key === 'Enter') {
-                    e.preventDefault();
-                    triggerSwitch();
-                }
+                window.location.href = targetUrl;
             });
         })();
     </script>

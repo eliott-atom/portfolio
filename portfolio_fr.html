@@ -59,8 +59,15 @@
             z-index: 50;
             pointer-events: none;
         }
+        .header-left-col {
+            grid-column: 1;
+            pointer-events: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+        }
         .header-left { 
-            grid-column: 1; 
             pointer-events: auto; 
             font-weight: 900; 
             font-size: 2em;           
@@ -68,6 +75,47 @@
             cursor: pointer; 
             color: #ffffff;
             text-decoration: none;
+            line-height: 1.0;
+        }
+        .header-lang {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            text-transform: lowercase;
+            color: #ffffff;
+            display: inline-flex;
+            align-items: baseline;
+            user-select: none;
+            -webkit-user-select: none;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+        }
+        .header-lang a,
+        .header-lang span {
+            color: #ffffff;
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+        .header-lang a {
+            cursor: pointer;
+            opacity: 0.6;
+        }
+        .header-lang .is-active {
+            font-weight: 900;
+            opacity: 1;
+            cursor: default;
+            pointer-events: none;
+        }
+        .header-lang a:hover {
+            color: #ff00ff;
+            opacity: 1;
+        }
+        .header-lang .lang-sep {
+            color: #ffffff;
+            opacity: 0.4;
+            padding: 0 1px;
+            cursor: default;
+            pointer-events: none;
         }
         .header-right { 
             grid-column: 3; 
@@ -413,6 +461,7 @@
                 transform: translateX(18vw);
             }
 
+            body.is-project-open .header-left-col,
             body.is-project-open .header-left,
             body.is-project-open .header-right,
             body.is-project-open .col-name span,
@@ -535,7 +584,12 @@
         <!-- Bouton Fermer (Caché par défaut) -->
         <div id="mobile-close-btn">✕ FERMER</div>
         
-        <a href="index_fr.html?return=true" class="header-left">Eliott Atom<br>Croubalian</a>
+        <div class="header-left-col">
+            <a href="index_fr.html?return=true" class="header-left">Eliott Atom<br>Croubalian</a>
+            <nav class="header-lang" aria-label="Choix de la langue">
+                <a href="portfolio.html">en</a><span class="lang-sep">/</span><span class="is-active" aria-current="page">fr</span>
+            </nav>
+        </div>
         <div class="header-right">
             <div class="filter-wrapper">
                 <!-- Le bouton déroulant pour mobile -->
@@ -1428,6 +1482,8 @@
 
         const allLinks = document.querySelectorAll('a');
         allLinks.forEach(link => {
+            // Le changement de langue est instantané
+            if (link.closest('.header-lang')) return;
             link.addEventListener('click', (e) => {
                 if (link.hostname === window.location.hostname && link.getAttribute('target') !== '_blank') {
                     e.preventDefault();
