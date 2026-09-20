@@ -4,16 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>digital portfolio</title>
-    <link rel="icon" type="image/png" href="favicon-light.png">
+    <link rel="icon" type="image/x-icon" href="favicon.ico?v=3">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-light.png?v=3">
+    <link rel="shortcut icon" href="favicon.ico?v=3">
+    <link rel="apple-touch-icon" href="favicon-light.png?v=3">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;700;900&display=swap" rel="stylesheet">
     <script>
-        if (window.location.pathname.endsWith('.html')) {
-            let clean = window.location.pathname.replace(/\/index\.html$/, '/').replace(/\.html$/, '');
-            if (!clean) clean = '/';
-            window.history.replaceState(null, '', clean + window.location.search + window.location.hash);
-        }
+        try {
+            if (window.location.protocol.startsWith('http') && window.location.pathname.endsWith('.html')) {
+                let clean = window.location.pathname.replace(/\/index\.html$/, '/').replace(/\.html$/, '');
+                if (!clean) clean = '/';
+                window.history.replaceState(null, '', clean + window.location.search + window.location.hash);
+            }
+        } catch (e) {}
     </script>
     <style>
         /* 1. GLOBAL & RESsET */
