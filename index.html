@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>welcome</title>
-    <link rel="icon" type="image/png" href="favicon-dark.png" media="(prefers-color-scheme: light)">
-    <link rel="icon" type="image/png" href="favicon-light.png" media="(prefers-color-scheme: dark)">
+    <link rel="icon" type="image/png" href="favicon-light.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;900&display=swap" rel="stylesheet">
@@ -225,25 +224,24 @@
             pointer-events: auto;
         }
 
-        .lang-switch a,
-        .lang-switch span {
+        .lang-switch .lang-item {
             color: #000000;
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.15s ease;
-        }
-
-        .lang-switch a {
+            transition: color 0.15s ease, font-weight 0.15s ease;
+            position: relative;
+            display: inline-block;
             cursor: pointer;
         }
 
-        .lang-switch .is-active {
-            font-weight: 900;
+        .lang-switch .lang-item.is-active {
+            font-weight: 900 !important;
+            color: #000000;
             cursor: default;
             pointer-events: none;
         }
 
-        .lang-switch a:hover {
+        .lang-switch a.lang-item:hover {
             color: #ff00ff;
             font-weight: 900;
         }
@@ -253,6 +251,21 @@
             font-weight: 500;
             cursor: default;
             pointer-events: none;
+            user-select: none;
+        }
+
+        .lang-switch .lang-underline {
+            position: absolute !important;
+            bottom: calc(4vw - 3px);
+            left: 0;
+            height: 2px;
+            background-color: #000000;
+            pointer-events: none;
+            opacity: 0;
+            border-radius: 1px;
+            transform: translateX(0);
+            transition: transform 0.28s cubic-bezier(0.25, 1, 0.5, 1), width 0.28s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s ease;
+            display: block !important;
         }
     </style>
 </head>
@@ -268,7 +281,8 @@
 
     <!-- SÉLECTEUR DE LANGUE (EN / FR) -->
     <nav id="lang-switch" class="lang-switch" aria-label="Language selection">
-        <span class="is-active" aria-current="page">en</span><span class="lang-sep">/</span><a href="index_fr.html?return=true" id="lang-link-fr">fr</a>
+        <span class="lang-item is-active" id="lang-item-en" aria-current="page">en</span><span class="lang-sep">/</span><a href="index_fr.html?return=true" id="lang-link-fr" class="lang-item">fr</a>
+        <span class="lang-underline" id="lang-underline"></span>
     </nav>
 
     <div id="content-layer">
@@ -382,7 +396,7 @@
 
             let html = '';
             // en part (active on index.html)
-            html += '<span class="is-active" aria-current="page">';
+            html += '<span class="lang-item is-active" id="lang-item-en" aria-current="page">';
             if (enVis > 0) html += enText.substring(0, enVis);
             if (enHid > 0) html += '<span style="visibility: hidden;">' + enText.substring(enVis) + '</span>';
             html += '</span>';
@@ -394,10 +408,12 @@
             html += '</span>';
 
             // fr part (link on index.html)
-            html += '<a href="index_fr.html?return=true" id="lang-link-fr">';
+            html += '<a href="index_fr.html?return=true" id="lang-link-fr" class="lang-item">';
             if (frVis > 0) html += frText.substring(0, frVis);
             if (frHid > 0) html += '<span style="visibility: hidden;">' + frText.substring(frVis) + '</span>';
             html += '</a>';
+
+            html += '<span class="lang-underline" id="lang-underline"></span>';
 
             return html;
         }
@@ -413,8 +429,10 @@
                 if (i < 5) {
                     i++;
                     registerTimeout(type, 60);
-                } else if (callback) {
-                    callback();
+                } else {
+                    const active = document.getElementById('lang-item-en');
+                    if (active) positionLangUnderline(active, true);
+                    if (callback) callback();
                 }
             }
             type();
@@ -422,6 +440,8 @@
 
         function typeWriterLangOut(speed, callback) {
             const el = document.getElementById('lang-switch');
+            const underline = document.getElementById('lang-underline');
+            if (underline) underline.style.opacity = '0';
             if (!el) {
                 if (callback) callback();
                 return;
@@ -429,6 +449,8 @@
             let i = 5;
             function untype() {
                 el.innerHTML = renderLangSwitchHtml(i);
+                const u = document.getElementById('lang-underline');
+                if (u) u.style.opacity = '0';
                 if (i > 0) {
                     i--;
                     registerTimeout(untype, speed || 25);
@@ -643,6 +665,10 @@
                 langWrap.innerHTML = renderLangSwitchHtml(5);
                 langWrap.classList.add('is-visible');
                 langWrap.style.pointerEvents = 'auto';
+                requestAnimationFrame(() => {
+                    const active = document.getElementById('lang-item-en');
+                    if (active) positionLangUnderline(active, true);
+                });
             }
         }
 
@@ -871,9 +897,44 @@
         // ==========================================
         // SÉLECTEUR DE LANGUE (EN -> FR)
         // ==========================================
+        function positionLangUnderline(targetEl, immediate) {
+            const underline = document.getElementById('lang-underline');
+            if (!underline || !targetEl) return;
+            const left = targetEl.offsetLeft;
+            const width = targetEl.offsetWidth;
+            if (width === 0) return;
+
+            if (immediate) {
+                underline.style.transition = 'none';
+                underline.style.transform = `translateX(${left}px)`;
+                underline.style.width = `${width}px`;
+                underline.style.opacity = '1';
+                void underline.offsetWidth;
+                underline.style.transition = '';
+            } else {
+                underline.style.transition = 'transform 0.28s cubic-bezier(0.25, 1, 0.5, 1), width 0.28s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s ease';
+                underline.style.transform = `translateX(${left}px)`;
+                underline.style.width = `${width}px`;
+                underline.style.opacity = '1';
+            }
+        }
+
         (function() {
             const langSwitch = document.getElementById('lang-switch');
             if (!langSwitch) return;
+
+            const initUnderline = () => {
+                const active = langSwitch.querySelector('.lang-item.is-active') || document.getElementById('lang-item-en');
+                if (active) positionLangUnderline(active, true);
+            };
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                initUnderline();
+            } else {
+                window.addEventListener('DOMContentLoaded', initUnderline);
+            }
+            window.addEventListener('load', initUnderline);
+            if (document.fonts) document.fonts.ready.then(initUnderline);
+            window.addEventListener('resize', initUnderline, { passive: true });
 
             langSwitch.addEventListener('click', function(e) {
                 const targetLink = e.target.closest('a#lang-link-fr');
@@ -884,9 +945,28 @@
                 e.preventDefault();
                 document.body.style.pointerEvents = 'none';
 
+                const enItem = document.getElementById('lang-item-en');
+                const frLink = targetLink;
+
+                // 1. Basculer l'état visuel actif
+                if (enItem) {
+                    enItem.classList.remove('is-active');
+                    enItem.style.fontWeight = '500';
+                }
+                frLink.classList.add('is-active');
+                frLink.style.fontWeight = '900';
+                frLink.style.color = '#000000';
+
+                // 2. Glissement fluide du soulignement vers fr
+                positionLangUnderline(frLink, false);
+
                 const isHtmlEnv = window.location.pathname.endsWith('.html') || window.location.protocol === 'file:';
                 const targetUrl = isHtmlEnv ? 'index_fr.html?return=true' : 'index_fr?return=true';
-                window.location.href = targetUrl;
+
+                // 3. Navigation une fois l'animation terminée
+                setTimeout(() => {
+                    window.location.href = targetUrl;
+                }, 300);
             });
         })();
     </script>
