@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -63,7 +63,6 @@
             height: 100dvh;
             position: relative;
             display: flex;
-            
             flex-direction: column;
         }
 
@@ -71,25 +70,22 @@
         .poster-top-bar {
             height: var(--top-bar-h);
             flex: 0 0 var(--top-bar-h);
-            
             background-color: var(--red);
-            border-bottom: 2.5px solid var(--white);        }
+            border-bottom: 2.5px solid var(--white);
+        }
 
         .title-svg {
             transform: translateX(-1vh);
             width: 100%;
             height: 100%;
             display: block;
-                        overflow: visible;
-
-                        
+            overflow: visible;
         }
 
         .svg-title-text {
             font-family: var(--font-poster);
             font-size: 126px;
             font-style: italic;
-            
             font-weight: 400;
             transform: translateX(10px);
             fill: var(--white);
@@ -254,14 +250,14 @@
 <div class="poster-container">
 
     <!-- Accessible text version for assistive tech and search engines -->
-    <section class="sr-only" id="accessible-poster-content" aria-label="Poster Content"></section>
+    <section class="sr-only" id="accessible-poster-content" aria-label="Contenu de l'affiche"></section>
 
     <!-- BANDEAU HAUT ROUGE : love is love is love -->
     <header class="poster-top-bar">
         <svg class="title-svg" viewBox="0 0 1000 110" preserveAspectRatio="none" role="img" aria-label="love is love is love">
             <text id="poster-title-text" x="0" y="96" textLength="1000" lengthAdjust="spacingAndGlyphs" class="svg-title-text">love is love is love</text>
         </svg>
-        <a id="poster-back-btn" href="./?return=true" class="poster-back-btn">retour ✕</a>
+        <a id="poster-back-btn" href="index_fr.html?return=true" class="poster-back-btn">retour ✕</a>
     </header>
 
     <!-- CORPS PRINCIPAL : FOND 2/3 BLANC ET 1/3 ROUGE -->
@@ -294,7 +290,7 @@
                     title: "love is love is love",
                     backButton: {
                         label: "retour ✕",
-                        href: "./?return=true"
+                        href: "index_fr.html?return=true"
                     }
                 },
 
@@ -923,7 +919,6 @@ jodie trontin
                 whiteLayout.lines.forEach(line => {
                     const lineDiv = document.createElement('div');
                     lineDiv.className = 'text-line';
-                    // Exact simulated line position ensures segments align 100% with the cutout contour
                     lineDiv.style.top = `${line.top}px`;
                     lineDiv.style.height = `${line.height}px`;
 
@@ -1038,9 +1033,9 @@ jodie trontin
             }
 
             // 15. BOOTSTRAP
-            if (document.referrer && document.referrer.includes('_fr')) {
+            if (document.referrer && document.referrer.includes('index.html') && !document.referrer.includes('_fr')) {
                 const backBtn = document.getElementById('poster-back-btn');
-                if (backBtn) backBtn.href = 'index_fr.html?return=true';
+                if (backBtn) backBtn.href = 'index.html?return=true';
             }
             syncContentWithDOM();
             scheduleStageUpdate();
@@ -1048,3 +1043,4 @@ jodie trontin
     </script>
 </body>
 </html>
+
