@@ -4,7 +4,18 @@
     <meta charset="UTF-8">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>welcome</title>
+    <title>Eliott Atom Croubalian | architecture, scenography, film</title>
+    <meta name="description" content="Portfolio of Eliott Atom Croubalian, architecture student at EPFL based in Geneva: architecture, scenography, objects and film.">
+    <link rel="canonical" href="https://eliott-atom.ch/">
+    <link rel="alternate" hreflang="en" href="https://eliott-atom.ch/">
+    <link rel="alternate" hreflang="fr" href="https://eliott-atom.ch/index_fr">
+    <link rel="alternate" hreflang="x-default" href="https://eliott-atom.ch/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Eliott Atom Croubalian | architecture, scenography, film">
+    <meta property="og:description" content="Portfolio of Eliott Atom Croubalian, architecture student at EPFL based in Geneva: architecture, scenography, objects and film.">
+    <meta property="og:url" content="https://eliott-atom.ch/">
+    <meta property="og:image" content="https://eliott-atom.ch/tete-centre.webp">
+    <meta property="og:locale" content="en_US">
     <link rel="icon" type="image/x-icon" href="favicon.ico?v=3">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-light.png?v=3">
     <link rel="shortcut icon" href="favicon.ico?v=3">
@@ -275,9 +286,22 @@
             transition: transform 0.28s cubic-bezier(0.25, 1, 0.5, 1), width 0.28s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s ease;
             display: block !important;
         }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
     </style>
 </head>
 <body>
+    <h1 class="visually-hidden">Eliott Atom Croubalian</h1>
 
     <div id="black-overlay"></div>
 
@@ -300,7 +324,7 @@
                 <source src="reveil.mp4" type="video/mp4">
             </video>
 
-            <img id="head-idle" src="tete-centre.webp" alt="Intro Animation">
+            <img id="head-idle" src="tete-centre.webp" alt="Portrait of Eliott Atom Croubalian">
             
             <!-- LA BULLE DE DIffALOGUE -->
             <div id="speech-bubble"></div>
