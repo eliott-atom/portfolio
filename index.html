@@ -81,7 +81,9 @@
             color: #000000; 
             transition: color 0.15s ease;
             pointer-events: none; 
-        }
+            white-space: nowrap; /* Prevents line breaks on fullscreen / desktop */
+}
+        
 
         .corner-link:hover,
         .corner-link.is-active {
@@ -204,16 +206,118 @@
         #black-overlay.show {
             opacity: 1;
         }
-        /* --- ADAPTATION MOBILE (Par ratio écran, alignée sur content.html) --- */
+       /* --- ADAPTATION MOBILE (Par ratio écran) --- */
         @media (max-aspect-ratio: 4/5) {
-            #main-title {
-                font-size: 12vw; /* Rend le texte 2x plus gros sur téléphone */
+            #main-title { font-size: 12vw; }
+            #main-title.move-to-header { top: 2vw; left: 4vw; font-size: 15.6px; }
+            .lang-switch { font-size: 15px; }
+
+            /* NOUVELLE LOGIQUE GRID POUR LES COINS */
+            .corner-grid {
+                display: grid;
+                align-items: center;
+                row-gap: 12px;
+                column-gap: 12px; /* Espace naturel entre l'arc et le texte */
             }
-            
-            #main-title.move-to-header {
-                top: 2vw; /* Aligné sur le top: 2vw de content.html */
-                left: 4vw;
-                font-size: 15.6px; /* 1.2em * 13px de content.html */
+
+            .corner-arc {
+                width: 18px;
+                height: 18px;
+                box-sizing: border-box;
+                border: 3px solid transparent; /* Arc caché par défaut (pour l'animation) */
+                transition: border-width 0.15s ease;
+            }
+
+            .corner-arc.is-visible { border-color: currentColor; }
+            .corner-link:hover .corner-arc.is-visible { border-width: 4px; }
+
+            .grid-text-v {
+                display: flex;
+                writing-mode: vertical-rl;
+                white-space: nowrap;
+            }
+            .grid-text-h {
+                display: flex;
+                white-space: nowrap;
+            }
+
+            /* --- 1. TOP-LEFT (btn-index) ┏ --- */
+            .btn-index-grid { grid-template-columns: auto auto; grid-template-rows: auto auto; }
+            .btn-index-grid .corner-arc {
+                grid-column: 1; grid-row: 1;
+                border-bottom: none; border-right: none;
+                border-radius: 14px 0 0 0;
+                justify-self: center; align-self: end;
+                transform: translate(50%,40%);
+            }
+            .btn-index-grid .grid-text-h {
+                grid-column: 2; grid-row: 1;
+                justify-self: start; align-self: end;
+            }
+            .btn-index-grid .grid-text-v {
+                grid-column: 1; grid-row: 2;
+                transform: rotate(180deg);
+                transform-origin: center;
+                justify-self: center; align-self: start;
+            }
+
+            /* --- 2. TOP-RIGHT (btn-info) ┓ --- */
+            .btn-info-grid { grid-template-columns: auto auto; grid-template-rows: auto auto; }
+            .btn-info-grid .corner-arc {
+                grid-column: 2; grid-row: 1;
+                border-bottom: none; border-left: none;
+                border-radius: 0 14px 0 0;
+                transform: translate(-50%,40%);
+                justify-self: center; align-self: end;
+            }
+            .btn-info-grid .grid-text-h {
+                grid-column: 1; grid-row: 1;
+                justify-self: end; align-self: end;
+            }
+            .btn-info-grid .grid-text-v {
+                grid-column: 2; grid-row: 2;
+                justify-self: center; align-self: start;
+            }
+
+            /* --- 3. BOTTOM-LEFT (btn-cv) ┗ --- */
+            .btn-cv-grid { grid-template-columns: auto auto; grid-template-rows: auto auto; }
+            .btn-cv-grid .corner-arc {
+                grid-column: 1; grid-row: 2;
+                border-top: none; border-right: none;
+                border-radius: 0 0 0 14px;
+                transform: translate(50%,-20%);
+                justify-self: center; align-self: start;
+            }
+            .btn-cv-grid .grid-text-h {
+                grid-column: 2; grid-row: 2;
+                justify-self: start; align-self: start;
+            }
+            .btn-cv-grid .grid-text-v {
+                grid-column: 1; grid-row: 1;
+                transform: translateX(4px);
+                justify-self: center; align-self: end;
+            }
+
+            /* --- 4. BOTTOM-RIGHT (btn-contact) ┛ --- */
+            .btn-contact-grid { grid-template-columns: auto auto; grid-template-rows: auto auto; }
+            .btn-contact-grid .corner-arc {
+                grid-column: 2; grid-row: 2;
+                border-top: none; border-left: none;
+                border-radius: 0 0 14px 0;
+                transform: translate(-50%,-20%);
+                
+                justify-self: center; align-self: start;
+            }
+            .btn-contact-grid .grid-text-h {
+                grid-column: 1; grid-row: 2;
+                justify-self: end; align-self: start;
+            }
+            .btn-contact-grid .grid-text-v {
+                grid-column: 2; grid-row: 1;
+                transform: rotate(180deg);
+                transform-origin: center;
+                justify-self: center; align-self: end;
+                padding-left: 4px;
             }
         }
 
@@ -308,7 +412,7 @@
     <!-- BOUTONS -->
     <a href="portfolio" class="corner-link top-left" id="btn-index"></a>
     <a href="info" class="corner-link top-right" id="btn-info"></a>
-    <a href="cv" class="corner-link bottom-left" id="btn-cv"></a>
+    <a href="work" class="corner-link bottom-left" id="btn-cv"></a>
     <a href="contact" class="corner-link bottom-right" id="btn-contact"></a>
 
     <!-- SÉLECTEUR DE LANGUE (EN / FR) -->
@@ -355,10 +459,26 @@
         let lastPhraseIndex = -1;
 
         const linksData = [
-            { id: 'btn-index', text: 'portfolio' },
-            { id: 'btn-info', text: 'love is love is love' },
-            { id: 'btn-cv', text: 'cv' },
-            { id: 'btn-contact', text: 'contact' }
+            {
+                id: 'btn-index',
+                text: 'digital portfolio',
+                mobileWrap: { maxChars: 12, writingMode: 'vertical-rl', connectorSize: 10 }
+            },
+            {
+                id: 'btn-info',
+                text: 'love is love is love',
+                mobileWrap: { maxChars: 12, writingMode: 'vertical-rl', connectorSize: 10 }
+            },
+            {
+                id: 'btn-cv',
+                text: "work in progress",
+                mobileWrap: { maxChars: 12, writingMode: 'vertical-rl', connectorSize: 10 }
+            },
+            {
+                id: 'btn-contact',
+                text: 'contact and infos',
+                mobileWrap: { maxChars: 12, writingMode: 'vertical-rl', connectorSize: 10 }
+            }
         ];
 
         function registerTimeout(fn, delay) {
@@ -373,15 +493,85 @@
             clearTimeout(bubbleTypeTimeout);
         }
 
+       function renderCornerLabel(element, text, visibleChars) {
+            const linkData = linksData.find(link => link.id === element.id);
+            const mobileWrap = linkData && linkData.mobileWrap;
+            const visibleText = text.substring(0, visibleChars);
+            const hiddenText = text.substring(visibleChars);
+
+            if (!mobileWrap || text.length <= mobileWrap.maxChars || !window.matchMedia('(max-aspect-ratio: 4/5)').matches) {
+                element.innerHTML = visibleText + '<span style="visibility: hidden;">' + hiddenText + '</span>';
+                return;
+            }
+
+            const words = [...text.matchAll(/\S+/g)];
+            
+            // --- NEW LOGIC: Control exactly where to split the words ---
+            let splitWordIndex;
+            
+            if (element.id === 'btn-cv') {
+                // Bottom-Left: The horizontal part is at the end. Split before the last word.
+                splitWordIndex = words.length - 2; 
+            } else if (element.id === 'btn-contact') {
+                // Bottom-Right: The horizontal part is at the start. Split after the 1st word.
+                splitWordIndex = 0; 
+            } else {
+                // Top Links: Default behavior (cut in half)
+                splitWordIndex = Math.ceil(words.length / 2) - 1;
+            }
+
+            const splitWord = words[splitWordIndex];
+            const splitAt = splitWord ? splitWord.index + splitWord[0].length : text.length;
+
+            const part1 = text.substring(0, splitAt).trimEnd();
+            const part2Start = splitAt + text.substring(splitAt).length - text.substring(splitAt).trimStart().length;
+            const part2 = text.substring(part2Start);
+
+            const isRightSide = element.classList.contains('top-right') || element.classList.contains('bottom-right');
+
+            let part1Vis = "", part1Hid = part1, part2Vis = "", part2Hid = part2;
+
+            if (visibleChars <= splitAt) {
+                part1Vis = part1.substring(0, visibleChars);
+                part1Hid = part1.substring(visibleChars);
+            } else {
+                part1Vis = part1;
+                part1Hid = "";
+                const secondChars = visibleChars - part2Start;
+                if (secondChars > 0) {
+                    part2Vis = part2.substring(0, secondChars);
+                    part2Hid = part2.substring(secondChars);
+                }
+            }
+
+            const textV_vis = isRightSide ? part2Vis : part1Vis;
+            const textV_hid = isRightSide ? part2Hid : part1Hid;
+            const textH_vis = isRightSide ? part1Vis : part2Vis;
+            const textH_hid = isRightSide ? part1Hid : part2Hid;
+
+            const isConnectorVisible = visibleChars >= part2Start;
+            const arcClass = `corner-arc ${isConnectorVisible ? 'is-visible' : ''}`;
+
+            const htmlV = `<span>${textV_vis}<span style="visibility: hidden;">${textV_hid}</span></span>`;
+            const htmlH = `<span>${textH_vis}<span style="visibility: hidden;">${textH_hid}</span></span>`;
+
+            element.innerHTML = `
+                <div class="corner-grid ${element.id}-grid">
+                    <div class="grid-text-v">${htmlV}</div>
+                    <div class="${arcClass}"></div>
+                    <div class="grid-text-h">${htmlH}</div>
+                </div>
+            `;
+        }
+
         // MACHINE À ÉCRIRE AVEC SÉCURITÉ DE CYCLE
         function typeWriterIn(element, text, speed, cycle, callback) {
             let i = 0;
+            element.dataset.cornerText = text;
             function type() {
                 if (cycle !== animationCycle) return;
-                let visiblePart = text.substring(0, i);
-                let hiddenPart = text.substring(i);
-                
-                element.innerHTML = visiblePart + '<span style="visibility: hidden;">' + hiddenPart + '</span>';
+                element.dataset.visibleChars = i;
+                renderCornerLabel(element, text, i);
                 
                 if (i < text.length) {
                     i++;
@@ -396,14 +586,13 @@
         function typeWriterOut(element, speed, callback) {
             let text = (element.id === 'main-title') 
                 ? 'eliott atom\ncroubalian' 
-                : (element.textContent || element.innerText); 
+                : (element.dataset.cornerText || element.textContent || element.innerText);
             let i = text.length;
+            element.dataset.cornerText = text;
 
             function untype() {
-                let visiblePart = text.substring(0, i);
-                let hiddenPart = text.substring(i);
-
-                element.innerHTML = visiblePart + '<span style="visibility: hidden;">' + hiddenPart + '</span>';
+                element.dataset.visibleChars = i;
+                renderCornerLabel(element, text, i);
 
                 if (i > 0) {
                     i--;
@@ -752,7 +941,9 @@
                 const el = document.getElementById(link.id);
                 if (el) {
                     el.classList.remove('is-active');
-                    el.innerHTML = link.text;
+                    el.dataset.cornerText = link.text;
+                    el.dataset.visibleChars = link.text.length;
+                    renderCornerLabel(el, link.text, link.text.length);
                     el.style.pointerEvents = 'auto';
                 }
             });
@@ -768,7 +959,17 @@
                 });
             }
         }
-
+function handleResizeUpdate() {
+            
+            // Refresh Corner Links (switch between Grid and Flat layout)
+            document.querySelectorAll('.corner-link').forEach(element => {
+                const text = element.dataset.cornerText;
+                const visibleChars = Number(element.dataset.visibleChars);
+                if (text !== undefined && Number.isFinite(visibleChars)) {
+                    renderCornerLabel(element, text, visibleChars);
+                }
+            });
+        }
         function shouldSkipIntro() {
             // 1. Si le paramètre ?return=true est présent dans l'URL (clic sur un bouton "retour")
             const urlParams = new URLSearchParams(window.location.search);
@@ -1039,6 +1240,7 @@
             window.addEventListener('load', initUnderline);
             if (document.fonts) document.fonts.ready.then(initUnderline);
             window.addEventListener('resize', initUnderline, { passive: true });
+            window.addEventListener('resize', handleResizeUpdate, { passive: true });
 
             langSwitch.addEventListener('click', function(e) {
                 const targetLink = e.target.closest('a#lang-link-fr');

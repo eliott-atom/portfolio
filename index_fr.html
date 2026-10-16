@@ -81,7 +81,9 @@
             color: #000000; 
             transition: color 0.15s ease;
             pointer-events: none; 
-        }
+            white-space: nowrap; /* Prevents line breaks on fullscreen / desktop */
+}
+        
 
         .corner-link:hover,
         .corner-link.is-active {
@@ -114,6 +116,7 @@
             grid-area: 1 / 1;
         }
 
+        /* Curseur spécifique pour la tête pour indiquer qu'elle est cliquable */
         #head-idle {
             cursor: pointer;
             z-index: 2;
@@ -133,33 +136,38 @@
             transition: opacity 0.5s ease;
         }
 
+        /* --- BULLE DE DIALOGUE EASTER EGG --- */
         #speech-bubble {
             position: absolute;
             top: 25%;
-            left: 55%;
+            left: 55%; /* Se place en haut à droite de la tête */
             max-width: 250px;
             background-color: #ff00ff;
             color: #ffffff;
             padding: 15px 25px;
-            border-radius: 30px 30px 30px 5px;
+            border-radius: 30px 30px 30px 5px; /* Forme de bulle */
             font-family: "Libre Franklin", sans-serif;
             font-weight: 900;
             font-size: 16px;
             line-height: 1.2;
             z-index: 20;
             pointer-events: none;
+            
+            /* Animation de base (cachée) */
             opacity: 0;
             transform: scale(0);
             transform-origin: bottom left; 
-            transition: opacity 0.2s ease, transform 0s ease;
+            transition: opacity 0.2s ease, transform 0s ease; /* Transform à 0s pour reset instantané */
         }
 
+        /* État actif de la bulle (effet rebond élastique) */
         #speech-bubble.show {
             opacity: 1;
             transform: scale(1);
             transition: opacity 0.2s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
+        /* LE TITRE */
         #main-title {
             position: fixed;
             top: 48%;
@@ -185,6 +193,7 @@
             text-align: left;
         }
 
+        /* L'ÉCRAN NOIR FINAL */
         #black-overlay {
             position: fixed;
             inset: 0;
@@ -197,16 +206,118 @@
         #black-overlay.show {
             opacity: 1;
         }
-
+       /* --- ADAPTATION MOBILE (Par ratio écran) --- */
         @media (max-aspect-ratio: 4/5) {
-            #main-title {
-                font-size: 12vw;
+            #main-title { font-size: 12vw; }
+            #main-title.move-to-header { top: 2vw; left: 4vw; font-size: 15.6px; }
+            .lang-switch { font-size: 15px; }
+
+            /* NOUVELLE LOGIQUE GRID POUR LES COINS */
+            .corner-grid {
+                display: grid;
+                align-items: center;
+                row-gap: 12px;
+                column-gap: 12px; /* Espace naturel entre l'arc et le texte */
             }
-            
-            #main-title.move-to-header {
-                top: 2vw;
-                left: 4vw;
-                font-size: 15.6px;
+
+            .corner-arc {
+                width: 18px;
+                height: 18px;
+                box-sizing: border-box;
+                border: 3px solid transparent; /* Arc caché par défaut (pour l'animation) */
+                transition: border-width 0.15s ease;
+            }
+
+            .corner-arc.is-visible { border-color: currentColor; }
+            .corner-link:hover .corner-arc.is-visible { border-width: 4px; }
+
+            .grid-text-v {
+                display: flex;
+                writing-mode: vertical-rl;
+                white-space: nowrap;
+            }
+            .grid-text-h {
+                display: flex;
+                white-space: nowrap;
+            }
+
+            /* --- 1. TOP-LEFT (btn-index) ┏ --- */
+            .btn-index-grid { grid-template-columns: auto auto; grid-template-rows: auto auto; }
+            .btn-index-grid .corner-arc {
+                grid-column: 1; grid-row: 1;
+                border-bottom: none; border-right: none;
+                border-radius: 14px 0 0 0;
+                justify-self: center; align-self: end;
+                transform: translate(50%,40%);
+            }
+            .btn-index-grid .grid-text-h {
+                grid-column: 2; grid-row: 1;
+                justify-self: start; align-self: end;
+            }
+            .btn-index-grid .grid-text-v {
+                grid-column: 1; grid-row: 2;
+                transform: rotate(180deg);
+                transform-origin: center;
+                justify-self: center; align-self: start;
+            }
+
+            /* --- 2. TOP-RIGHT (btn-info) ┓ --- */
+            .btn-info-grid { grid-template-columns: auto auto; grid-template-rows: auto auto; }
+            .btn-info-grid .corner-arc {
+                grid-column: 2; grid-row: 1;
+                border-bottom: none; border-left: none;
+                border-radius: 0 14px 0 0;
+                transform: translate(-50%,40%);
+                justify-self: center; align-self: end;
+            }
+            .btn-info-grid .grid-text-h {
+                grid-column: 1; grid-row: 1;
+                justify-self: end; align-self: end;
+            }
+            .btn-info-grid .grid-text-v {
+                grid-column: 2; grid-row: 2;
+                justify-self: center; align-self: start;
+            }
+
+            /* --- 3. BOTTOM-LEFT (btn-cv) ┗ --- */
+            .btn-cv-grid { grid-template-columns: auto auto; grid-template-rows: auto auto; }
+            .btn-cv-grid .corner-arc {
+                grid-column: 1; grid-row: 2;
+                border-top: none; border-right: none;
+                border-radius: 0 0 0 14px;
+                transform: translate(50%,-20%);
+                justify-self: center; align-self: start;
+            }
+            .btn-cv-grid .grid-text-h {
+                grid-column: 2; grid-row: 2;
+                justify-self: start; align-self: start;
+            }
+            .btn-cv-grid .grid-text-v {
+                grid-column: 1; grid-row: 1;
+                transform: translateX(4px);
+                justify-self: center; align-self: end;
+            }
+
+            /* --- 4. BOTTOM-RIGHT (btn-contact) ┛ --- */
+            .btn-contact-grid { grid-template-columns: auto auto; grid-template-rows: auto auto; }
+            .btn-contact-grid .corner-arc {
+                grid-column: 2; grid-row: 2;
+                border-top: none; border-left: none;
+                border-radius: 0 0 14px 0;
+                transform: translate(-50%,-20%);
+                
+                justify-self: center; align-self: start;
+            }
+            .btn-contact-grid .grid-text-h {
+                grid-column: 1; grid-row: 2;
+                justify-self: end; align-self: start;
+            }
+            .btn-contact-grid .grid-text-v {
+                grid-column: 2; grid-row: 1;
+                transform: rotate(180deg);
+                transform-origin: center;
+                justify-self: center; align-self: end;
+                padding-left: 4px;
             }
         }
 
@@ -301,7 +412,7 @@
     <!-- BOUTONS -->
     <a href="portfolio_fr" class="corner-link top-left" id="btn-index"></a>
     <a href="love_is_love_is_love_fr" class="corner-link top-right" id="btn-info"></a>
-    <a href="cv_fr" class="corner-link bottom-left" id="btn-cv"></a>
+    <a href="work_fr" class="corner-link bottom-left" id="btn-cv"></a>
     <a href="contact_fr" class="corner-link bottom-right" id="btn-contact"></a>
 
     <!-- SÉLECTEUR DE LANGUE (FR / EN) -->
@@ -347,10 +458,26 @@
         let lastPhraseIndex = -1;
 
         const linksData = [
-            { id: 'btn-index', text: 'portfolio' },
-            { id: 'btn-info', text: 'love is love is love' },
-            { id: 'btn-cv', text: 'cv' },
-            { id: 'btn-contact', text: 'contact' }
+            {
+                id: 'btn-index',
+                text: 'portfolio digital',
+                mobileWrap: { maxChars: 12, writingMode: 'vertical-rl', connectorSize: 10 }
+            },
+            {
+                id: 'btn-info',
+                text: 'love is love is love',
+                mobileWrap: { maxChars: 12, writingMode: 'vertical-rl', connectorSize: 10 }
+            },
+            {
+                id: 'btn-cv',
+                text: 'work in progress',
+                mobileWrap: { maxChars: 12, writingMode: 'vertical-rl', connectorSize: 10 }
+            },
+            {
+                id: 'btn-contact',
+                text: 'contact et infos',
+                mobileWrap: { maxChars: 12, writingMode: 'vertical-rl', connectorSize: 10 }
+            }
         ];
 
         function registerTimeout(fn, delay) {
@@ -365,14 +492,85 @@
             clearTimeout(bubbleTypeTimeout);
         }
 
+       function renderCornerLabel(element, text, visibleChars) {
+            const linkData = linksData.find(link => link.id === element.id);
+            const mobileWrap = linkData && linkData.mobileWrap;
+            const visibleText = text.substring(0, visibleChars);
+            const hiddenText = text.substring(visibleChars);
+
+            if (!mobileWrap || text.length <= mobileWrap.maxChars || !window.matchMedia('(max-aspect-ratio: 4/5)').matches) {
+                element.innerHTML = visibleText + '<span style="visibility: hidden;">' + hiddenText + '</span>';
+                return;
+            }
+
+            const words = [...text.matchAll(/\S+/g)];
+            
+            // --- NEW LOGIC: Control exactly where to split the words ---
+            let splitWordIndex;
+            
+            if (element.id === 'btn-cv') {
+                // Bottom-Left: The horizontal part is at the end. Split before the last word.
+                splitWordIndex = words.length - 2; 
+            } else if (element.id === 'btn-contact') {
+                // Bottom-Right: The horizontal part is at the start. Split after the 1st word.
+                splitWordIndex = 0; 
+            } else {
+                // Top Links: Default behavior (cut in half)
+                splitWordIndex = Math.ceil(words.length / 2) - 1;
+            }
+
+            const splitWord = words[splitWordIndex];
+            const splitAt = splitWord ? splitWord.index + splitWord[0].length : text.length;
+
+            const part1 = text.substring(0, splitAt).trimEnd();
+            const part2Start = splitAt + text.substring(splitAt).length - text.substring(splitAt).trimStart().length;
+            const part2 = text.substring(part2Start);
+
+            const isRightSide = element.classList.contains('top-right') || element.classList.contains('bottom-right');
+
+            let part1Vis = "", part1Hid = part1, part2Vis = "", part2Hid = part2;
+
+            if (visibleChars <= splitAt) {
+                part1Vis = part1.substring(0, visibleChars);
+                part1Hid = part1.substring(visibleChars);
+            } else {
+                part1Vis = part1;
+                part1Hid = "";
+                const secondChars = visibleChars - part2Start;
+                if (secondChars > 0) {
+                    part2Vis = part2.substring(0, secondChars);
+                    part2Hid = part2.substring(secondChars);
+                }
+            }
+
+            const textV_vis = isRightSide ? part2Vis : part1Vis;
+            const textV_hid = isRightSide ? part2Hid : part1Hid;
+            const textH_vis = isRightSide ? part1Vis : part2Vis;
+            const textH_hid = isRightSide ? part1Hid : part2Hid;
+
+            const isConnectorVisible = visibleChars >= part2Start;
+            const arcClass = `corner-arc ${isConnectorVisible ? 'is-visible' : ''}`;
+
+            const htmlV = `<span>${textV_vis}<span style="visibility: hidden;">${textV_hid}</span></span>`;
+            const htmlH = `<span>${textH_vis}<span style="visibility: hidden;">${textH_hid}</span></span>`;
+
+            element.innerHTML = `
+                <div class="corner-grid ${element.id}-grid">
+                    <div class="grid-text-v">${htmlV}</div>
+                    <div class="${arcClass}"></div>
+                    <div class="grid-text-h">${htmlH}</div>
+                </div>
+            `;
+        }
+
+        // MACHINE À ÉCRIRE AVEC SÉCURITÉ DE CYCLE
         function typeWriterIn(element, text, speed, cycle, callback) {
             let i = 0;
+            element.dataset.cornerText = text;
             function type() {
                 if (cycle !== animationCycle) return;
-                let visiblePart = text.substring(0, i);
-                let hiddenPart = text.substring(i);
-                
-                element.innerHTML = visiblePart + '<span style="visibility: hidden;">' + hiddenPart + '</span>';
+                element.dataset.visibleChars = i;
+                renderCornerLabel(element, text, i);
                 
                 if (i < text.length) {
                     i++;
@@ -387,14 +585,13 @@
         function typeWriterOut(element, speed, callback) {
             let text = (element.id === 'main-title') 
                 ? 'eliott atom\ncroubalian' 
-                : (element.textContent || element.innerText); 
+                : (element.dataset.cornerText || element.textContent || element.innerText);
             let i = text.length;
+            element.dataset.cornerText = text;
 
             function untype() {
-                let visiblePart = text.substring(0, i);
-                let hiddenPart = text.substring(i);
-
-                element.innerHTML = visiblePart + '<span style="visibility: hidden;">' + hiddenPart + '</span>';
+                element.dataset.visibleChars = i;
+                renderCornerLabel(element, text, i);
 
                 if (i > 0) {
                     i--;
@@ -453,7 +650,7 @@
                     i++;
                     registerTimeout(type, 60);
                 } else {
-                    const active = document.getElementById('lang-item-fr');
+                    const active = document.getElementById('lang-item-en');
                     if (active) positionLangUnderline(active, true);
                     if (callback) callback();
                 }
@@ -544,15 +741,18 @@
             } catch (e) {}
         }
 
+        // CYCLE D'INTRODUCTION COMPLET ET RÉINITIALISABLE
         function startIntroSequence() {
             clearAllTimeouts();
             animationCycle++;
             const currentCycle = animationCycle;
 
+            // Enregistre que l'intro a été initiée dans cette session
             try {
                 sessionStorage.setItem('introPlayed', 'true');
             } catch (e) {}
 
+            // 1. Déverrouille les clics et le rideau noir
             isTransitioning = false;
             document.body.style.pointerEvents = 'auto';
 
@@ -563,12 +763,14 @@
             void overlay.offsetWidth;
             overlay.style.transition = '';
 
+            // 2. Réinitialise le conteneur principal
             const contentLayer = document.getElementById('content-layer');
             contentLayer.style.transition = 'none';
             contentLayer.classList.remove('theme-white', 'theme-inverted');
             void contentLayer.offsetWidth;
             contentLayer.style.transition = '';
 
+            // 3. Masque et stoppe toutes les vidéos
             document.querySelectorAll('.interactive-video').forEach(vid => {
                 vid.pause();
                 vid.currentTime = 0;
@@ -582,6 +784,7 @@
             vidReveil.style.display = 'block';
             vidReveil.style.pointerEvents = 'none';
 
+            // 4. Masque la tête idle et la bulle
             document.getElementById('head-idle').style.display = 'none';
             const bubble = document.getElementById('speech-bubble');
             bubble.classList.remove('show');
@@ -595,6 +798,7 @@
                 langWrap.style.pointerEvents = 'none';
             }
 
+            // 5. Réinitialise le titre et les boutons de coin
             const titleEl = document.getElementById('main-title');
             titleEl.style.transition = 'none';
             titleEl.classList.remove('move-to-header');
@@ -611,7 +815,7 @@
                 }
             });
 
-            // Attendre que la vidéo réveil soit préchargée en priorité avant de lancer le fondu au blanc
+            // 6. Lance le déroulement temporel une fois que reveil.mp4 est préchargé en priorité
             waitForReveilPreload(currentCycle, () => {
                 if (currentCycle !== animationCycle) return;
 
@@ -672,6 +876,7 @@
             });
         }
 
+        // AFFICHAGE DIRECT SANS ANIMATIONS (RETOUR SUR LA PAGE)
         function skipIntroSequence() {
             clearAllTimeouts();
             animationCycle++;
@@ -684,6 +889,7 @@
             isTransitioning = false;
             document.body.style.pointerEvents = 'auto';
 
+            // 1. Overlay noir masqué
             const overlay = document.getElementById('black-overlay');
             overlay.style.transition = 'none';
             overlay.classList.remove('show');
@@ -691,6 +897,7 @@
             void overlay.offsetWidth;
             overlay.style.transition = '';
 
+            // 2. Conteneur principal en thème blanc immédiat
             const contentLayer = document.getElementById('content-layer');
             contentLayer.style.transition = 'none';
             contentLayer.classList.remove('theme-inverted');
@@ -698,6 +905,7 @@
             void contentLayer.offsetWidth;
             contentLayer.style.transition = '';
 
+            // 3. Masque et stoppe toutes les vidéos
             document.querySelectorAll('.interactive-video').forEach(vid => {
                 vid.pause();
                 vid.currentTime = 0;
@@ -710,13 +918,16 @@
             vidReveil.style.opacity = '0';
             vidReveil.style.display = 'none';
 
+            // 4. Affiche directement la tête idle
             document.getElementById('head-idle').style.display = 'block';
 
+            // 5. Réinitialise la bulle
             const bubble = document.getElementById('speech-bubble');
             bubble.classList.remove('show');
             bubble.innerHTML = '';
             bubble.style.display = '';
 
+            // 6. Titre centré directement
             const titleEl = document.getElementById('main-title');
             titleEl.style.transition = 'none';
             titleEl.classList.remove('move-to-header');
@@ -724,11 +935,14 @@
             void titleEl.offsetWidth;
             titleEl.style.transition = '';
 
+            // 7. Boutons de coin avec texte complet et cliquables
             linksData.forEach(link => {
                 const el = document.getElementById(link.id);
                 if (el) {
                     el.classList.remove('is-active');
-                    el.innerHTML = link.text;
+                    el.dataset.cornerText = link.text;
+                    el.dataset.visibleChars = link.text.length;
+                    renderCornerLabel(el, link.text, link.text.length);
                     el.style.pointerEvents = 'auto';
                 }
             });
@@ -739,13 +953,24 @@
                 langWrap.classList.add('is-visible');
                 langWrap.style.pointerEvents = 'auto';
                 requestAnimationFrame(() => {
-                    const active = document.getElementById('lang-item-fr');
+                    const active = document.getElementById('lang-item-en');
                     if (active) positionLangUnderline(active, true);
                 });
             }
         }
-
+function handleResizeUpdate() {
+            
+            // Refresh Corner Links (switch between Grid and Flat layout)
+            document.querySelectorAll('.corner-link').forEach(element => {
+                const text = element.dataset.cornerText;
+                const visibleChars = Number(element.dataset.visibleChars);
+                if (text !== undefined && Number.isFinite(visibleChars)) {
+                    renderCornerLabel(element, text, visibleChars);
+                }
+            });
+        }
         function shouldSkipIntro() {
+            // 1. Si le paramètre ?return=true est présent dans l'URL (clic sur un bouton "retour")
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('return') === 'true' || window.location.hash === '#return') {
                 try {
@@ -754,24 +979,22 @@
                 return true;
             }
 
+            // 2. Retour arrière navigateur (historique back / forward)
             const navEntries = performance.getEntriesByType && performance.getEntriesByType('navigation');
             const navType = (navEntries && navEntries.length > 0) ? navEntries[0].type : '';
             if (navType === 'back_forward') {
                 return true;
             }
 
+            // 3. Si l'utilisateur revient depuis une sous-page du portfolio (referrer)
             if (document.referrer) {
                 try {
                     const refUrl = new URL(document.referrer);
                     const cleanRef = refUrl.pathname.replace(/\/$/, '').replace(/\.html$/, '');
                     if (cleanRef.endsWith('cv') || 
-                        cleanRef.endsWith('cv_fr') || 
                         cleanRef.endsWith('contact') || 
-                        cleanRef.endsWith('contact_fr') || 
                         cleanRef.endsWith('portfolio') || 
-                        cleanRef.endsWith('portfolio_fr') || 
                         cleanRef.endsWith('content') || 
-                        cleanRef.endsWith('content_fr') || 
                         cleanRef.endsWith('info')) {
                         return true;
                     }
@@ -786,21 +1009,26 @@
                 }
             }
 
+            // Pour tout nouvel onglet, lien envoyé à quelqu'un, rechargement, etc. :
+            // Toujours jouer l'animation de réveil !
             return false;
         }
 
+        // CHARGEMENT INITIAL OU RETOUR
         if (shouldSkipIntro()) {
             skipIntroSequence();
         } else {
             startIntroSequence();
         }
 
+        // GESTION DU RETOUR ARRIÈRE MOBILE ET DESKTOP (SAFARI / CHROME BFCACHE)
         window.addEventListener('pageshow', (event) => {
             if (event.persisted || isTransitioning || shouldSkipIntro()) {
                 skipIntroSequence();
             }
         });
 
+        // SORTIES DE PAGE VERS LES AUTRES SECTIONS
         const interactions = [
             { btnId: 'btn-index', vidId: 'vid-top-left' },
             { btnId: 'btn-info', vidId: 'vid-top-right' },
@@ -903,6 +1131,7 @@
             }
         });
 
+        // EASTER EGG BULLE DE DIALOGUE
         const phrases = [
             "arrête de me tripoter le visage.",
             "j'essaie d'avoir l'air professionnel.",
@@ -969,7 +1198,7 @@
         });
 
         // ==========================================
-        // SÉLECTEUR DE LANGUE (FR -> EN)
+        // SÉLECTEUR DE LANGUE (EN -> FR)
         // ==========================================
         function positionLangUnderline(targetEl, immediate) {
             const underline = document.getElementById('lang-underline');
@@ -998,7 +1227,7 @@
             if (!langSwitch) return;
 
             const initUnderline = () => {
-                const active = langSwitch.querySelector('.lang-item.is-active') || document.getElementById('lang-item-fr');
+                const active = langSwitch.querySelector('.lang-item.is-active') || document.getElementById('lang-item-en');
                 if (active) positionLangUnderline(active, true);
             };
             if (document.readyState === 'complete' || document.readyState === 'interactive') {
@@ -1009,9 +1238,10 @@
             window.addEventListener('load', initUnderline);
             if (document.fonts) document.fonts.ready.then(initUnderline);
             window.addEventListener('resize', initUnderline, { passive: true });
+            window.addEventListener('resize', handleResizeUpdate, { passive: true });
 
             langSwitch.addEventListener('click', function(e) {
-                const targetLink = e.target.closest('a#lang-link-en');
+                const targetLink = e.target.closest('a#lang-link-fr');
                 if (!targetLink) return;
                 if (isTransitioning) return;
 
@@ -1019,23 +1249,23 @@
                 e.preventDefault();
                 document.body.style.pointerEvents = 'none';
 
-                const frItem = document.getElementById('lang-item-fr');
-                const enLink = targetLink;
+                const enItem = document.getElementById('lang-item-en');
+                const frLink = targetLink;
 
                 // 1. Basculer l'état visuel actif
-                if (frItem) {
-                    frItem.classList.remove('is-active');
-                    frItem.style.fontWeight = '500';
+                if (enItem) {
+                    enItem.classList.remove('is-active');
+                    enItem.style.fontWeight = '500';
                 }
-                enLink.classList.add('is-active');
-                enLink.style.fontWeight = '900';
-                enLink.style.color = '#000000';
+                frLink.classList.add('is-active');
+                frLink.style.fontWeight = '900';
+                frLink.style.color = '#000000';
 
-                // 2. Glissement fluide du soulignement vers en
-                positionLangUnderline(enLink, false);
+                // 2. Glissement fluide du soulignement vers fr
+                positionLangUnderline(frLink, false);
 
                 const isHtmlEnv = window.location.pathname.endsWith('.html') || window.location.protocol === 'file:';
-                const targetUrl = isHtmlEnv ? 'index.html?return=true' : './?return=true';
+                const targetUrl = isHtmlEnv ? 'index_fr.html?return=true' : 'index_fr?return=true';
 
                 // 3. Navigation une fois l'animation terminée
                 setTimeout(() => {
