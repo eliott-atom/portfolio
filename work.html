@@ -127,6 +127,60 @@
             font-variant-numeric: tabular-nums;
         }
 
+        .safari-library {
+            display: none;
+        }
+
+        .is-safari .scroll-container {
+            min-height: 100vh;
+            padding: 18vh 8vw 10vh;
+        }
+
+        .is-safari .stage-viewport,
+        .is-safari .scroll-hint,
+        .is-safari .scroll-counter {
+            display: none;
+        }
+
+        .is-safari .safari-library {
+            display: block;
+            width: min(100%, 900px);
+            margin: 0 auto;
+        }
+
+        .safari-library-list {
+            list-style: none;
+        }
+
+        .safari-library-item {
+            border-bottom: 1px solid rgba(17, 17, 17, .18);
+        }
+
+        .safari-library-link,
+        .safari-library-unavailable {
+            display: block;
+            padding: 18px 0;
+            color: var(--ink);
+            font: 900 clamp(24px, 5vw, 58px)/.95 "Libre Franklin", sans-serif;
+            letter-spacing: -.04em;
+            text-decoration: none;
+            text-transform: lowercase;
+        }
+
+        .safari-library-link:hover {
+            color: var(--accent);
+        }
+
+        .safari-library-unavailable {
+            color: #999;
+        }
+
+        @media (max-width: 700px) {
+            .is-safari .scroll-container {
+                padding: 120px 24px 80px;
+            }
+        }
+
         /* Scroll track */
         .scroll-container {
             position: relative;
@@ -426,6 +480,9 @@
                 <section class="sculpture-column" id="sculpture-column" aria-label="Writing and publication slabs stack"></section>
             </div>
         </div>
+        <section class="safari-library" aria-label="Writing library">
+            <ol class="safari-library-list" id="safari-library-list"></ol>
+        </section>
     </main>
 
 
@@ -447,9 +504,40 @@
             { title: "Art Fundament", file: "art-fundament.pdf", available: true },
             { title: "Architectural sketches", file: "architectural-sketches.pdf", available: true },
             { title: "Intermission in the Garden", file: "intermission-in-the-garden.pdf", available: true },
-            { title: "Être LGBT en Chine", file: "etre-lgbt-en-chine.pdf", available: true }
+            
         ];
 
+        const isSafariBrowser = /safari/i.test(navigator.userAgent)
+            && !/chrome|crios|android|fxios|edgios/i.test(navigator.userAgent);
+
+        if (isSafariBrowser) {
+            document.documentElement.classList.add("is-safari");
+            const safariLibrary = document.getElementById("safari-library-list");
+
+            works.forEach((work) => {
+                const item = document.createElement("li");
+                item.className = "safari-library-item";
+
+                if (work.available) {
+                    const link = document.createElement("a");
+                    link.className = "safari-library-link";
+                    link.href = `reader.html?file=${encodeURIComponent(work.file)}&title=${encodeURIComponent(work.title)}`;
+                    link.textContent = work.title;
+                    link.setAttribute("aria-label", `Open ${work.title}`);
+                    item.appendChild(link);
+                } else {
+                    const unavailable = document.createElement("span");
+                    unavailable.className = "safari-library-unavailable";
+                    unavailable.textContent = work.title;
+                    unavailable.setAttribute("aria-disabled", "true");
+                    item.appendChild(unavailable);
+                }
+
+                safariLibrary.appendChild(item);
+            });
+        }
+
+        if (!isSafariBrowser) {
         // 20-degree progressive rotation per slab in the pile
         const ANGLE_STEP = 20;
 
@@ -707,6 +795,7 @@
         // Initial setup
         updateMetrics();
         updateScroll();
+        }
     </script>
 </body>
 </html>
