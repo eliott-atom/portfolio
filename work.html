@@ -140,7 +140,7 @@
             left: 0;
             width: 100%;
             height: 100vh;
-            height: 100dvh;
+            height: 100svh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -307,7 +307,7 @@
             width: 100%;
             text-align: center;
             font-family: "Libre Franklin", sans-serif;
-            font-weight: 900;
+            font-weight: 600;
             line-height: 0.98;
             letter-spacing: -0.04em;
             text-transform: lowercase;
@@ -486,6 +486,9 @@
         let totalScrollDist = (works.length - 1) * scrollTravelPerSlab;
         let slabElements = [];
         let titleElements = [];
+        let layoutViewportWidth = window.innerWidth;
+        let layoutViewportHeight = window.innerHeight;
+        let layoutOrientation = window.innerWidth > window.innerHeight ? "landscape" : "portrait";
 
         // Build the solid monolithic pile of slabs
         works.forEach((work, index) => {
@@ -643,7 +646,7 @@
             scrollTravelPerSlab = isMobile ? 210 : 250;
             totalScrollDist = (works.length - 1) * scrollTravelPerSlab;
 
-            scrollContainer.style.height = `${window.innerHeight + totalScrollDist}px`;
+            scrollContainer.style.height = `${layoutViewportHeight + totalScrollDist}px`;
 
             // Every cube touches directly and has exactly the same vertical pitch
             slabElements.forEach((slab, i) => {
@@ -686,7 +689,18 @@
 
         window.addEventListener("scroll", requestScrollUpdate, { passive: true });
         window.addEventListener("resize", () => {
-            updateMetrics();
+            const nextOrientation = window.innerWidth > window.innerHeight ? "landscape" : "portrait";
+            const widthChanged = Math.abs(window.innerWidth - layoutViewportWidth) > 1;
+            const orientationChanged = nextOrientation !== layoutOrientation;
+
+            // Safari resizes innerHeight while its URL bar expands/collapses.
+            // Keep the scroll geometry stable unless the layout width/orientation changes.
+            if (widthChanged || orientationChanged) {
+                layoutViewportWidth = window.innerWidth;
+                layoutViewportHeight = window.innerHeight;
+                layoutOrientation = nextOrientation;
+                updateMetrics();
+            }
             requestScrollUpdate();
         }, { passive: true });
 
